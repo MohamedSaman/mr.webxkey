@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Billing System' }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>{{ config('app.name', 'Laravel') ?? 'Billing System' }}</title>
 
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
-        <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-        
-    @livewireStyles
-    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
         /* Login page styling */
         .login-container {
@@ -35,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('../images/bgwatch.jpg');
+            background-image: url('{{ asset('images/bgwatch.jpg') }}');
             background-size: cover;
             background-position: center;
             z-index: 0;
@@ -106,8 +102,7 @@
             position: relative;
         }
 
-        .divider::before,
-        .divider::after {
+        .divider::before, .divider::after {
             content: "";
             position: absolute;
             top: 50%;
@@ -158,15 +153,72 @@
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
         }
     </style>
+    
+    @livewireStyles
 </head>
-
 <body>
-    {{ $slot }}
-
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="login-container">
+        <!-- Full-screen background image -->
+        <div class="background-image"></div>
+        
+        <!-- Centered login form overlay -->
+        <div class="login-form-overlay">
+            <!-- User icon -->
+            <div class="user-icon-container">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            
+            <form wire:submit.prevent="login">
+                <!-- Error messages -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
+                <!-- Email field -->
+                <div class="form-group">
+                    <input type="email" class="form-control" wire:model="email" placeholder="Enter Email" required>
+                </div>
+                
+                <!-- Password field -->
+                <div class="form-group">
+                    <input type="password" class="form-control" wire:model="password" placeholder="Enter Password" required>
+                </div>
+                
+                <!-- Remember & Forgot options -->
+                <div class="d-flex justify-content-between form-options">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" wire:model="remember" id="remember">
+                        <label class="form-check-label" for="remember">Remember me</label>
+                    </div>
+                    <a href="{{ route('password.request') }}" class="forgot-link">Forgot Password</a>
+                </div>
+                
+                <!-- Login button -->
+                <button type="submit" class="btn btn-primary login-btn">Login</button>
+                
+                <!-- Divider with text -->
+                <div class="divider">
+                    <span>Or Login With</span>
+                </div>
+                
+                <!-- Social media login options -->
+                <div class="social-login">
+                    <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-google"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     @livewireScripts
-
 </body>
-
 </html>
