@@ -10,6 +10,6 @@ class StrapMaterialList extends Model
     use HasFactory;
     protected $fillable = [
         'strap_material_name',
-        'material_quantity',
+        'material_quality',
     ];
 }
