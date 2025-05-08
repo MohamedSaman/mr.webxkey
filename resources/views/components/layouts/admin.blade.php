@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Chart.js -->
+    
 
     <style>
         body {
@@ -25,6 +25,35 @@
             border-right: 1px solid #e0e0e0;
             padding: 20px 0;
             position: fixed;
+            transition: all 0.3s ease;
+            z-index: 1040;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+            padding: 20px 0;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+            font-size: 1.25rem;
+        }
+
+        .sidebar.collapsed .nav-link {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .sidebar.collapsed .nav-link.dropdown-toggle::after {
+            display: none;
         }
 
         .sidebar-header {
@@ -62,6 +91,28 @@
             font-size: 1.1rem;
         }
 
+        .nav-link.dropdown-toggle::after {
+            display: inline-block;
+            margin-left: 0.255em;
+            vertical-align: 0.255em;
+            content: "";
+            border-top: 0.3em solid;
+            border-right: 0.3em solid transparent;
+            border-bottom: 0;
+            border-left: 0.3em solid transparent;
+            float: right;
+            margin-top: 8px;
+        }
+
+        #inventorySubmenu .nav-link {
+            padding-left: 15px;
+            font-size: 0.9rem;
+        }
+
+        #inventorySubmenu .nav-link i {
+            font-size: 1rem;
+        }
+
         .top-bar {
             height: 60px;
             background-color: #ffffff;
@@ -74,7 +125,11 @@
             z-index: 1000;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            transition: left 0.3s ease;
+        }
+
+        .top-bar.collapsed {
+            left: 70px;
         }
 
         .admin-info {
@@ -111,7 +166,8 @@
         }
 
         .dropdown-toggle::after {
-            display: none; /* Remove the default dropdown arrow */
+            display: none;
+            /* Remove the default dropdown arrow */
         }
 
         .dropdown-menu {
@@ -146,6 +202,13 @@
             margin-top: 60px;
             padding: 20px;
             min-height: calc(100vh - 60px);
+            width: calc(100% - 250px);
+            transition: all 0.3s ease;
+        }
+
+        .main-content.collapsed {
+            margin-left: 70px;
+            width: calc(100% - 70px);
         }
 
         .stat-card {
@@ -415,8 +478,35 @@
             color: #dc3545;
             /* Danger red  */
         }
-    </style>
 
+        @media (max-width: 767.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 250px;
+                /* Keep full width on mobile */
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar.collapsed.show {
+                width: 250px;
+                /* Ensure sidebar is fully visible when shown on mobile */
+            }
+
+            .top-bar {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+    @stack('styles')
+    @livewireStyles
 </head>
 
 <body>
@@ -428,41 +518,52 @@
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link active" href="./dashbord.html">
-                        <i class="bi bi-bar-chart-line"></i> Overview
+                    <a class="nav-link active" href="{{ route('admin.dashboard') }}">
+                        <i class="bi bi-bar-chart-line"></i> <span>Overview</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./HR.html">
-                        <i class="bi bi-people"></i> HR Management
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-people"></i> <span>HR Management</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="./inventory.html">
-                        <i class="bi bi-box-seam"></i> Inventory
+                    <a class="nav-link dropdown-toggle" href="#inventorySubmenu" data-bs-toggle="collapse"
+                        role="button" aria-expanded="false" aria-controls="inventorySubmenu">
+                        <i class="bi bi-box-seam"></i> <span>Inventory</span>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="./sales.html">
-                        <i class="bi bi-cart3"></i> Sales
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="./billing.html">
-                        <i class="bi bi-receipt"></i> Billing
-                    </a>
+                    <div class="collapse" id="inventorySubmenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watches') }}">
+                                    <i class="bi bi-watch"></i> <span>Watch Details</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-color') }}">
+                                    <i class="bi bi-watch"></i> <span>Watch Color</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </div>
 
         <!-- Top Navigation Bar -->
         <nav class="top-bar">
+            <!-- Add toggle button at the start of the navbar -->
+            <button id="sidebarToggler" class="btn btn-sm btn-light me-auto d-flex align-items-center">
+                <i class="bi bi-list fs-5"></i>
+            </button>
+
             <div class="dropdown">
-                <div class="admin-info dropdown-toggle" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="admin-info dropdown-toggle" id="adminDropdown" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
                     <div class="admin-avatar">A</div>
                     <div class="admin-name">Admin</div>
                 </div>
-                
+
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
                     <li>
                         <a class="dropdown-item" href="#">
@@ -474,7 +575,9 @@
                             <i class="bi bi-gear me-2"></i>Settings
                         </a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}" class="mb-0">
                             @csrf
@@ -486,110 +589,236 @@
                 </ul>
             </div>
         </nav>
-        {{ $slot }}
+        <!-- Main Content -->
+        <main class="main-content">
+            {{ $slot }}
+        </main>
     </div>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 from CDN (only need this one line) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Include jQuery (required by Bootstrap 4 modal) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    @livewireScripts
 
     <script>
-        // Tab Switching Functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Tab Switching Functionality
             const tabs = document.querySelectorAll('.content-tab');
+            if (tabs.length > 0) {
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        // Remove active class from all tabs
+                        tabs.forEach(t => t.classList.remove('active'));
 
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active class from all tabs
-                    tabs.forEach(t => t.classList.remove('active'));
+                        // Add active class to clicked tab
+                        this.classList.add('active');
 
-                    // Add active class to clicked tab
-                    this.classList.add('active');
+                        // Hide all tab contents
+                        document.querySelectorAll('.tab-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
 
-                    // Hide all tab contents
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
+                        // Show the selected tab content
+                        const tabId = this.getAttribute('data-tab');
+                        document.getElementById(tabId).classList.add('active');
                     });
-
-                    // Show the selected tab content
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
                 });
-            });
+            }
 
-            // Chart Initialization
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Black Friday',
-                        tension: 0.4,
-                        borderWidth: 3,
-                        borderColor: '#00ab55',
-                        backgroundColor: 'transparent',
-                        data: [20, 60, 20, 50, 90, 220, 440, 380, 500],
-                        pointRadius: 0
-                    }, {
-                        label: 'Autumn Sale',
-                        tension: 0.4,
-                        borderWidth: 3,
-                        borderColor: '#212b36',
-                        backgroundColor: 'transparent',
-                        data: [30, 90, 40, 140, 290, 290, 240, 270, 230],
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            enabled: true,
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#fff',
-                            borderWidth: 1
-                        }
+            // Chart Initialization - ONLY if element exists
+            const salesChartEl = document.getElementById('salesChart');
+            if (salesChartEl) {
+                const ctx = salesChartEl.getContext('2d');
+                new Chart(ctx, {
+                    // Your existing chart configuration
+                    type: 'line',
+                    data: {
+                        // ...existing chart data
                     },
-                    scales: {
-                        y: {
-                            grid: {
-                                borderDash: [2],
-                                color: '#dee2e6',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                padding: 10,
-                                font: {
-                                    size: 11,
-                                    family: 'Public Sans'
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                padding: 10,
-                                font: {
-                                    size: 11,
-                                    family: 'Public Sans'
-                                }
-                            }
+                    options: {
+                        // ...existing chart options
+                    }
+                });
+            }
+
+            // Inventory submenu behavior
+            const inventoryToggle = document.querySelector('.nav-link.dropdown-toggle');
+            const inventorySubmenu = document.querySelector('#inventorySubmenu');
+            const submenuLinks = document.querySelectorAll('#inventorySubmenu .nav-link');
+            const mainNavLinks = document.querySelectorAll(
+                '.sidebar > .nav > .nav-item > .nav-link:not(.dropdown-toggle)');
+
+            // Fixed function to check if any submenu items are active
+            function isAnySubmenuItemActive() {
+                const currentPath = window.location.pathname;
+                let active = false;
+
+                submenuLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href !== '#') {
+                        // Extract just the path portion for comparison
+                        const hrefPath = href.replace(/^(https?:\/\/[^\/]+)/, '').split('?')[0];
+                        const linkIsActive = currentPath === hrefPath ||
+                            currentPath.endsWith(hrefPath) ||
+                            currentPath.includes(hrefPath);
+
+                        if (linkIsActive) {
+                            link.classList.add('active');
+                            active = true;
                         }
                     }
+                });
+
+                return active;
+            }
+
+            // Initialize the submenu state on page load
+            function initializeSubmenuState() {
+                // If any submenu item is active based on the current URL
+                if (isAnySubmenuItemActive()) {
+                    // Remove active class from all main navigation links
+                    mainNavLinks.forEach(link => {
+                        link.classList.remove('active');
+                    });
+
+                    // Make sure the inventory toggle is active
+                    inventoryToggle.classList.add('active');
+                    inventoryToggle.setAttribute('aria-expanded', 'true');
+
+                    // Make sure the submenu is expanded
+                    inventorySubmenu.classList.add('show');
+                }
+            }
+
+            // Handle inventory toggle clicks
+            inventoryToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (inventorySubmenu.classList.contains('show')) {
+                    inventorySubmenu.classList.remove('show');
+                    this.setAttribute('aria-expanded', 'false');
+                } else {
+                    inventorySubmenu.classList.add('show');
+                    this.setAttribute('aria-expanded', 'true');
                 }
             });
+
+            // Initialize on page load
+            initializeSubmenuState();
+
+            // Add sidebar toggle functionality
+            const sidebarToggler = document.getElementById('sidebarToggler');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+
+            if (sidebarToggler && sidebar) {
+                sidebarToggler.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    const isMobile = window.innerWidth < 768;
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnToggler = sidebarToggler.contains(event.target);
+
+                    if (isMobile && sidebar.classList.contains('show') && !isClickInsideSidebar && !
+                        isClickOnToggler) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth >= 768) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+            }
+
+            // Enhanced sidebar toggle functionality
+            const topBar = document.querySelector('.top-bar');
+
+            // Check if sidebar state is saved in localStorage
+            const sidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+
+            // Initialize sidebar state
+            function initializeSidebar() {
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    topBar.classList.add('collapsed');
+                    mainContent.classList.add('collapsed');
+                }
+
+                // On mobile, always start with sidebar hidden
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('show');
+                    topBar.classList.remove('collapsed');
+                    mainContent.classList.remove('collapsed');
+                }
+            }
+
+            // Toggle sidebar function
+            function toggleSidebar() {
+                if (window.innerWidth < 768) {
+                    // Mobile behavior
+                    sidebar.classList.toggle('show');
+                } else {
+                    // Desktop behavior
+                    sidebar.classList.toggle('collapsed');
+                    topBar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('collapsed');
+
+                    // Save state to localStorage
+                    localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
+                }
+            }
+
+            // Initialize
+            if (sidebarToggler && sidebar) {
+                initializeSidebar();
+
+                // Toggle button click handler
+                sidebarToggler.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    toggleSidebar();
+                });
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth < 768 &&
+                        sidebar.classList.contains('show') &&
+                        !sidebar.contains(event.target) &&
+                        !sidebarToggler.contains(event.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth >= 768) {
+                        sidebar.classList.remove('show');
+
+                        // Restore collapsed state on desktop
+                        if (sidebarCollapsed) {
+                            sidebar.classList.add('collapsed');
+                            topBar.classList.add('collapsed');
+                            mainContent.classList.add('collapsed');
+                        }
+                    } else {
+                        // On mobile, remove collapsed styles
+                        topBar.classList.remove('collapsed');
+                        mainContent.classList.remove('collapsed');
+                    }
+                });
+            }
         });
     </script>
+    @stack('scripts')
 </body>
+
 </html>
