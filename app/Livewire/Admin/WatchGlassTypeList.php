@@ -27,7 +27,7 @@ class WatchGlassTypeList extends Component
     }
     public function saveGlassType(){
         $this->validate([
-            'glassTypeName' => 'required',
+            'glassTypeName' => 'required|unique:glass_type_lists,glass_type_name',
         ]);
         try{
             GlassTypeList::create([
@@ -55,7 +55,7 @@ class WatchGlassTypeList extends Component
 
         try{
             $this->validate([
-                'editGlassTypeName' => 'required',
+                'editGlassTypeName' => 'required|unique:glass_type_lists,glass_type_name,'.$id,
             ]);
             GlassTypeList::where('id', $id)->update([
                 'glass_type_name' => $this->editGlassTypeName,

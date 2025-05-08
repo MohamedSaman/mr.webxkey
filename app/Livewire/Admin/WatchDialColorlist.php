@@ -29,8 +29,8 @@ class WatchDialColorlist extends Component
     public function saveDialColor(){
         try{
             $this->validate([
-                'dialColorName' => 'required',
-                'dialColorCode' => 'required',
+                'dialColorName' => 'required|unique:dial_color_lists,dial_color_name',
+                'dialColorCode' => 'required|unique:dial_color_lists,dial_color_code',
             ]);
             DialColorList::create([
                 'dial_color_name' => $this->dialColorName,
@@ -61,8 +61,8 @@ class WatchDialColorlist extends Component
     public function updateDialColor($id){
         try{
             $this->validate([
-                'editDialColorName' => 'required',
-                'editDialColorCode' => 'required',
+                'editDialColorName' => 'required|unique:dial_color_lists,dial_color_name,'.$id,
+                'editDialColorCode' => 'required|unique:dial_color_lists,dial_color_code,'.$id,
             ]);
             DialColorList::where('id', $id)->update([
                 'dial_color_name' => $this->editDialColorName,
