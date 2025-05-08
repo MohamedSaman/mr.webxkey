@@ -78,20 +78,21 @@
                         </div>
                         <div class="card-body p-4">
                             <div class="row">
+                                
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="code" class="form-label fw-bold">Code:</label>
-                                        <input type="text" class="form-control" id="code" wire:model="code">
-                                        @error('code')
+                                        <label for="name" class="form-label fw-bold">Name:</label>
+                                        <input type="text" class="form-control" id="name" wire:model="name">
+                                        @error('name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label fw-bold">Name:</label>
-                                        <input type="text" class="form-control" id="name" wire:model="name">
-                                        @error('name')
+                                        <label for="model" class="form-label fw-bold">Model:</label>
+                                        <input type="text" class="form-control" id="model" wire:model="model">
+                                        @error('model')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -109,24 +110,15 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="model" class="form-label fw-bold">Model:</label>
-                                        <input type="text" class="form-control" id="model" wire:model="model">
-                                        @error('model')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
                                         <label for="color" class="form-label fw-bold">Color:</label>
                                         <select class="form-select" id="color" wire:model="color">
-                                        <option value="">Select Color</option>
-                                        @foreach ($watchColors as $watchColor)
-                                            <option value="{{ $watchColor->id }}">
-                                                {{ $watchColor->name }} ({{ $watchColor->hex_code }})
-                                            </div>
-                                            </option>
-                                        @endforeach
+                                            <option value="">Select Color</option>
+                                            @foreach ($watchColors as $watchColor)
+                                                <option value="{{ $watchColor->id }}">
+                                                    {{ $watchColor->name }} ({{ $watchColor->hex_code }})
+
+                                                </option>
+                                            @endforeach
                                         </select>
                                         @error('color')
                                             <span class="text-danger">{{ $message }}</span>
@@ -244,8 +236,8 @@
                                     <div class="mb-3">
                                         <label for="caseDiameter" class="form-label fw-bold">Case Diameter
                                             (mm):</label>
-                                        <input type="number" step="0.1" class="form-control"
-                                            id="caseDiameter" wire:model="caseDiameter">
+                                        <input type="number" step="0.1" class="form-control" id="caseDiameter"
+                                            wire:model="caseDiameter">
                                         @error('caseDiameter')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -255,8 +247,8 @@
                                     <div class="mb-3">
                                         <label for="caseThickness" class="form-label fw-bold">Case Thickness
                                             (mm):</label>
-                                        <input type="number" step="0.1" class="form-control"
-                                            id="caseThickness" wire:model="caseThickness">
+                                        <input type="number" step="0.1" class="form-control" id="caseThickness"
+                                            wire:model="caseThickness">
                                         @error('caseThickness')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -382,8 +374,8 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="supplierPrice" class="form-label fw-bold">Supplier Price:</label>
-                                        <input type="number" step="0.01" class="form-control"
-                                            id="supplierPrice" wire:model="supplierPrice">
+                                        <input type="number" step="0.01" class="form-control" id="supplierPrice"
+                                            wire:model="supplierPrice">
                                         @error('supplierPrice')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -413,8 +405,8 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="discountPrice" class="form-label fw-bold">Discount Price:</label>
-                                        <input type="number" step="0.01" class="form-control"
-                                            id="discountPrice" wire:model="discountPrice">
+                                        <input type="number" step="0.01" class="form-control" id="discountPrice"
+                                            wire:model="discountPrice">
                                         @error('discountPrice')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror

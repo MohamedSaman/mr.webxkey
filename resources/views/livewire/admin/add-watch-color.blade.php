@@ -25,9 +25,10 @@
                             @foreach ($colors as $color)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td class="text-center">{{ $color->name }}</td>
-                                    <td class="text-center">{{ $color->hex_code }}</td>
+                                    <td class="text-center">{{ $color->name ?? '-' }}</td>
+                                    <td class="text-center">{{ $color->hex_code ?? '-' }}</td>
                                     <td class="text-center">
+                                        @if($color->hex_code)
                                         <div class="color-circle"
                                             style="
                                             width: 30px; 
@@ -38,6 +39,9 @@
                                             display: inline-block;
                                             ">
                                         </div>
+                                        @else
+                                            -
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
@@ -107,7 +111,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h1 class="modal-title fs-5" id="editColorModalLabel">Add Color</h1>
+                    <h1 class="modal-title fs-5" id="editColorModalLabel">Edit Color</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-3">
