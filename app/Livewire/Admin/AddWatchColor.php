@@ -41,7 +41,7 @@ class AddWatchColor extends Component
             ]);
             $this->js("Swal.fire('Success!', 'Color Created Successfully', 'success')");
         }catch(Exception $e){
-            log($e->getMessage());
+            // log($e->getMessage());
             $this->js("Swal.fire('Error!', '".$e->getMessage()."', 'error')");
         }
         
