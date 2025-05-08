@@ -70,7 +70,16 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="materialQuality" class="form-label">Strap Material Quality</label>
-                                <input type="text" class="form-control" id="materialQuality" wire:model="materialQuality">
+                                <select class="form-select" id="materialQuality" wire:model="materialQuality">
+                                    <option value="">Select Quality</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Branded">Branded</option>
+                                    <option value="Original">Original</option>
+                                    <option value="Local">Local</option>
+                                    <option value="Premium">Premium</option>
+                                </select>
                                 @error('materialQuality')
                                     <span class="text-danger">*{{ $message }}</span>
                                 @enderror
@@ -108,7 +117,15 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="editMaterialQuality" class="form-label">Strap Material Quality</label>
-                            <input type="text" class="form-control" id="editMaterialQuality" wire:model="editMaterialQuality">
+                            <select class="form-select" id="editMaterialQuality" wire:model="editMaterialQuality">
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                                <option value="Branded">Branded</option>
+                                <option value="Original">Original</option>
+                                <option value="Local">Local</option>
+                                <option value="Premium">Premium</option>
+                            </select>
                             @error('editMaterialQuality')
                                 <span class="text-danger">*{{ $message }}</span>
                             @enderror

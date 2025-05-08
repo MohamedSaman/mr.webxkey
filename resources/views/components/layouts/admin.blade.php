@@ -541,7 +541,32 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.watch-color') }}">
-                                    <i class="bi bi-watch"></i> <span>Watch Color</span>
+                                    <i class="bi bi-palette-fill"></i> <span>Watch Color</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-brand') }}">
+                                    <i class="bi bi-tag-fill"></i> <span>Watch Brand</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-category') }}">
+                                    <i class="bi bi-collection"></i> <span>Watch Category</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-dial-color') }}">
+                                    <i class="bi bi-circle-half"></i> <span>Watch Dial Color</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-glass-type') }}">
+                                    <i class="bi bi-diamond"></i> <span>Watch Glass Type</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-strap-material') }}">
+                                    <i class="bi bi-link"></i> <span>Watch Strap Material</span>
                                 </a>
                             </li>
                         </ul>
