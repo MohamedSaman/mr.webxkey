@@ -565,8 +565,28 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-strap-color') }}">
+                                    <i class="bi bi-paint-bucket"></i> <span>Watch Strap Color</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.watch-strap-material') }}">
                                     <i class="bi bi-link"></i> <span>Watch Strap Material</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-types') }}">
+                                    <i class="bi bi-grid-3x3-gap"></i> <span>Watch Type</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.made-by-list') }}">
+                                    <i class="bi bi-flag"></i> <span>Watch Made By</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.supplier-list') }}">
+                                    <i class="bi bi-truck"></i> <span>Watch Suppliers</span>
                                 </a>
                             </li>
                         </ul>
