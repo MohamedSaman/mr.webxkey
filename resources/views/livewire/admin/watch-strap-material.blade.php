@@ -63,7 +63,7 @@
                                 <label for="strapMaterialName" class="form-label">Strap Material Name</label>
                                 <input type="text" class="form-control" id="strapMaterialName" wire:model="strapMaterialName">
                                 @error('strapMaterialName')
-                                    <span class="text-danger">*{{ $message }}</span>
+                                    <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                                     <option value="Premium">Premium</option>
                                 </select>
                                 @error('materialQuality')
-                                    <span class="text-danger">*{{ $message }}</span>
+                                    <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                             <label for="editStrapMaterialName" class="form-label">Strap Material Name</label>
                             <input type="text" class="form-control" id="editStrapMaterialName" wire:model="editStrapMaterialName">
                             @error('editStrapMaterialName')
-                                <span class="text-danger">*{{ $message }}</span>
+                                <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -127,7 +127,7 @@
                                 <option value="Premium">Premium</option>
                             </select>
                             @error('editMaterialQuality')
-                                <span class="text-danger">*{{ $message }}</span>
+                                <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>

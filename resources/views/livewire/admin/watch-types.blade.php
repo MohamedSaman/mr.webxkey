@@ -62,7 +62,7 @@
                                 <label for="typeName" class="form-label">Type Name</label>
                                 <input type="text" class="form-control" id="typeName" wire:model="typeName">
                                 @error('typeName')
-                                    <span class="text-danger">*{{ $message }}</span>
+                                    <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                             <label for="editTypeName" class="form-label">Type Name</label>
                             <input type="text" class="form-control" id="editTypeName" wire:model="editTypeName">
                             @error('editTypeName')
-                                <span class="text-danger">*{{ $message }}</span>
+                                <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>

@@ -62,7 +62,7 @@
                                 <label for="glassTypeName" class="form-label">Glass Type Name</label>
                                 <input type="text" class="form-control" id="glassTypeName" wire:model="glassTypeName">
                                 @error('glassTypeName')
-                                    <span class="text-danger">*{{ $message }}</span>
+                                    <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                             <label for="editGlassTypeName" class="form-label">Glass Type Name</label>
                             <input type="text" class="form-control" id="editGlassTypeName" wire:model="editGlassTypeName">
                             @error('editGlassTypeName')
-                                <span class="text-danger">*{{ $message }}</span>
+                                <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>

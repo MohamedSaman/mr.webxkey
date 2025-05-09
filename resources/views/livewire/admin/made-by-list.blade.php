@@ -62,7 +62,7 @@
                                 <label for="countryName" class="form-label">Country Name</label>
                                 <input country="text" class="form-control" id="countryName" wire:model="countryName">
                                 @error('countryName')
-                                    <span class="text-danger">*{{ $message }}</span>
+                                    <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                             <label for="editCountryName" class="form-label">Country Name</label>
                             <input country="text" class="form-control" id="editCountryName" wire:model="editCountryName">
                             @error('editCountryName')
-                                <span class="text-danger">*{{ $message }}</span>
+                                <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>

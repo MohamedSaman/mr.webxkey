@@ -81,7 +81,7 @@
                                 <label for="colorName" class="form-label">Color Name</label>
                                 <input type="text" class="form-control" id="colorName" wire:model="colorName">
                                 @error('colorName')
-                                    <span class="text-danger">*{{ $message }}</span>
+                                    <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                                 <label for="colorCode" class="form-label">Color Code</label>
                                 <input type="text" class="form-control" id="colorCode" wire:model="colorCode">
                                 @error('colorCode')
-                                    <span class="text-danger">*{{ $message }}</span>
+                                    <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -121,7 +121,7 @@
                             <label for="editColorName" class="form-label">Color Name</label>
                             <input type="text" class="form-control" id="editColorName" wire:model="editColorName">
                             @error('editColorName')
-                                <span class="text-danger">*{{ $message }}</span>
+                                <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                             <label for="editColorCode" class="form-label">Color Code</label>
                             <input type="text" class="form-control" id="editColorCode" wire:model="editColorCode">
                             @error('editColorCode')
-                                <span class="text-danger">*{{ $message }}</span>
+                                <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>
