@@ -30,7 +30,7 @@ class WatchBrandlist extends Component
 
     public function saveBrand(){
         $this->validate([
-            'brandName' => 'required|unique:brand_lists,brand_name',
+            'brandName' => 'required|unique:brand_lists,brand_name'
         ]);
         try{
             
@@ -59,10 +59,10 @@ class WatchBrandlist extends Component
     }
 
     public function updateBrand($id){
+        $this->validate([
+            'editBrandName' => 'required|unique:brand_lists,brand_name'.$id
+        ]);
         try{
-            $this->validate([
-                'editBrandName' => 'required|unique:brand_lists,brand_name'.$id,
-            ]);
             BrandList::where('id', $id)->update([
                 'brand_name' => $this->editBrandName,
             ]);

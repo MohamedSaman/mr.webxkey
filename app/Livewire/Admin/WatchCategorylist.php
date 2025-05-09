@@ -28,7 +28,7 @@ class WatchCategorylist extends Component
 
     public function saveCategory(){
         $this->validate([
-            'categoryName' => 'required|unique:category_lists,category_name',
+            'categoryName' => 'required|unique:category_lists,category_name'
         ]);
         try{
             
@@ -56,10 +56,10 @@ class WatchCategorylist extends Component
     }
 
     public function updateCategory($id){
+        $this->validate([
+            'editCategoryName' => 'required|unique:category_lists,category_name'.$id
+        ]);
         try{
-            $this->validate([
-                'editCategoryName' => 'required|unique:category_lists,category_name'.$id,
-            ]);
             CategoryList::where('id', $id)->update([
                 'category_name' => $this->editCategoryName,
             ]);

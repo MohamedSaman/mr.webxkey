@@ -30,11 +30,11 @@ class AddWatchColor extends Component
         $this->js("$('#createColorModal').modal('show')");
     }
     public function saveColor(){
+        $this->validate([
+            'colorName' => 'required|unique:watch_colors,name',
+            'colorCode' => 'required|unique:watch_colors,hex_code'
+        ]);
         try{
-            $this->validate([
-                'colorName' => 'required|unique:watch_colors,name',
-                'colorCode' => 'required|unique:watch_colors,hex_code',
-            ]);
             WatchColors::create([
                 'name' => $this->colorName,
                 'hex_code' => $this->colorCode,
@@ -62,11 +62,12 @@ class AddWatchColor extends Component
     }
 
     public function updateColor($id){
+        $this->validate([
+            'editColorName' => 'required|unique:watch_colors,name,'.$id,
+            'editColorCode' => 'required|unique:watch_colors,hex_code,'.$id
+        ]);
         try{
-            $this->validate([
-                'editColorName' => 'required|unique:watch_colors,name,'.$id,
-                'editColorCode' => 'required|unique:watch_colors,hex_code,'.$id,
-            ]);
+            
             WatchColors::where('id', $id)->update([
                 'name' => $this->editColorName,
                 'hex_code' => $this->editColorCode,

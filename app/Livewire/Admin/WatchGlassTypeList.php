@@ -27,7 +27,7 @@ class WatchGlassTypeList extends Component
     }
     public function saveGlassType(){
         $this->validate([
-            'glassTypeName' => 'required|unique:glass_type_lists,glass_type_name',
+            'glassTypeName' => 'required|unique:glass_type_lists,glass_type_name'
         ]);
         try{
             GlassTypeList::create([
@@ -52,11 +52,11 @@ class WatchGlassTypeList extends Component
         $this->js("$('#editGlassTypeModal').modal('show')");
     }
     public function updateGlassType($id){
-
+        $this->validate([
+            'editGlassTypeName' => 'required|unique:glass_type_lists,glass_type_name,'.$id
+        ]);
         try{
-            $this->validate([
-                'editGlassTypeName' => 'required|unique:glass_type_lists,glass_type_name,'.$id,
-            ]);
+            
             GlassTypeList::where('id', $id)->update([
                 'glass_type_name' => $this->editGlassTypeName,
             ]);

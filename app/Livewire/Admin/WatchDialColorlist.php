@@ -27,11 +27,12 @@ class WatchDialColorlist extends Component
         $this->js("$('#createDialColorModal').modal('show')");
     }
     public function saveDialColor(){
+        $this->validate([
+            'dialColorName' => 'required|unique:dial_color_lists,dial_color_name',
+            'dialColorCode' => 'required|unique:dial_color_lists,dial_color_code'
+        ]);
         try{
-            $this->validate([
-                'dialColorName' => 'required|unique:dial_color_lists,dial_color_name',
-                'dialColorCode' => 'required|unique:dial_color_lists,dial_color_code',
-            ]);
+           
             DialColorList::create([
                 'dial_color_name' => $this->dialColorName,
                 'dial_color_code' => $this->dialColorCode,
@@ -59,11 +60,12 @@ class WatchDialColorlist extends Component
     }
 
     public function updateDialColor($id){
+        $this->validate([
+            'editDialColorName' => 'required|unique:dial_color_lists,dial_color_name,'.$id,
+            'editDialColorCode' => 'required|unique:dial_color_lists,dial_color_code,'.$id
+        ]);
         try{
-            $this->validate([
-                'editDialColorName' => 'required|unique:dial_color_lists,dial_color_name,'.$id,
-                'editDialColorCode' => 'required|unique:dial_color_lists,dial_color_code,'.$id,
-            ]);
+            
             DialColorList::where('id', $id)->update([
                 'dial_color_name' => $this->editDialColorName,
                 'dial_color_code' => $this->editDialColorCode,
