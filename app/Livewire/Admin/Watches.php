@@ -60,6 +60,7 @@ class Watches extends Component
     public $damageStock = 0;
     public $status;
     public $location;
+    public $search = '';
 
     public function render()
     {
@@ -67,6 +68,12 @@ class Watches extends Component
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
             ->join('watch_stocks', 'watch_details.id', '=', 'watch_stocks.watch_id')
             ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*')
+            ->where('watch_details.name', 'like', '%' . $this->search . '%')
+            ->orWhere('watch_details.code', 'like', '%' . $this->search . '%')
+            ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
+            ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
+            ->orWhere('watch_details.status', 'like', '%' . $this->search . '%')
+            ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
             ->orderBy('watch_details.created_at', 'desc')
             ->paginate(10);
         // dd($watches);

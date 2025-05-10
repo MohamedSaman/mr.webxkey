@@ -120,11 +120,11 @@
                 <div class="d-flex gap-3">
                     <div class="search-bar">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="product-search"
+                            <input type="text" class="form-control" id="product-search" wire:model.live ="search"
                                 placeholder="Search products...">
-                            <button class="btn btn-outline-secondary" type="button" id="search-btn">
+                            {{-- <button class="btn btn-outline-secondary" type="button" id="search-btn">
                                 <i class="bi bi-search"></i>
-                            </button>
+                            </button> --}}
                         </div>
                     </div>
                     <button class="btn btn-primary add-product-btn" id="add-product-btn" wire:click="createWatch">
@@ -140,11 +140,13 @@
                     <thead>
                         <th scope="col" class="text-center">#</th>
                         <th scope="col" class="text-center">WatchName</th>
-                        <th scope="col" class="text-center">Model</th>
-                        <th scope="col" class="text-center">Selling Price</th>
-                        <th scope="col" class="text-center">Barcode</th>
                         <th scope="col" class="text-center">Code</th>
+                        <th scope="col" class="text-center">Barcode</th>
                         <th scope="col" class="text-center">Brand</th>
+                        <th scope="col" class="text-center">Model</th>
+                        <th scope="col" class="text-center">Stock</th>
+                        <th scope="col" class="text-center">Selling Price</th>
+                        <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Actions</th>
                     </thead>
                     <tbody>
@@ -153,11 +155,24 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">{{ $watch->name }}</td>
-                                    <td class="text-center">{{ $watch->model }}</td>
-                                    <td class="text-center">{{ $watch->selling_price }}</td>
-                                    <td class="text-center">{{ $watch->barcode }}</td>
                                     <td class="text-center">{{ $watch->code }}</td>
+                                    <td class="text-center">{{ $watch->barcode }}</td>
                                     <td class="text-center">{{ $watch->brand }}</td>
+                                    <td class="text-center">{{ $watch->model }}</td>
+                                    <td class="text-center">
+                                        @if ($watch->available_stock > 0)
+                                            <span class="badge bg-success rounded-pill">In Stock</span>
+                                        @else
+                                            <span class="badge bg-danger rounded-pill">Out of Stock</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{ $watch->selling_price }}</td>
+                                    <td class="text-center">
+                                        @if ($watch->status == 'active')
+                                            <span class="badge bg-success rounded-pill">Active</span>
+                                        @else
+                                            <span class="badge bg-danger rounded-pill">Inactive</span>
+                                        @endif
                                     <td class="text-center">
                                         <div class="action-btns" style="justify-content: center;">
                                             <button class="action-btn edit" title="Edit"
