@@ -596,6 +596,11 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-cash"></i> <span>Billing</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
