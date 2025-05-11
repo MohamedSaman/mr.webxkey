@@ -5,6 +5,7 @@ use App\Livewire\CustomLogin;
 use App\Livewire\Admin\Watches;
 use App\Livewire\Admin\MadeByList;
 use App\Livewire\Admin\WatchTypes;
+use App\Livewire\Admin\BillingPage;
 use App\Livewire\Admin\SupplierList;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Admin\AddWatchColor;
@@ -55,6 +56,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('admin/made-by-list', MadeByList::class)->name('admin.made-by-list')->middleware('role:admin');
     Route::get('admin/supplier-list', SupplierList::class)->name('admin.supplier-list')->middleware('role:admin');
     Route::get('admin/watch-strap-colorlist', WatchStrapColorlist::class)->name('admin.watch-strap-color')->middleware('role:admin');
+    Route::get('admin/billing-page', BillingPage::class)->name('admin.billing-page')->middleware('role:admin');
     
     // Staff routes
     Route::get('/staff/dashboard', StaffDashboard::class)->name('staff.dashboard')->middleware('role:staff');
