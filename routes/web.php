@@ -17,6 +17,7 @@ use App\Livewire\Admin\WatchCategorylist;
 use App\Livewire\Admin\WatchDialColorlist;
 use App\Livewire\Admin\WatchGlassTypeList;
 use App\Livewire\Admin\WatchStrapMaterial;
+use App\Http\Controllers\ReceiptController;
 use App\Livewire\Admin\WatchStrapColorlist;
 
 /*
@@ -57,6 +58,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('admin/supplier-list', SupplierList::class)->name('admin.supplier-list')->middleware('role:admin');
     Route::get('admin/watch-strap-colorlist', WatchStrapColorlist::class)->name('admin.watch-strap-color')->middleware('role:admin');
     Route::get('admin/billing-page', BillingPage::class)->name('admin.billing-page')->middleware('role:admin');
+    // Add this route for receipt download
+    Route::get('/receipts/{id}/download', [ReceiptController::class, 'download'])->name('receipts.download');
     
     // Staff routes
     Route::get('/staff/dashboard', StaffDashboard::class)->name('staff.dashboard')->middleware('role:staff');
