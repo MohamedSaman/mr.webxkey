@@ -199,7 +199,7 @@
                                         <div class="card-header pb-0 bg-primary">
                                             <h6 class="text-white">Customer & Payment Information</h6>
                                         </div>
-                                        <div class="card-body">
+                                        <div class="card-body" style="height: 500px; overflow-y: auto;">
                                             <!-- Customer Selection -->
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold">Select Customer</label>
