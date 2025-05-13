@@ -176,35 +176,6 @@
                                                 </button>
                                             </td>
                                         </tr>
-                                        {{-- @if ($showDetail === (int) $id)
-                                            <tr class="bg-light">
-                                                <td colspan="6">
-                                                    <div class="p-3">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <p class="mb-1"><strong>Model:</strong>
-                                                                    {{ $item['model'] }}</p>
-                                                                <p class="mb-1"><strong>Brand:</strong>
-                                                                    {{ $item['brand'] }}</p>
-                                                                <p class="mb-1"><strong>Code:</strong>
-                                                                    {{ $item['code'] }}</p>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <p class="mb-1"><strong>In Stock:</strong>
-                                                                    {{ $item['inStock'] }}</p>
-                                                                <p class="mb-1"><strong>Regular Price:</strong>
-                                                                    ${{ number_format($item['price'], 2) }}</p>
-                                                                @if ($item['discountPrice'])
-                                                                    <p class="mb-1"><strong>Discount Price:</strong>
-                                                                        ${{ number_format($item['discountPrice'], 2) }}
-                                                                    </p>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endif --}}
                                     @empty
                                         <tr>
                                             <td colspan="6" class="text-center py-5">
@@ -219,13 +190,394 @@
                             </table>
                         </div>
 
-                        <!-- Order Summary -->
-                        @if (count($cart) > 0)
+                        <!-- Customer & Payment Information -->
+                        @if (!empty($cart))
                             <div class="row mt-4">
-                                <div class="col-md-6 ms-auto">
+                                <div class="col-md-6">
+                                    <!-- Customer & Payment Information Card -->
                                     <div class="card">
-                                        <div class="card-header pb-0">
-                                            <h6>Order Summary</h6>
+                                        <div class="card-header pb-0 bg-primary">
+                                            <h6 class="text-white">Customer & Payment Information</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Customer Selection -->
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Select Customer</label>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="input-group flex-grow-1">
+                                                        <span class="input-group-text">
+                                                            <i class="bi bi-person"></i>
+                                                        </span>
+                                                        <select class="form-select" wire:model="customerId">
+                                                            <option value="">-- Select a customer --</option>
+                                                            @foreach ($customers as $customer)
+                                                                <option value="{{ $customer->id }}">
+                                                                    {{ $customer->name }}</option>
+                                                            @endforeach
+                                                        </select>
+
+                                                    </div>
+                                                    <button class="btn btn-primary d-flex align-items-center"
+                                                        data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                                                        <i class="bi bi-plus-circle me-1"></i>ADD
+                                                    </button>
+                                                </div>
+                                                @error('customerId')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
+                                            <!-- Payment Method Selection -->
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Payment Type</label>
+                                                <div class="d-flex">
+                                                    <div class="form-check me-4">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="paymentType" id="fullPayment" value="full"
+                                                            wire:model.live="paymentType" checked>
+                                                        <label class="form-check-label" for="fullPayment">
+                                                            <span class="badge bg-success me-1">
+                                                                <i class="fas fa-money-bill me-1"></i>
+                                                            </span>
+                                                            Full Payment
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="paymentType" id="partialPayment" value="partial"
+                                                            wire:model.live="paymentType">
+                                                        <label class="form-check-label" for="partialPayment">
+                                                            <span class="badge bg-warning me-1">
+                                                                <i class="fas fa-percentage me-1"></i>
+                                                            </span>
+                                                            Partial Payment
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @if ($paymentType == 'full')
+                                                <!-- Full Payment - Single Payment Method -->
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Payment Method</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">
+                                                            <i class="bi bi-credit-card"></i>
+                                                        </span>
+                                                        <select
+                                                            class="form-select @error('paymentMethod') is-invalid @enderror"
+                                                            wire:model.live="paymentMethod">
+                                                            <option value="">-- Select payment method --</option>
+                                                            <option value="cash">Cash</option>
+                                                            <option value="bank_transfer">Bank Transfer</option>
+                                                            <option value="cheque">Cheque</option>
+                                                        </select>
+                                                        {{-- @error('paymentMethod')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror --}}
+                                                    </div>
+                                                </div>
+
+                                                <!-- Payment Reference Fields based on payment method -->
+                                                @if ($paymentMethod == 'bank_transfer')
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold">Bank Transfer
+                                                            Receipt</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text">
+                                                                <i class="bi bi-image"></i>
+                                                            </span>
+                                                            <input type="file"
+                                                                class="form-control @error('paymentReceiptImage') is-invalid @enderror"
+                                                                wire:model="paymentReceiptImage" accept="image/*">
+                                                        </div>
+                                                      
+                                                        @if ($paymentReceiptImagePreview)
+                                                            <div class="mt-2">
+                                                                <img src="{{ $paymentReceiptImagePreview }}"
+                                                                    class="img-thumbnail" style="max-height: 100px">
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @elseif($paymentMethod == 'cheque')
+                                                    <div class="mb-3">
+                                                        <label class="form-label small fw-bold">Cheque Image</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text">
+                                                                <i class="bi bi-image"></i>
+                                                            </span>
+                                                            <input type="file"
+                                                                class="form-control @error('paymentReceiptImage') is-invalid @enderror"
+                                                                wire:model="paymentReceiptImage" accept="image/*">
+                                                        </div>
+                                                       
+                                                        @if ($paymentReceiptImagePreview)
+                                                            <div class="mt-2">
+                                                                <img src="{{ $paymentReceiptImagePreview }}"
+                                                                    class="img-thumbnail" style="max-height: 100px">
+                                                            </div>
+                                                        @endif
+
+                                                        <!-- Bank name is still needed for cheque -->
+                                                        <div class="mt-2">
+                                                            <label class="form-label small fw-bold">Bank Name</label>
+                                                            <input type="text"
+                                                                class="form-control form-control-sm @error('bankName') is-invalid @enderror"
+                                                                placeholder="Enter bank name" wire:model="bankName">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @else
+                                                <!-- Partial Payment - Split Payment System -->
+                                                <div class="card mb-3 border border-warning bg-light">
+                                                    <div class="card-body p-3">
+                                                        <h6 class="card-title fw-bold mb-3">
+                                                            <i class="fas fa-hand-holding-usd me-2"></i>Initial Payment
+                                                        </h6>
+
+                                                        <!-- Initial Payment Amount -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Amount to Pay
+                                                                Now</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">$</span>
+                                                                <input type="number" class="form-control"
+                                                                    placeholder="Enter amount"
+                                                                    wire:model="initialPaymentAmount"
+                                                                    wire:change="calculateBalanceAmount"
+                                                                    min="0" step="0.01"
+                                                                    max="{{ $grandTotal }}">
+                                                            </div>
+                                                            <div class="progress mt-2" style="height: 5px;">
+                                                                <div class="progress-bar bg-success"
+                                                                    role="progressbar"
+                                                                    style="width: {{ $initialPaymentAmount ? ($initialPaymentAmount / $grandTotal) * 100 : 0 }}%"
+                                                                    aria-valuenow="{{ $initialPaymentAmount ? ($initialPaymentAmount / $grandTotal) * 100 : 0 }}"
+                                                                    aria-valuemin="0" aria-valuemax="100">
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between mt-1">
+                                                                <small class="text-muted">$0</small>
+                                                                <small
+                                                                    class="text-success">{{ $initialPaymentAmount ? number_format(($initialPaymentAmount / $grandTotal) * 100, 0) : 0 }}%</small>
+                                                                <small
+                                                                    class="text-muted">${{ number_format($grandTotal, 2) }}</small>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Initial Payment Method -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Initial Payment
+                                                                Method</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">
+                                                                    <i class="bi bi-credit-card"></i>
+                                                                </span>
+                                                                <select
+                                                                    class="form-select @error('initialPaymentMethod') is-invalid @enderror"
+                                                                    wire:model.live="initialPaymentMethod">
+                                                                    <option value="">-- Select payment method --
+                                                                    </option>
+                                                                    <option value="cash">Cash</option>
+                                                                    <option value="bank_transfer">Bank Transfer
+                                                                    </option>
+                                                                    <option value="cheque">Cheque</option>
+                                                                </select>
+                                                                @error('initialPaymentMethod')
+                                                                    <div class="invalid-feedback">{{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Initial Payment Reference Fields based on payment method -->
+                                                        @if ($initialPaymentMethod == 'bank_transfer')
+                                                            <div class="mb-3">
+                                                                <label class="form-label small fw-bold">Bank Transfer
+                                                                    Receipt</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">
+                                                                        <i class="bi bi-image"></i>
+                                                                    </span>
+                                                                    <input type="file"
+                                                                        class="form-control @error('initialPaymentReceiptImage') is-invalid @enderror"
+                                                                        wire:model="initialPaymentReceiptImage"
+                                                                        accept="image/*">
+                                                                </div>
+                                                                
+                                                                @if ($initialPaymentReceiptImagePreview)
+                                                                    <div class="mt-2">
+                                                                        <img src="{{ $initialPaymentReceiptImagePreview }}"
+                                                                            class="img-thumbnail"
+                                                                            style="max-height: 100px">
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @elseif($initialPaymentMethod == 'cheque')
+                                                            <div class="mb-3">
+                                                                <label class="form-label small fw-bold">Cheque
+                                                                    Image</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">
+                                                                        <i class="bi bi-image"></i>
+                                                                    </span>
+                                                                    <input type="file"
+                                                                        class="form-control @error('initialPaymentReceiptImage') is-invalid @enderror"
+                                                                        wire:model="initialPaymentReceiptImage"
+                                                                        accept="image/*">
+                                                                </div>
+                                                                
+                                                                @if ($initialPaymentReceiptImagePreview)
+                                                                    <div class="mt-2">
+                                                                        <img src="{{ $initialPaymentReceiptImagePreview }}"
+                                                                            class="img-thumbnail"
+                                                                            style="max-height: 100px">
+                                                                    </div>
+                                                                @endif
+
+                                                                <!-- Bank name is still needed for cheque -->
+                                                                <div class="mt-2">
+                                                                    <label class="form-label small fw-bold">Bank
+                                                                        Name</label>
+                                                                    <input type="text"
+                                                                        class="form-control form-control-sm @error('initialBankName') is-invalid @enderror"
+                                                                        placeholder="Enter bank name"
+                                                                        wire:model="initialBankName">
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                <!-- Balance Payment Section -->
+                                                <div class="card mb-3 border border-info bg-light">
+                                                    <div class="card-body p-3">
+                                                        <h6 class="card-title fw-bold mb-3">
+                                                            <i class="fas fa-calendar-alt me-2"></i>Balance Payment
+                                                            <span
+                                                                class="badge bg-info float-end">${{ number_format($balanceAmount, 2) }}</span>
+                                                        </h6>
+
+                                                        <!-- Balance Payment Method -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Balance Payment
+                                                                Method</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">
+                                                                    <i class="bi bi-wallet2"></i>
+                                                                </span>
+                                                                <select
+                                                                    class="form-select @error('balancePaymentMethod') is-invalid @enderror"
+                                                                    wire:model.live="balancePaymentMethod">
+                                                                    <option value="">-- Select payment method --
+                                                                    </option>
+                                                                    <option value="cash">Cash</option>
+                                                                    <option value="cheque">Cheque</option>
+                                                                    <option value="credit">Credit (Pay Later)</option>
+                                                                    <option value="bank_transfer">Bank Transfer
+                                                                    </option>
+                                                                </select>
+                                                                @error('balancePaymentMethod')
+                                                                    <div class="invalid-feedback">{{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Balance Due Date - always show for partial payments -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Balance Payment Due
+                                                                Date</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">
+                                                                    <i class="bi bi-calendar-date"></i>
+                                                                </span>
+                                                                <input type="date" class="form-control"
+                                                                    wire:model="balanceDueDate"
+                                                                    min="{{ date('Y-m-d') }}">
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Balance Payment Reference Fields based on payment method -->
+                                                        @if ($balancePaymentMethod == 'cheque')
+                                                            <div class="mb-3">
+                                                                <div class="row g-2">
+                                                                    <div class="col-md-12">
+                                                                        <label class="form-label small fw-bold">Cheque
+                                                                            Image</label>
+                                                                        <div class="input-group">
+                                                                            <span class="input-group-text">
+                                                                                <i class="bi bi-image"></i>
+                                                                            </span>
+                                                                            <input type="file"
+                                                                                class="form-control @error('balancePaymentReceiptImage') is-invalid @enderror"
+                                                                                wire:model="balancePaymentReceiptImage"
+                                                                                accept="image/*">
+                                                                        </div>
+                                                                        
+                                                                        @if ($balancePaymentReceiptImagePreview)
+                                                                            <div class="mt-2">
+                                                                                <img src="{{ $balancePaymentReceiptImagePreview }}"
+                                                                                    class="img-thumbnail"
+                                                                                    style="max-height: 100px">
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                    <div class="col-md-12 mt-2">
+                                                                        <label class="form-label small fw-bold">Bank
+                                                                            Name</label>
+                                                                        <input type="text"
+                                                                            class="form-control form-control-sm @error('balanceBankName') is-invalid @enderror"
+                                                                            placeholder="Enter bank name"
+                                                                            wire:model="balanceBankName">
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @elseif($balancePaymentMethod == 'bank_transfer')
+                                                            <div class="mb-3">
+                                                                <label class="form-label small fw-bold">Bank Transfer
+                                                                    Receipt</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text">
+                                                                        <i class="bi bi-image"></i>
+                                                                    </span>
+                                                                    <input type="file"
+                                                                        class="form-control @error('balancePaymentReceiptImage') is-invalid @enderror"
+                                                                        wire:model="balancePaymentReceiptImage"
+                                                                        accept="image/*">
+                                                                </div>
+                                                                
+                                                                @if ($balancePaymentReceiptImagePreview)
+                                                                    <div class="mt-2">
+                                                                        <img src="{{ $balancePaymentReceiptImagePreview }}"
+                                                                            class="img-thumbnail"
+                                                                            style="max-height: 100px">
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <!-- Customer Notes -->
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold">Notes</label>
+                                                <textarea class="form-control" rows="3" placeholder="Add any notes about this sale" wire:model="saleNotes"></textarea>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Order Summary -->
+                                    <div class="card mt-4">
+                                        <div class="card-header bg-light">
+                                            <h6 class="mb-0 fw-bold">Order Summary</h6>
                                         </div>
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between mb-2">
@@ -238,16 +590,15 @@
                                             </div>
                                             <hr>
                                             <div class="d-flex justify-content-between">
-                                                <span class="font-weight-bold">Grand Total:</span>
-                                                <span
-                                                    class="font-weight-bold">${{ number_format($grandTotal, 2) }}</span>
+                                                <span class="fw-bold">Grand Total:</span>
+                                                <span class="fw-bold">${{ number_format($grandTotal, 2) }}</span>
                                             </div>
 
                                             <div class="d-flex mt-4">
                                                 <button class="btn btn-danger me-2" wire:click="clearCart">
                                                     <i class="fas fa-times me-2"></i>Clear
                                                 </button>
-                                                <button class="btn btn-success flex-grow-1">
+                                                <button class="btn btn-success flex-grow-1" wire:click="completeSale">
                                                     <i class="fas fa-check me-2"></i>Complete Sale
                                                 </button>
                                             </div>
@@ -785,6 +1136,280 @@
                 </div>
             </div>
             <!-- View Watch Modal End-->
+
+            <!-- Add New Customer Modal -->
+            <div wire:ignore.self class="modal fade" id="addCustomerModal" tabindex="-1"
+                aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addCustomerModalLabel">
+                                <i class="bi bi-user-plus me-2"></i>Add New Customer
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form wire:submit.prevent="saveCustomer">
+                                <div class="row g-3">
+                                    <!-- Customer Type -->
+                                    <div class="col-md-12">
+                                        <label class="form-label">Customer Type</label>
+                                        <div class="d-flex">
+                                            <div class="form-check me-4">
+                                                <input class="form-check-input" type="radio" name="newCustomerType"
+                                                    id="newRetail" value="retail" wire:model="newCustomerType"
+                                                    checked>
+                                                <label class="form-check-label" for="newRetail">Retail</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="newCustomerType"
+                                                    id="newWholesale" value="wholesale" wire:model="newCustomerType">
+                                                <label class="form-check-label" for="newWholesale">Wholesale</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer Name & Phone -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                            <input type="text" class="form-control"
+                                                placeholder="Enter customer name" wire:model="newCustomerName"
+                                                required>
+                                        </div>
+                                        @error('newCustomerName')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number <span
+                                                class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                            <input type="text" class="form-control"
+                                                placeholder="Enter phone number" wire:model="newCustomerPhone"
+                                                required>
+                                        </div>
+                                        @error('newCustomerPhone')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Email & Address -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email Address</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
+                                            <input type="email" class="form-control"
+                                                placeholder="Enter email address" wire:model="newCustomerEmail">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Address</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                            <input type="text" class="form-control" placeholder="Enter address"
+                                                wire:model="newCustomerAddress">
+                                        </div>
+                                    </div>
+
+                                    <!-- Additional Information -->
+                                    <div class="col-md-12">
+                                        <label class="form-label">Additional Information</label>
+                                        <textarea class="form-control" rows="3" placeholder="Add any additional information about this customer"
+                                            wire:model="newCustomerNotes"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </button>
+                            <button type="button" class="btn btn-primary" wire:click="saveCustomer">
+                                <i class="fas fa-save me-1"></i>Save Customer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receipt Modal -->
+            <div wire:ignore.self class="modal fade" id="receiptModal" tabindex="-1"
+                aria-labelledby="receiptModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success">
+                            <h5 class="modal-title text-white" id="receiptModalLabel">
+                                <i class="bi bi-receipt me-2"></i>Sales Receipt
+                            </h5>
+                            <div class="ms-auto">
+                                <button type="button" class="btn btn-sm btn-light me-2"
+                                    wire:click="downloadReceipt">
+                                    <i class="bi bi-download me-1"></i>Download
+                                </button>
+                                <button type="button" class="btn btn-sm btn-light me-2" wire:click="printReceipt">
+                                    <i class="bi bi-printer me-1"></i>Print
+                                </button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                        </div>
+                        <div class="modal-body p-4" id="receiptContent">
+                            @if ($receipt)
+                                <div class="receipt-container">
+                                    <!-- Receipt Header -->
+                                    <div class="text-center mb-4">
+                                        <h3 class="mb-0">WatchStore</h3>
+                                        <p class="mb-0 text-muted small">123 Main Street, City, Country</p>
+                                        <p class="mb-0 text-muted small">Phone: (123) 456-7890 | Email:
+                                            info@watchstore.com</p>
+                                        <h4 class="mt-3 border-bottom border-2 pb-2">SALES RECEIPT</h4>
+                                    </div>
+
+                                    <!-- Invoice Details -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <h6 class="text-muted mb-2">INVOICE DETAILS</h6>
+                                            <p class="mb-1"><strong>Invoice Number:</strong>
+                                                {{ $receipt->invoice_number }}</p>
+                                            <p class="mb-1"><strong>Date:</strong>
+                                                {{ $receipt->created_at->format('d/m/Y h:i A') }}</p>
+                                            <p class="mb-1"><strong>Payment Status:</strong>
+                                                <span
+                                                    class="badge bg-{{ $receipt->payment_status == 'paid' ? 'success' : ($receipt->payment_status == 'partial' ? 'warning' : 'danger') }}">
+                                                    {{ ucfirst($receipt->payment_status) }}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="text-muted mb-2">CUSTOMER DETAILS</h6>
+                                            @if ($receipt->customer)
+                                                <p class="mb-1"><strong>Name:</strong>
+                                                    {{ $receipt->customer->name }}</p>
+                                                <p class="mb-1"><strong>Phone:</strong>
+                                                    {{ $receipt->customer->phone }}</p>
+                                                <p class="mb-1"><strong>Type:</strong>
+                                                    {{ ucfirst($receipt->customer_type) }}</p>
+                                            @else
+                                                <p class="text-muted">Walk-in Customer</p>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Items Table -->
+                                    <h6 class="text-muted mb-2">PURCHASED ITEMS</h6>
+                                    <div class="table-responsive mb-4">
+                                        <table class="table table-bordered table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Item</th>
+                                                    <th scope="col">Code</th>
+                                                    <th scope="col">Price</th>
+                                                    <th scope="col">Qty</th>
+                                                    <th scope="col">Discount</th>
+                                                    <th scope="col">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($receipt->items as $index => $item)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $item->watch_name }}</td>
+                                                        <td>{{ $item->watch_code }}</td>
+                                                        <td>${{ number_format($item->unit_price, 2) }}</td>
+                                                        <td>{{ $item->quantity }}</td>
+                                                        <td>${{ number_format($item->discount * $item->quantity, 2) }}
+                                                        </td>
+                                                        <td>${{ number_format($item->total, 2) }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Payment Details -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="text-muted mb-2">PAYMENT INFORMATION</h6>
+                                            @if ($receipt->payments->count() > 0)
+                                                @foreach ($receipt->payments as $payment)
+                                                    <div
+                                                        class="mb-2 p-2 border-start border-3 {{ $payment->is_completed ? 'border-success' : 'border-warning' }} bg-light">
+                                                        <p class="mb-1">
+                                                            <strong>{{ $payment->is_completed ? 'Payment' : 'Scheduled Payment' }}:</strong>
+                                                            ${{ number_format($payment->amount, 2) }}
+                                                        </p>
+                                                        <p class="mb-1"><strong>Method:</strong>
+                                                            {{ ucfirst(str_replace('_', ' ', $payment->payment_method)) }}
+                                                        </p>
+                                                        @if ($payment->payment_reference)
+                                                            <p class="mb-1"><strong>Reference:</strong>
+                                                                {{ $payment->payment_reference }}</p>
+                                                        @endif
+                                                        @if ($payment->is_completed)
+                                                            <p class="mb-0"><strong>Date:</strong>
+                                                                {{ $payment->payment_date->format('d/m/Y') }}</p>
+                                                        @else
+                                                            <p class="mb-0"><strong>Due Date:</strong>
+                                                                {{ $payment->due_date->format('d/m/Y') }}</p>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <p class="text-muted">No payment information available</p>
+                                            @endif
+
+                                            @if ($receipt->notes)
+                                                <h6 class="text-muted mt-3 mb-2">NOTES</h6>
+                                                <p class="font-italic text-muted">{{ $receipt->notes }}</p>
+                                            @endif
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-body p-3">
+                                                    <h6 class="card-title">ORDER SUMMARY</h6>
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <span>Subtotal:</span>
+                                                        <span>${{ number_format($receipt->subtotal, 2) }}</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <span>Total Discount:</span>
+                                                        <span>${{ number_format($receipt->discount_amount, 2) }}</span>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="d-flex justify-content-between">
+                                                        <span class="fw-bold">Grand Total:</span>
+                                                        <span
+                                                            class="fw-bold">${{ number_format($receipt->total_amount, 2) }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Footer -->
+                                    <div class="text-center mt-4 pt-3 border-top">
+                                        <p class="mb-0 text-muted small">Thank you for your purchase!</p>
+                                        <p class="mb-0 text-muted small">For questions or returns, please contact us
+                                            within 7 days</p>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="text-center p-5">
+                                    <p class="text-muted">No receipt data available</p>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     @push('styles')
@@ -798,5 +1423,101 @@
                 cursor: pointer;
             }
         </style>
+    @endpush
+    @push('scripts')
+        <script>
+            document.addEventListener('printReceipt', function() {
+                const printContent = document.getElementById('receiptContent').innerHTML;
+                const originalContent = document.body.innerHTML;
+
+                const printStyles = `
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 20px;
+                        font-size: 14px;
+                    }
+                    .modal-header, .modal-footer, button {
+                        display: none !important;
+                    }
+                    .receipt-container {
+                        width: 100%;
+                        max-width: 800px;
+                        margin: 0 auto;
+                    }
+                    @media print {
+                        .no-print {
+                            display: none !important;
+                        }
+                    }
+                </style>
+            `;
+
+                document.body.innerHTML = printStyles + printContent;
+                window.print();
+                document.body.innerHTML = originalContent;
+
+                // Reinitialize Livewire after printing
+                window.Livewire.rescan();
+            });
+
+            document.addEventListener('closeModal', function(e) {
+                const modalId = e.detail.modalId;
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                }
+            });
+
+            document.addEventListener('showModal', function(e) {
+                const modalId = e.detail.modalId;
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    if (modalInstance) {
+                        modalInstance.show();
+                    }
+                }
+            });
+
+            document.addEventListener('showToast', function(e) {
+                const type = e.detail.type;
+                const message = e.detail.message;
+
+                // Implement your toast notification system here
+                // For example, if you're using Bootstrap 5 toasts:
+                const toastHtml = `
+                <div class="toast align-items-center text-white bg-${type}" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+
+                const toastContainer = document.getElementById('toast-container');
+                if (!toastContainer) {
+                    const newToastContainer = document.createElement('div');
+                    newToastContainer.id = 'toast-container';
+                    newToastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                    document.body.appendChild(newToastContainer);
+                }
+
+                const toastElement = document.createElement('div');
+                toastElement.innerHTML = toastHtml;
+                document.getElementById('toast-container').appendChild(toastElement.firstChild);
+
+                const toastInstance = new bootstrap.Toast(document.getElementById('toast-container').lastChild, {
+                    delay: 3000
+                });
+                toastInstance.show();
+            });
+        </script>
     @endpush
 </div>
