@@ -11,5 +11,5 @@ class StrapColorList extends Model
     protected $fillable = [
         'strap_color_name',
     ];
-    protected $table = 'strap_color_list';
+    protected $table = 'strap_color_lists';
 }

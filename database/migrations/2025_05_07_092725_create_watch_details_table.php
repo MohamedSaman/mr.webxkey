@@ -35,10 +35,9 @@ return new class extends Migration
             $table->string('barcode')->nullable()->unique();
             $table->enum('status', ['active', 'inactive', 'discontinued'])->default('active');
             $table->string('location')->nullable();
-            
-            // Foreign keys
-            $table->foreignId('brand_id')->constrained('watch_brands');
-            $table->foreignId('category_id')->constrained('watch_categories');
+            $table->string('brand')->nullable();
+            $table->string('category')->nullable();
+            $table->text('discription')->nullable();
             $table->foreignId('supplier_id')->constrained('watch_suppliers');
             
             $table->timestamps();

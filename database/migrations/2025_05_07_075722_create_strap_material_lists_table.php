@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('strap_material_lists', function (Blueprint $table) {
             $table->id();
             $table->string('strap_material_name')->unique();
-            $table->string('quantity')->nullable()->unique();
+            $table->string('material_quality')->nullable();
             $table->timestamps();
         });
     }
