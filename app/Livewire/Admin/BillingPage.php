@@ -238,6 +238,28 @@ class BillingPage extends Component
         }
     }
 
+    public function updatedPaymentType($value)
+    {
+        if ($value == 'partial') {
+            // Default to 50% initial payment when switching to partial
+            $this->initialPaymentAmount = round($this->grandTotal / 2, 2);
+            $this->calculateBalanceAmount();
+        } else {
+            // Reset partial payment fields when switching back to full
+            $this->initialPaymentAmount = 0;
+            $this->initialPaymentMethod = '';
+            $this->initialPaymentReceiptImage = null;
+            $this->initialPaymentReceiptImagePreview = null;
+            $this->initialBankName = '';
+            
+            $this->balanceAmount = 0;
+            $this->balancePaymentMethod = '';
+            $this->balancePaymentReceiptImage = null;
+            $this->balancePaymentReceiptImagePreview = null;
+            $this->balanceBankName = '';
+        }
+    }
+
     public function updatedPaymentReceiptImage()
     {
         $this->validate([
@@ -297,17 +319,22 @@ class BillingPage extends Component
             }
 
             if ($this->paymentMethod == 'cheque') {
-                if (empty($this->paymentReceiptImage && $this->paymentReceiptImage->getSize() > 1024 * 1024)) {
-                    $this->js('swal.fire("Validation Error", "Payment Receipt is required|Check size must be less than 1MB", "error")');
+                if (empty($this->paymentReceiptImage)) {
+                    $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                    return;
+                } elseif ($this->paymentReceiptImage && $this->paymentReceiptImage->getSize() > 1024 * 1024) {
+                    $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
                     return;
                 } elseif (empty($this->bankName)) {
                     $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
                     return;
                 }
-
             } elseif ($this->paymentMethod == 'bank_transfer') {
-                if (empty($this->paymentReceiptImage) && $this->paymentReceiptImage->getSize() > 1024 * 1024) {
-                    $this->js('swal.fire("Validation Error", "Payment Receipt is required|Check size must be less than 1MB", "error")');
+                if (empty($this->paymentReceiptImage)) {
+                    $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                    return;
+                } elseif ($this->paymentReceiptImage && $this->paymentReceiptImage->getSize() > 1024 * 1024) {
+                    $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
                     return;
                 }
             }
@@ -320,16 +347,22 @@ class BillingPage extends Component
                 }
 
                 if ($this->initialPaymentMethod == 'cheque') {
-                    if (empty($this->paymentReceiptImage) && $this->paymentReceiptImage->getSize() > 1024 * 1024) {
-                        $this->js('swal.fire("Validation Error", "Payment Receipt is required|Check size must be less than 1MB", "error")');
+                    if (empty($this->initialPaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
                         return;
                     } elseif (empty($this->initialBankName)) {
                         $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
                         return;
                     }
                 } elseif ($this->initialPaymentMethod == 'bank_transfer') {
-                    if (empty($this->paymentReceiptImage) && $this->paymentReceiptImage->getSize() > 1024 * 1024) {
-                        $this->js('swal.fire("Validation Error", "Payment Receipt is required|Check size must be less than 1MB", "error")');
+                    if (empty($this->initialPaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
                         return;
                     }
                 }
@@ -347,16 +380,22 @@ class BillingPage extends Component
                 }
 
                 if ($this->balancePaymentMethod == 'cheque') {
-                    if (empty($this->paymentReceiptDate)) {
-                        $this->js('swal.fire("Validation Error", "Payment Receipt is required|Check size must be less than 1MB", "error")');
+                    if (empty($this->balancePaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->balancePaymentReceiptImage && $this->balancePaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
                         return;
                     } elseif (empty($this->balanceBankName)) {
                         $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
                         return;
                     }
                 } elseif ($this->balancePaymentMethod == 'bank_transfer') {
-                    if (empty($this->paymentReceiptDate)) {
-                        $this->js('swal.fire("Validation Error", "Payment Receipt is required|Check size must be less than 1MB", "error")');
+                    if (empty($this->balancePaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->balancePaymentReceiptImage && $this->balancePaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
                         return;
                     }
                 }
