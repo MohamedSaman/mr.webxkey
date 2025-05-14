@@ -77,7 +77,7 @@
         {{-- End Create Type Model --}}
     </div>
     {{-- Edit Type Model --}}
-    <div wire:ignore.self  class="modal fade" id="editTypeModal" tabindex="-1" aria-labelledby="editTypeModalLabel"
+    <div wire:ignore.self wire:key="edit-modal-{{ $editTypeId ?? 'new' }}"  class="modal fade" id="editTypeModal" tabindex="-1" aria-labelledby="editTypeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -127,6 +127,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('edit-type-modal', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editTypeModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush
