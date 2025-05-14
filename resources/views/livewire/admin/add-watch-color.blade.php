@@ -79,7 +79,7 @@
 
                             <div class="mb-3">
                                 <label for="colorName" class="form-label">Color Name</label>
-                                <input type="text" class="form-control" id="colorName" wire:model="colorName">
+                                <input type="text" class="form-control" id="colorName" wire:model="colorName" placeholder="Enter Color Name">
                                 @error('colorName')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
@@ -88,7 +88,7 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="colorCode" class="form-label">Color Code</label>
-                                <input type="text" class="form-control" id="colorCode" wire:model="colorCode">
+                                <input type="color" class="form-control" id="colorCode" wire:model="colorCode" placeholder="Select Color Code">
                                 @error('colorCode')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
@@ -106,7 +106,7 @@
     </div>
     {{-- edit Color Model --}}
     {{-- Create Color Model --}}
-    <div wire:ignore.self  class="modal fade" id="editColorModal" tabindex="-1" aria-labelledby="editColorModalLabel"
+    <div wire:ignore.self wire:key="edit-modal-{{ $editColorId ?? 'new' }}" class="modal fade" id="editColorModal" tabindex="-1" aria-labelledby="editColorModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -128,7 +128,7 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="editColorCode" class="form-label">Color Code</label>
-                            <input type="text" class="form-control" id="editColorCode" wire:model="editColorCode">
+                            <input type="color" class="form-control" id="editColorCode" wire:model="editColorCode">
                             @error('editColorCode')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
@@ -165,6 +165,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('open-edit-modal', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editColorModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush
