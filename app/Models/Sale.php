@@ -20,6 +20,7 @@ class Sale extends Model
         'payment_status',
         'notes',
         'due_amount',
+        'user_id',
     ];
 
     public function customer()
