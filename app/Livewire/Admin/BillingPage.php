@@ -156,10 +156,12 @@ class BillingPage extends Component
 
     public function removeFromCart($watchId)
     {
+        
         unset($this->cart[$watchId]);
         unset($this->quantities[$watchId]);
         unset($this->discounts[$watchId]);
         $this->updateTotals();
+        
     }
 
     public function showDetail($watchId)
@@ -417,6 +419,7 @@ class BillingPage extends Component
             $sale = Sale::create([
                 'invoice_number' => $invoiceNumber,
                 'customer_id' => $this->customerId,
+                'user_id' => auth()->id(),
                 'customer_type' => $customer->type,
                 'subtotal' => $this->subtotal,
                 'discount_amount' => $this->totalDiscount,
