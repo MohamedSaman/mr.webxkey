@@ -6,11 +6,14 @@ use App\Livewire\Admin\Watches;
 use App\Livewire\Admin\MadeByList;
 use App\Livewire\Admin\WatchTypes;
 use App\Livewire\Admin\BillingPage;
+use App\Livewire\Admin\ManageAdmin;
+use App\Livewire\Admin\ManageStaff;
 use App\Livewire\Admin\SupplierList;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Admin\AddWatchColor;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\AdminDashboard;
+use App\Livewire\Admin\ManageCustomer;
 use App\Livewire\Admin\WatchBrandlist;
 use App\Livewire\Staff\StaffDashboard;
 use App\Livewire\Admin\WatchCategorylist;
@@ -58,6 +61,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('admin/supplier-list', SupplierList::class)->name('admin.supplier-list')->middleware('role:admin');
     Route::get('admin/watch-strap-colorlist', WatchStrapColorlist::class)->name('admin.watch-strap-color')->middleware('role:admin');
     Route::get('admin/billing-page', BillingPage::class)->name('admin.billing-page')->middleware('role:admin');
+    Route::get('admin/manage-admin', ManageAdmin::class)->name('admin.manage-admin')->middleware('role:admin');
+    Route::get('admin/manage-staff', ManageStaff::class)->name('admin.manage-staff')->middleware('role:admin');
+    Route::get('admin/manage-customer', ManageCustomer::class)->name('admin.manage-customer')->middleware('role:admin');
     // Add this route for receipt download
     Route::get('/receipts/{id}/download', [ReceiptController::class, 'download'])->name('receipts.download');
     
