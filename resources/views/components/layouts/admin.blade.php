@@ -527,10 +527,36 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link dropdown-toggle" href="#hrSubmenu" data-bs-toggle="collapse"
+                        role="button" aria-expanded="false" aria-controls="hrSubmenu">
                         <i class="bi bi-people"></i> <span>HR Management</span>
                     </a>
+                    <div class="collapse" id="hrSubmenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.manage-admin') }}">
+                                    <i class="bi bi-shield-lock"></i> <span>Manage Admin</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.manage-staff') }}">
+                                    <i class="bi bi-person-lines-fill"></i> <span>Manage Staff</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.manage-customer') }}">
+                                    <i class="bi bi-people"></i> <span>Manage Customer</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.supplier-list') }}">
+                                    <i class="bi bi-truck"></i> <span>Manage Suppliers</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
+                
                 <li class="nav-item">
                     <a class="nav-link dropdown-toggle" href="#inventorySubmenu" data-bs-toggle="collapse"
                         role="button" aria-expanded="false" aria-controls="inventorySubmenu">
@@ -586,11 +612,6 @@
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.made-by-list') }}">
                                     <i class="bi bi-flag"></i> <span>Watch Made By</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link py-2" href="{{ route('admin.supplier-list') }}">
-                                    <i class="bi bi-truck"></i> <span>Watch Suppliers</span>
                                 </a>
                             </li>
                         </ul>
@@ -702,22 +723,18 @@
                 });
             }
 
-            // Inventory submenu behavior
-            const inventoryToggle = document.querySelector('.nav-link.dropdown-toggle');
-            const inventorySubmenu = document.querySelector('#inventorySubmenu');
-            const submenuLinks = document.querySelectorAll('#inventorySubmenu .nav-link');
-            const mainNavLinks = document.querySelectorAll(
-                '.sidebar > .nav > .nav-item > .nav-link:not(.dropdown-toggle)');
+            // General submenu activation logic
+            function activateParentMenuIfSubmenuActive(parentToggleSelector, submenuSelector) {
+                const parentToggle = document.querySelector(parentToggleSelector);
+                const submenu = document.querySelector(submenuSelector);
+                const submenuLinks = submenu ? submenu.querySelectorAll('.nav-link') : [];
 
-            // Fixed function to check if any submenu items are active
-            function isAnySubmenuItemActive() {
-                const currentPath = window.location.pathname;
                 let active = false;
+                const currentPath = window.location.pathname;
 
                 submenuLinks.forEach(link => {
                     const href = link.getAttribute('href');
                     if (href && href !== '#') {
-                        // Extract just the path portion for comparison
                         const hrefPath = href.replace(/^(https?:\/\/[^\/]+)/, '').split('?')[0];
                         const linkIsActive = currentPath === hrefPath ||
                             currentPath.endsWith(hrefPath) ||
@@ -730,41 +747,20 @@
                     }
                 });
 
-                return active;
-            }
-
-            // Initialize the submenu state on page load
-            function initializeSubmenuState() {
-                // If any submenu item is active based on the current URL
-                if (isAnySubmenuItemActive()) {
-                    // Remove active class from all main navigation links
-                    mainNavLinks.forEach(link => {
+                if (active && parentToggle && submenu) {
+                    // Remove active from all main nav links
+                    document.querySelectorAll('.sidebar > .nav > .nav-item > .nav-link:not(.dropdown-toggle)').forEach(link => {
                         link.classList.remove('active');
                     });
-
-                    // Make sure the inventory toggle is active
-                    inventoryToggle.classList.add('active');
-                    inventoryToggle.setAttribute('aria-expanded', 'true');
-
-                    // Make sure the submenu is expanded
-                    inventorySubmenu.classList.add('show');
+                    parentToggle.classList.add('active');
+                    parentToggle.setAttribute('aria-expanded', 'true');
+                    submenu.classList.add('show');
                 }
             }
 
-            // Handle inventory toggle clicks
-            inventoryToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (inventorySubmenu.classList.contains('show')) {
-                    inventorySubmenu.classList.remove('show');
-                    this.setAttribute('aria-expanded', 'false');
-                } else {
-                    inventorySubmenu.classList.add('show');
-                    this.setAttribute('aria-expanded', 'true');
-                }
-            });
-
-            // Initialize on page load
-            initializeSubmenuState();
+            // Initialize both HR and Inventory submenus
+            activateParentMenuIfSubmenuActive('a[href="#hrSubmenu"]', '#hrSubmenu');
+            activateParentMenuIfSubmenuActive('a[href="#inventorySubmenu"]', '#inventorySubmenu');
 
             // Add sidebar toggle functionality
             const sidebarToggler = document.getElementById('sidebarToggler');
