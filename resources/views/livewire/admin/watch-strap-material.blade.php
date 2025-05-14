@@ -96,7 +96,7 @@
         {{-- End Create Strap Material Model --}}
     </div>
     {{-- Edit Strap Material Model --}}
-    <div wire:ignore.self  class="modal fade" id="editStrapMaterialModal" tabindex="-1" aria-labelledby="editStrapMaterialModalLabel"
+    <div wire:ignore.self  wire:key="edit-modal-{{ $editStrapMaterialId ?? 'new' }}" class="modal fade" id="editStrapMaterialModal" tabindex="-1" aria-labelledby="editStrapMaterialModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -162,6 +162,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('edit-strap-material', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editStrapMaterialModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush

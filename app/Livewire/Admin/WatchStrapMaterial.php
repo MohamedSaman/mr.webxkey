@@ -57,7 +57,8 @@ class WatchStrapMaterial extends Component
         $this->editMaterialQuality = $strapMaterial->material_quality;
         $this->editStrapMaterialId = $strapMaterial->id;
         
-        $this->js("$('#editStrapMaterialModal').modal('show')");
+        // $this->js("$('#editStrapMaterialModal').modal('show')");
+        $this->dispatch('edit-strap-material');
     }
     public function updateStrapMaterial($id){
         $this->validate([
