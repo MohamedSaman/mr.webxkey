@@ -75,7 +75,7 @@
 
                             <div class="mb-3">
                                 <label for="dialColorName" class="form-label">Dial Color Name</label>
-                                <input type="text" class="form-control" id="dialColorName" wire:model="dialColorName">
+                                <input type="text" class="form-control" id="dialColorName" wire:model="dialColorName" placeholder="Enter Dial Color Name">
                                 @error('dialColorName')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
@@ -84,7 +84,7 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="dialColorCode" class="form-label">Dial Color Code</label>
-                                <input type="text" class="form-control" id="dialColorCode" wire:model="dialColorCode">
+                                <input type="color" class="form-control" id="dialColorCode" wire:model="dialColorCode" placeholder="Select Dial Color">
                                 @error('dialColorCode')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
@@ -102,7 +102,7 @@
     </div>
     {{-- edit Dial Color Model --}}
     {{-- Create Dial Color Model --}}
-    <div wire:ignore.self  class="modal fade" id="editDialColorModal" tabindex="-1" aria-labelledby="editDialColorModalLabel"
+    <div wire:ignore.self  wire:key="edit-modal-{{ $editDialColorId ?? 'new' }}" class="modal fade" id="editDialColorModal" tabindex="-1" aria-labelledby="editDialColorModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -124,7 +124,7 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="editDialColorCode" class="form-label">Dial Color Code</label>
-                            <input type="text" class="form-control" id="editDialColorCode" wire:model="editDialColorCode">
+                            <input type="color" class="form-control" id="editDialColorCode" wire:model="editDialColorCode">
                             @error('editDialColorCode')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
@@ -161,6 +161,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('edit-dial-color', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editDialColorModal'));
+                modal.show();
+            }, 500);
         });
     </script>
 @endpush
