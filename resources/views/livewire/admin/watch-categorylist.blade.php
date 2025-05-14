@@ -77,7 +77,7 @@
         {{-- End Create Category Model --}}
     </div>
     {{-- Edit Category Model --}}
-    <div wire:ignore.self  class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
+    <div wire:ignore.self wire:key="edit-modal-{{ $editCategoryId ?? 'new' }}"  class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -127,6 +127,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('edit-category', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush
