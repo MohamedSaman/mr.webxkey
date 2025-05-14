@@ -175,12 +175,17 @@
                                         @endif
                                     <td class="text-center">
                                         <div class="action-btns" style="justify-content: center;">
-                                            <button class="action-btn edit" title="Edit"
-                                                wire:click="editWatch({{ $watch->id }})">
-                                                <i class="bi bi-pencil"></i>
+                                            <button class="btn action-btn edit" title="Edit"
+                                                wire:click="editWatch({{ $watch->id }})"
+                                                wire:loading.attr="disabled">
+                                                <i class="bi bi-pencil" wire:loading.class="d-none"
+                                                    wire:target="editWatch({{ $watch->id }})"></i>
+                                                <span wire:loading wire:target="editWatch({{ $watch->id }})">
+                                                    <i class="spinner-border spinner-border-sm"></i>
+                                                </span>
                                             </button>
                                             <button class="action-btn delete" title="Delete"
-                                                wire:click="deleteWatch({{ $watch->id }})">
+                                                wire:click="confirmDelete({{ $watch->id }})">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                             <button class="action-btn qr" title="View"
@@ -204,6 +209,500 @@
                 </table>
                 <div class="d-flex justify-content-center">
                     {{ $watches->links() }}
+                </div>
+            </div>
+            {{-- <!-- Create Watch Modal --> --}}
+            <div wire:ignore.self class="modal fade" id="createWatchModal" tabindex="-1"
+                aria-labelledby="createWatchModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary">
+                            <h1 class="modal-title fs-5 text-white" id="createWatchModalLabel">Create New Watch</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body bg-light p-4">
+                            <!-- Basic Information Card -->
+                            <div class="card mb-4 shadow border border-primary">
+                                <div class="card-header bg-primary bg-opacity-10">
+                                    <h5 class="card-title mb-0 text-primary">Basic Information</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label fw-bold">Name:</label>
+                                                <input type="text" class="form-control" id="name"
+                                                    wire:model="name">
+                                                @error('name')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="model" class="form-label fw-bold">Model:</label>
+                                                <input type="text" class="form-control" id="model"
+                                                    wire:model="model">
+                                                @error('model')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="brand" class="form-label fw-bold">Brand:</label>
+                                                <select class="form-select" id="brand" wire:model="brand">
+                                                    <option value="">Select Brand</option>
+                                                    @foreach ($watchBarnds as $watchBrand)
+                                                        <option value="{{ $watchBrand->brand_name }}">
+                                                            {{ $watchBrand->brand_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('brand')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="color" class="form-label fw-bold">Color:</label>
+                                                <select class="form-select" id="color" wire:model="color">
+                                                    <option value="">Select Color</option>
+                                                    @foreach ($watchColors as $watchColor)
+                                                        <option value="{{ $watchColor->name }}">
+                                                            {{ $watchColor->name }} ({{ $watchColor->hex_code }})
+
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('color')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="madeBy" class="form-label fw-bold">Made By:</label>
+                                                <select class="form-select" id="madeBy" wire:model="madeBy">
+                                                    <option value="">Select Country</option>
+                                                    @foreach ($watchMadeins as $madein)
+                                                        <option value="{{ $madein->country_name }}">
+                                                            {{ $madein->country_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('madeBy')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Classification Card -->
+                            <div class="card mb-4 shadow border border-primary">
+                                <div class="card-header bg-primary bg-opacity-10">
+                                    <h5 class="card-title mb-0 text-primary">Classification</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="category" class="form-label fw-bold">Category:</label>
+                                                <select class="form-select" id="category" wire:model="category">
+                                                    <option value="">Select Category</option>
+                                                    @foreach ($watchCategories as $watchCategory)
+                                                        <option value="{{ $watchCategory->category_name }}">
+                                                            {{ $watchCategory->category_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('category')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="gender" class="form-label fw-bold">Gender:</label>
+                                                <select class="form-select" id="gender" wire:model="gender">
+                                                    <option value="">Select Gender</option>
+                                                    <option value="men">Men</option>
+                                                    <option value="women">Women</option>
+                                                    <option value="unisex">Unisex</option>
+                                                </select>
+                                                @error('gender')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="type" class="form-label fw-bold">Type:</label>
+                                                <select class="form-select" id="type" wire:model="type">
+                                                    <option value="">Select Type</option>
+                                                    @foreach ($watchType as $type)
+                                                        <option value="{{ $type->type_name }}">
+                                                            {{ $type->type_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('type')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Technical Specifications Card -->
+                            <div class="card mb-4 shadow border border-primary">
+                                <div class="card-header bg-primary bg-opacity-10">
+                                    <h5 class="card-title mb-0 text-primary">Technical Specifications</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="movement" class="form-label fw-bold">Movement:</label>
+                                                <select wire:model="movement" id="movement" class="form-select">
+                                                    <option value="">Select Movement</option>
+                                                    <option value="Mechanical">Mechanical</option>
+                                                    <option value="Quartz">Quartz</option>
+                                                    <option value="Automatic">Automatic</option>
+                                                </select>
+                                                @error('movement')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="dialColor" class="form-label fw-bold">Dial Color:</label>
+                                                <select class="form-select" id="dialColor" wire:model="dialColor">
+                                                    <option value="">Select Dial Color</option>
+                                                    @foreach ($watchDialColors as $dialColor)
+                                                        <option value="{{ $dialColor->dial_color_name }}">
+                                                            {{ $dialColor->dial_color_name }}
+                                                            @if (isset($dialColor->dial_color_code))
+                                                                ({{ $dialColor->dial_color_code }})
+                                                            @endif
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('dialColor')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="strapColor" class="form-label fw-bold">Strap
+                                                    Color:</label>
+                                                <select class="form-select" id="strapColor" wire:model="strapColor">
+                                                    <option value="">Select Strap Color</option>
+                                                    @foreach ($watchStrapColors as $strapColor)
+                                                        <option value="{{ $strapColor->strap_color_name }}">
+                                                            {{ $strapColor->strap_color_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('strapColor')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="strapMaterial" class="form-label fw-bold">Strap
+                                                    Material:</label>
+                                                <select class="form-select" id="strapMaterial"
+                                                    wire:model="strapMaterial">
+                                                    <option value="">Select Strap Material</option>
+                                                    @foreach ($watchStrapMaterials as $material)
+                                                        <option value="{{ $material->strap_material_name }}">
+                                                            {{ $material->strap_material_name }}
+                                                            @if (isset($material->material_quality))
+                                                                ({{ $material->material_quality }} Quality)
+                                                            @endif
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('strapMaterial')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="caseDiameter" class="form-label fw-bold">Case Diameter
+                                                    (mm):</label>
+                                                <input type="number" step="0.1" class="form-control"
+                                                    id="caseDiameter" wire:model="caseDiameter">
+                                                @error('caseDiameter')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="caseThickness" class="form-label fw-bold">Case Thickness
+                                                    (mm):</label>
+                                                <input type="number" step="0.1" class="form-control"
+                                                    id="caseThickness" wire:model="caseThickness">
+                                                @error('caseThickness')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="glassType" class="form-label fw-bold">Glass Type:</label>
+                                                <select class="form-select" id="glassType" wire:model="glassType">
+                                                    <option value="">Select Glass Type</option>
+                                                    @foreach ($watchGlassTypes as $glass)
+                                                        <option value="{{ $glass->glass_type_name }}">
+                                                            {{ $glass->glass_type_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('glassType')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="waterResistance" class="form-label fw-bold">Water
+                                                    Resistance:</label>
+                                                <input type="text" class="form-control" id="waterResistance"
+                                                    wire:model="waterResistance">
+                                                @error('waterResistance')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="features" class="form-label fw-bold">Features:</label>
+                                                <input type="text" class="form-control" id="features"
+                                                    wire:model="features">
+                                                @error('features')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Information Card -->
+                            <div class="card mb-4 shadow border border-primary">
+                                <div class="card-header bg-primary bg-opacity-10">
+                                    <h5 class="card-title mb-0 text-primary">Product Information</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="image" class="form-label fw-bold">Watch Image:</label>
+                                                <input type="file" class="form-control" id="image"
+                                                    wire:model="image" accept="image/*">
+                                                <div wire:loading wire:target="image">Uploading...</div>
+                                                @if ($image && is_object($image))
+                                                    <img src="{{ $image->temporaryUrl() }}"
+                                                        class="mt-2 img-thumbnail" style="height: 100px">
+                                                @endif
+                                                @error('image')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="warranty" class="form-label fw-bold">Warranty:</label>
+                                                <input type="text" class="form-control" id="warranty"
+                                                    wire:model="warranty">
+                                                @error('warranty')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="barcode" class="form-label fw-bold">Barcode:</label>
+                                                <input type="text" class="form-control" id="barcode"
+                                                    wire:model="barcode">
+                                                @error('barcode')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="description"
+                                                    class="form-label fw-bold">Description:</label>
+                                                <textarea class="form-control" id="description" rows="3" wire:model="description"></textarea>
+                                                @error('description')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Supplier Information Card -->
+                            <div class="card mb-4 shadow border border-primary">
+                                <div class="card-header bg-primary bg-opacity-10">
+                                    <h5 class="card-title mb-0 text-primary">Supplier Information</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="supplier" class="form-label fw-bold">Supplier:</label>
+                                                <select class="form-select" id="supplier" wire:model="supplier">
+                                                    <option value="">Select Supplier</option>
+                                                    @foreach ($watchSuppliers as $supplier)
+                                                        <option value="{{ $supplier->id }}">
+                                                            {{ $supplier->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('supplier')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="supplierPrice" class="form-label fw-bold">Supplier
+                                                    Price:</label>
+                                                <input type="number" step="0.01" class="form-control"
+                                                    id="supplierPrice" wire:model="supplierPrice">
+                                                @error('supplierPrice')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pricing and Inventory Card -->
+                            <div class="card mb-4 shadow border border-primary">
+                                <div class="card-header bg-primary bg-opacity-10">
+                                    <h5 class="card-title mb-0 text-primary">Pricing and Inventory</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="sellingPrice" class="form-label fw-bold">Selling
+                                                    Price:</label>
+                                                <input type="number" step="0.01" class="form-control"
+                                                    id="sellingPrice" wire:model="sellingPrice">
+                                                @error('sellingPrice')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="discountPrice" class="form-label fw-bold">Discount
+                                                    Price:</label>
+                                                <input type="number" step="0.01" class="form-control"
+                                                    id="discountPrice" wire:model="discountPrice">
+                                                @error('discountPrice')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="shopStock" class="form-label fw-bold">Shop Stock:</label>
+                                                <input type="number" class="form-control" id="shopStock"
+                                                    wire:model="shopStock">
+                                                @error('shopStock')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="storeStock" class="form-label fw-bold">Store
+                                                    Stock:</label>
+                                                <input type="number" class="form-control" id="storeStock"
+                                                    wire:model="storeStock">
+                                                @error('storeStock')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="damageStock" class="form-label fw-bold">Damage
+                                                    Stock:</label>
+                                                <input type="number" class="form-control" id="damageStock"
+                                                    wire:model="damageStock">
+                                                @error('damageStock')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="status" class="form-label fw-bold">Status:</label>
+                                                <select class="form-select" id="status" wire:model="status">
+                                                    <option value="">Select Status</option>
+                                                    <option value="Active">Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                    <option value="Discontinued">Discontinued</option>
+                                                </select>
+                                                @error('status')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label for="location" class="form-label fw-bold">Store
+                                                    Location:</label>
+                                                <input type="text" class="form-control" id="location"
+                                                    wire:model="location">
+                                                @error('location')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" wire:click="saveWatch">Save Watch</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -698,499 +1197,19 @@
             </div>
         </div>
     </div>
-    <!-- Create Watch Modal -->
-    <div wire:ignore.self class="modal fade" id="createWatchModal" tabindex="-1"
-        aria-labelledby="createWatchModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <h1 class="modal-title fs-5 text-white" id="createWatchModalLabel">Create New Watch</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body bg-light p-4">
-                    <!-- Basic Information Card -->
-                    <div class="card mb-4 shadow border border-primary">
-                        <div class="card-header bg-primary bg-opacity-10">
-                            <h5 class="card-title mb-0 text-primary">Basic Information</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="row">
 
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label fw-bold">Name:</label>
-                                        <input type="text" class="form-control" id="name" wire:model="name">
-                                        @error('name')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="model" class="form-label fw-bold">Model:</label>
-                                        <input type="text" class="form-control" id="model"
-                                            wire:model="model">
-                                        @error('model')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="brand" class="form-label fw-bold">Brand:</label>
-                                        <select class="form-select" id="brand" wire:model="brand">
-                                            <option value="">Select Brand</option>
-                                            @foreach ($watchBarnds as $watchBrand)
-                                                <option value="{{ $watchBrand->brand_name }}">
-                                                    {{ $watchBrand->brand_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('brand')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="color" class="form-label fw-bold">Color:</label>
-                                        <select class="form-select" id="color" wire:model="color">
-                                            <option value="">Select Color</option>
-                                            @foreach ($watchColors as $watchColor)
-                                                <option value="{{ $watchColor->name }}">
-                                                    {{ $watchColor->name }} ({{ $watchColor->hex_code }})
-
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('color')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="madeBy" class="form-label fw-bold">Made By:</label>
-                                        <select class="form-select" id="madeBy" wire:model="madeBy">
-                                            <option value="">Select Country</option>
-                                            @foreach ($watchMadeins as $madein)
-                                                <option value="{{ $madein->country_name }}">
-                                                    {{ $madein->country_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('madeBy')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Classification Card -->
-                    <div class="card mb-4 shadow border border-primary">
-                        <div class="card-header bg-primary bg-opacity-10">
-                            <h5 class="card-title mb-0 text-primary">Classification</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="category" class="form-label fw-bold">Category:</label>
-                                        <select class="form-select" id="category" wire:model="category">
-                                            <option value="">Select Category</option>
-                                            @foreach ($watchCategories as $watchCategory)
-                                                <option value="{{ $watchCategory->category_name }}">
-                                                    {{ $watchCategory->category_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('category')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="gender" class="form-label fw-bold">Gender:</label>
-                                        <select class="form-select" id="gender" wire:model="gender">
-                                            <option value="">Select Gender</option>
-                                            <option value="men">Men</option>
-                                            <option value="women">Women</option>
-                                            <option value="unisex">Unisex</option>
-                                        </select>
-                                        @error('gender')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="type" class="form-label fw-bold">Type:</label>
-                                        <select class="form-select" id="type" wire:model="type">
-                                            <option value="">Select Type</option>
-                                            @foreach ($watchType as $type)
-                                                <option value="{{ $type->type_name }}">
-                                                    {{ $type->type_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('type')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Technical Specifications Card -->
-                    <div class="card mb-4 shadow border border-primary">
-                        <div class="card-header bg-primary bg-opacity-10">
-                            <h5 class="card-title mb-0 text-primary">Technical Specifications</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="movement" class="form-label fw-bold">Movement:</label>
-                                        <select wire:model="movement" id="movement" class="form-select">
-                                            <option value="">Select Movement</option>
-                                            <option value="Mechanical">Mechanical</option>
-                                            <option value="Quartz">Quartz</option>
-                                            <option value="Automatic">Automatic</option>
-                                        </select>
-                                        @error('movement')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="dialColor" class="form-label fw-bold">Dial Color:</label>
-                                        <select class="form-select" id="dialColor" wire:model="dialColor">
-                                            <option value="">Select Dial Color</option>
-                                            @foreach ($watchDialColors as $dialColor)
-                                                <option value="{{ $dialColor->dial_color_name }}">
-                                                    {{ $dialColor->dial_color_name }}
-                                                    @if (isset($dialColor->dial_color_code))
-                                                        ({{ $dialColor->dial_color_code }})
-                                                    @endif
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('dialColor')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="strapColor" class="form-label fw-bold">Strap Color:</label>
-                                        <select class="form-select" id="strapColor" wire:model="strapColor">
-                                            <option value="">Select Strap Color</option>
-                                            @foreach ($watchStrapColors as $strapColor)
-                                                <option value="{{ $strapColor->strap_color_name }}">
-                                                    {{ $strapColor->strap_color_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('strapColor')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="strapMaterial" class="form-label fw-bold">Strap Material:</label>
-                                        <select class="form-select" id="strapMaterial" wire:model="strapMaterial">
-                                            <option value="">Select Strap Material</option>
-                                            @foreach ($watchStrapMaterials as $material)
-                                                <option value="{{ $material->strap_material_name }}">
-                                                    {{ $material->strap_material_name }}
-                                                    @if (isset($material->material_quality))
-                                                        ({{ $material->material_quality }} Quality)
-                                                    @endif
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('strapMaterial')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="caseDiameter" class="form-label fw-bold">Case Diameter
-                                            (mm):</label>
-                                        <input type="number" step="0.1" class="form-control" id="caseDiameter"
-                                            wire:model="caseDiameter">
-                                        @error('caseDiameter')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="caseThickness" class="form-label fw-bold">Case Thickness
-                                            (mm):</label>
-                                        <input type="number" step="0.1" class="form-control" id="caseThickness"
-                                            wire:model="caseThickness">
-                                        @error('caseThickness')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="glassType" class="form-label fw-bold">Glass Type:</label>
-                                        <select class="form-select" id="glassType" wire:model="glassType">
-                                            <option value="">Select Glass Type</option>
-                                            @foreach ($watchGlassTypes as $glass)
-                                                <option value="{{ $glass->glass_type_name }}">
-                                                    {{ $glass->glass_type_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('glassType')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="waterResistance" class="form-label fw-bold">Water
-                                            Resistance:</label>
-                                        <input type="text" class="form-control" id="waterResistance"
-                                            wire:model="waterResistance">
-                                        @error('waterResistance')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="features" class="form-label fw-bold">Features:</label>
-                                        <input type="text" class="form-control" id="features"
-                                            wire:model="features">
-                                        @error('features')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Information Card -->
-                    <div class="card mb-4 shadow border border-primary">
-                        <div class="card-header bg-primary bg-opacity-10">
-                            <h5 class="card-title mb-0 text-primary">Product Information</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="image" class="form-label fw-bold">Watch Image:</label>
-                                        <input type="file" class="form-control" id="image" wire:model="image"
-                                            accept="image/*">
-                                        <div wire:loading wire:target="image">Uploading...</div>
-                                        @if ($image && is_object($image))
-                                            <img src="{{ $image->temporaryUrl() }}" class="mt-2 img-thumbnail"
-                                                style="height: 100px">
-                                        @endif
-                                        @error('image')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="warranty" class="form-label fw-bold">Warranty:</label>
-                                        <input type="text" class="form-control" id="warranty"
-                                            wire:model="warranty">
-                                        @error('warranty')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="barcode" class="form-label fw-bold">Barcode:</label>
-                                        <input type="text" class="form-control" id="barcode"
-                                            wire:model="barcode">
-                                        @error('barcode')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="description" class="form-label fw-bold">Description:</label>
-                                        <textarea class="form-control" id="description" rows="3" wire:model="description"></textarea>
-                                        @error('description')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Supplier Information Card -->
-                    <div class="card mb-4 shadow border border-primary">
-                        <div class="card-header bg-primary bg-opacity-10">
-                            <h5 class="card-title mb-0 text-primary">Supplier Information</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="supplier" class="form-label fw-bold">Supplier:</label>
-                                        <select class="form-select" id="supplier" wire:model="supplier">
-                                            <option value="">Select Supplier</option>
-                                            @foreach ($watchSuppliers as $supplier)
-                                                <option value="{{ $supplier->id }}">
-                                                    {{ $supplier->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('supplier')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="supplierPrice" class="form-label fw-bold">Supplier Price:</label>
-                                        <input type="number" step="0.01" class="form-control" id="supplierPrice"
-                                            wire:model="supplierPrice">
-                                        @error('supplierPrice')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pricing and Inventory Card -->
-                    <div class="card mb-4 shadow border border-primary">
-                        <div class="card-header bg-primary bg-opacity-10">
-                            <h5 class="card-title mb-0 text-primary">Pricing and Inventory</h5>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="sellingPrice" class="form-label fw-bold">Selling Price:</label>
-                                        <input type="number" step="0.01" class="form-control" id="sellingPrice"
-                                            wire:model="sellingPrice">
-                                        @error('sellingPrice')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="discountPrice" class="form-label fw-bold">Discount Price:</label>
-                                        <input type="number" step="0.01" class="form-control" id="discountPrice"
-                                            wire:model="discountPrice">
-                                        @error('discountPrice')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="shopStock" class="form-label fw-bold">Shop Stock:</label>
-                                        <input type="number" class="form-control" id="shopStock"
-                                            wire:model="shopStock">
-                                        @error('shopStock')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="storeStock" class="form-label fw-bold">Store Stock:</label>
-                                        <input type="number" class="form-control" id="storeStock"
-                                            wire:model="storeStock">
-                                        @error('storeStock')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="damageStock" class="form-label fw-bold">Damage Stock:</label>
-                                        <input type="number" class="form-control" id="damageStock"
-                                            wire:model="damageStock">
-                                        @error('damageStock')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="status" class="form-label fw-bold">Status:</label>
-                                        <select class="form-select" id="status" wire:model="status">
-                                            <option value="">Select Status</option>
-                                            <option value="Active">Active</option>
-                                            <option value="Inactive">Inactive</option>
-                                            <option value="Discontinued">Discontinued</option>
-                                        </select>
-                                        @error('status')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="location" class="form-label fw-bold">Store Location:</label>
-                                        <input type="text" class="form-control" id="location"
-                                            wire:model="location">
-                                        @error('location')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="saveWatch">Save Watch</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Edit Watch Modal -->
-    <div wire:ignore.self class="modal fade" id="editWatchModal" tabindex="-1"
-        aria-labelledby="editWatchModalLabel" aria-hidden="true">
+    {{-- <!-- Edit Watch Modal --> --}}
+    <div wire:ignore.self wire:key="edit-modal-{{ $editId ?? 'new' }}" class="modal fade hidden"
+        id="editWatchModal" tabindex="-1" aria-labelledby="editWatchModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <h1 class="modal-title fs-5 text-white" id="editWatchModalLabel">Edit Watch</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body bg-light p-4">
-                    <!-- Basic Information Card -->
+                    {{-- Basic Information --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
                             <h5 class="card-title mb-0 text-primary">Basic Information</h5>
@@ -1221,7 +1240,6 @@
                                     <div class="mb-3">
                                         <label for="editBrand" class="form-label fw-bold">Brand:</label>
                                         <select class="form-select" id="editBrand" wire:model="editBrand">
-                                            <option value="">Select Brand</option>
                                             @foreach ($watchBarnds as $watchBrand)
                                                 <option value="{{ $watchBrand->brand_name }}">
                                                     {{ $watchBrand->brand_name }}
@@ -1281,7 +1299,7 @@
                         </div>
                     </div>
 
-                    <!-- Classification Card -->
+                    {{-- Classification --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
                             <h5 class="card-title mb-0 text-primary">Classification</h5>
@@ -1337,7 +1355,7 @@
                         </div>
                     </div>
 
-                    <!-- Technical Specifications Card -->
+                    {{-- Technical Specifications --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
                             <h5 class="card-title mb-0 text-primary">Technical Specifications</h5>
@@ -1379,7 +1397,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="editStrapColor" class="form-label fw-bold">Strap Color:</label>
+                                        <label for="editStrapColor" class="form-label fw-bold">Strap
+                                            Color:</label>
                                         <select class="form-select" id="editStrapColor" wire:model="editStrapColor">
                                             <option value="">Select Strap Color</option>
                                             @foreach ($watchStrapColors as $strapColor)
@@ -1481,7 +1500,7 @@
                         </div>
                     </div>
 
-                    <!-- Product Information Card -->
+                    {{-- Product Information --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
                             <h5 class="card-title mb-0 text-primary">Product Information</h5>
@@ -1511,7 +1530,8 @@
                                                     class="img-thumbnail" style="height: 100px">
                                             @endif
                                         </div>
-                                        <small class="form-text text-muted">Accepted formats: JPG, PNG, GIF. Max size:
+                                        <small class="form-text text-muted">Accepted formats: JPG, PNG, GIF. Max
+                                            size:
                                             2MB</small>
                                         @error('editImage')
                                             <span class="text-danger">{{ $message }}</span>
@@ -1553,7 +1573,7 @@
                         </div>
                     </div>
 
-                    <!-- Supplier Information Card -->
+                    {{-- Supplier Information --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
                             <h5 class="card-title mb-0 text-primary">Supplier Information</h5>
@@ -1564,7 +1584,6 @@
                                     <div class="mb-3">
                                         <label for="editSupplier" class="form-label fw-bold">Supplier:</label>
                                         <select class="form-select" id="editSupplier" wire:model="editSupplier">
-                                            <option value="">Select Supplier</option>
                                             @foreach ($watchSuppliers as $supplier)
                                                 <option value="{{ $supplier->id }}">
                                                     {{ $supplier->name }}
@@ -1591,7 +1610,7 @@
                         </div>
                     </div>
 
-                    <!-- Pricing and Inventory Card -->
+                    {{-- Pricing and Inventory --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
                             <h5 class="card-title mb-0 text-primary">Pricing and Inventory</h5>
@@ -1622,7 +1641,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="editShopStock" class="form-label fw-bold">Shop Stock:</label>
+                                        <label for="editShopStock" class="form-label fw-bold">Shop
+                                            Stock:</label>
                                         <input type="number" class="form-control" id="editShopStock"
                                             wire:model="editShopStock">
                                         @error('editShopStock')
@@ -1634,7 +1654,8 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="editStoreStock" class="form-label fw-bold">Store Stock:</label>
+                                        <label for="editStoreStock" class="form-label fw-bold">Store
+                                            Stock:</label>
                                         <input type="number" class="form-control" id="editStoreStock"
                                             wire:model="editStoreStock">
                                         @error('editStoreStock')
@@ -1669,7 +1690,8 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <label for="editLocation" class="form-label fw-bold">Store Location:</label>
+                                        <label for="editLocation" class="form-label fw-bold">Store
+                                            Location:</label>
                                         <input type="text" class="form-control" id="editLocation"
                                             wire:model="editLocation">
                                         @error('editLocation')
@@ -1681,10 +1703,12 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="saveWatch">Save Watch</button>
+                    <button type="button" class="btn btn-primary" wire:click="updateWatch">Update Watch</button>
                 </div>
+
             </div>
         </div>
     </div>
@@ -1726,7 +1750,8 @@
                 }
             });
         });
-
+    </script>
+    <script>
         window.addEventListener('confirm-delete', event => {
             Swal.fire({
                 title: "Are you sure?",
@@ -1748,207 +1773,14 @@
                 }
             });
         });
+    </script>
 
-        // Barcode scanner functionality
-        const startScannerBtn = document.getElementById('start-scanner-btn');
-        const stopScannerBtn = document.getElementById('stop-scanner-btn');
-        const useBarcodeBtn = document.getElementById('use-barcode-btn');
-        const scannedBarcodeInput = document.getElementById('scanned-barcode');
-        const modalScanBarcodeBtn = document.getElementById('modal-scan-barcode-btn');
-        let scannerActive = false;
-
-        // Initialize barcode scanner
-        function initScanner() {
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: document.querySelector('#scanner'),
-                    constraints: {
-                        width: 480,
-                        height: 320,
-                        facingMode: "environment"
-                    },
-                },
-                decoder: {
-                    readers: ["ean_reader", "ean_8_reader", "code_128_reader", "upc_reader",
-                        "upc_e_reader"
-                    ]
-                }
-            }, function(err) {
-                if (err) {
-                    console.error(err);
-                    alert("Error initializing scanner: " + err);
-                    return;
-                }
-                console.log("Scanner initialized");
-                Quagga.start();
-            });
-
-            Quagga.onDetected(function(result) {
-                const code = result.codeResult.code;
-                scannedBarcodeInput.value = code;
-                useBarcodeBtn.disabled = false;
-
-                // Automatically stop scanner after successful scan
-                stopScanner();
-
-                // Check if we should auto-use the barcode
-                if (document.getElementById('barcode').classList.contains('active')) {
-                    useBarcode();
-                }
-            });
-        }
-
-        // Start scanner
-        function startScanner() {
-            if (!scannerActive) {
-                document.getElementById('scanner-placeholder').style.display = 'none';
-                initScanner();
-                scannerActive = true;
-                startScannerBtn.disabled = true;
-                stopScannerBtn.disabled = false;
-            }
-        }
-
-        // Stop scanner
-        function stopScanner() {
-            if (scannerActive) {
-                Quagga.stop();
-                scannerActive = false;
-                startScannerBtn.disabled = false;
-                stopScannerBtn.disabled = true;
-                document.getElementById('scanner-placeholder').style.display = 'flex';
-            }
-        }
-
-        // Use scanned barcode in product form
-        function useBarcode() {
-            document.getElementById('modal-product-barcode').value = scannedBarcodeInput.value;
-            scannedBarcodeInput.value = '';
-            useBarcodeBtn.disabled = true;
-
-            // Show the modal again
-            const modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
-            modal.show();
-        }
-
-        // Event listeners
-        startScannerBtn.addEventListener('click', startScanner);
-        stopScannerBtn.addEventListener('click', stopScanner);
-        useBarcodeBtn.addEventListener('click', useBarcode);
-        modalScanBarcodeBtn.addEventListener('click', function() {
-            document.querySelector('.content-tab[data-tab="barcode"]').click();
-            startScanner();
-        });
-
-        // Clean up scanner when leaving page
-        window.addEventListener('beforeunload', function() {
-            if (scannerActive) {
-                Quagga.stop();
-            }
-        });
-
-        // Search functionality
-        const searchInput = document.getElementById('product-search');
-        const searchBtn = document.getElementById('search-btn');
-        const tableBody = document.getElementById('inventory-table-body');
-        const rows = tableBody.querySelectorAll('tr');
-
-        function filterProducts() {
-            const searchTerm = searchInput.value.toLowerCase();
-
-            rows.forEach(row => {
-                const productName = row.cells[0].textContent.toLowerCase();
-                const sku = row.cells[1].textContent.toLowerCase();
-                const category = row.cells[2].textContent.toLowerCase();
-
-                if (productName.includes(searchTerm) ||
-                    sku.includes(searchTerm) ||
-                    category.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        searchInput.addEventListener('input', filterProducts);
-        searchBtn.addEventListener('click', filterProducts);
-
-        // Clear search when clicking the 'x' in the search input (for browsers that support it)
-        searchInput.addEventListener('search', function() {
-            if (this.value === '') {
-                filterProducts();
-            }
-        });
-
-        // QR Code functionality
-        const qrButtons = document.querySelectorAll('.action-btn.qr');
-        const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-        const qrCodeImage = document.getElementById('qr-code-image');
-        const downloadQrBtn = document.getElementById('download-qr-btn');
-
-        qrButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const productName = row.cells[0].textContent;
-                const sku = row.cells[1].textContent;
-
-                // Generate a simple QR code (in a real app, you would use a QR code library)
-                // For demo purposes, we'll just show a placeholder
-                const qrText = `Product: ${productName}\nSKU: ${sku}`;
-                qrCodeImage.src =
-                    `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`;
-
-                // Set up download button
-                downloadQrBtn.onclick = function() {
-                    const link = document.createElement('a');
-                    link.href = qrCodeImage.src;
-                    link.download = `QR_${sku}.png`;
-                    link.click();
-                };
-
-                // Show the modal
-                document.getElementById('qrModalLabel').textContent =
-                    `QR Code - ${productName}`;
-                qrModal.show();
-            });
-        });
-
-        // Edit buttons functionality
-        const editButtons = document.querySelectorAll('.action-btn.edit');
-        editButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const modal = new bootstrap.Modal(document.getElementById('productModal'));
-
-                // Fill modal with product data
-                document.getElementById('modal-product-name').value = row.cells[0].textContent;
-                document.getElementById('modal-product-sku').value = row.cells[1].textContent;
-                document.getElementById('modal-product-category').value = row.cells[2]
-                    .textContent.toLowerCase();
-                document.getElementById('modal-product-price').value = parseFloat(row.cells[3]
-                    .textContent.replace('$', ''));
-                document.getElementById('modal-product-quantity').value = parseInt(row.cells[4]
-                    .textContent);
-
-                // Change modal title
-                document.getElementById('productModalLabel').textContent = 'Edit Product';
-
+    <script>
+        window.addEventListener('open-edit-modal', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editWatchModal'));
                 modal.show();
-            });
-        });
-
-        // Delete buttons functionality
-        const deleteButtons = document.querySelectorAll('.action-btn.delete');
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                if (confirm('Are you sure you want to delete this product?')) {
-                    row.remove();
-                }
-            });
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush

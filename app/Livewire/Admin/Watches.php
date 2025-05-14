@@ -253,9 +253,10 @@ class Watches extends Component
     public $editBarcode;
     public $editImage;
     public $existingImage;
-
+    public $isLoading = false;
     public function editWatch($id)
     {
+        // $this->isLoading = true;
         // Find the watch with its related data
         $watch = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
@@ -264,6 +265,7 @@ class Watches extends Component
             ->where('watch_details.id', $id)
             ->first();
 
+        // dd($watch);
         // Basic information
         $this->editId = $id;
         $this->editCode = $watch->code;
@@ -308,8 +310,11 @@ class Watches extends Component
         $this->editStatus = $watch->status;
         $this->editLocation = $watch->location;
 
+        // dd($this->editId,$this->editCode,$this->editName,$this->editModel,$this->editBrand,$this->editColor,$this->editMadeBy,$this->editCategory,$this->editType,$this->editGender,$this->editMovement,$this->editDialColor,$this->editStrapColor,$this->editStrapMaterial,$this->editCaseDiameter,$this->editCaseThickness,$this->editGlassType,$this->editWaterResistance,$this->editFeatures,$this->existingImage,$this->editWarranty,$this->editBarcode,$this->editDescription,$this->editSupplierPrice,$this->editSellingPrice,$this->editDiscountPrice);
         // Show the modal
-        $this->js("$('#editWatchModal').modal('show')");
+        // $this->isLoading = false;
+        // $this->js("$('#editWatchModal').modal('show')");
+        $this->dispatch('open-edit-modal');
     }
 
     public function updateWatch()
@@ -328,6 +333,8 @@ class Watches extends Component
                 $imagePath = 'images/WatchImages/' . $imageName;
             }
 
+            // $code = $this->editCode();
+            // dd($code);
             // Update the main watch record
             WatchDetail::where('id', $this->editId)->update([
                 'code' => $this->editCode,
@@ -523,6 +530,27 @@ class Watches extends Component
             'color' => strtoupper(substr($this->color ?? '', 0, 1)),
             'strap' => strtoupper(substr($this->strapMaterial ?? '', 0, 1)),
             'gender' => strtoupper(substr($this->gender ?? '', 0, 1)),
+        ];
+
+        // Combine components into alphabetic prefix
+        $prefix = implode('', $components);
+
+        // Return the complete code
+        return $prefix . $numericId;
+    }
+
+    private function editCode()
+    {
+        // Get the next numeric ID (last ID + 1)
+       
+        $numericId = $this->editId;
+
+        // Extract code components from properties
+        $components = [
+            'brand' => strtoupper(substr($this->editBrand ?? '', 0, 3)),
+            'color' => strtoupper(substr($this->editColor ?? '', 0, 1)),
+            'strap' => strtoupper(substr($this->editStrapMaterial ?? '', 0, 1)),
+            'gender' => strtoupper(substr($this->editGender ?? '', 0, 1)),
         ];
 
         // Combine components into alphabetic prefix
