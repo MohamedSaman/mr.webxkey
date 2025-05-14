@@ -317,14 +317,16 @@ class Watches extends Component
         $this->dispatch('open-edit-modal');
     }
 
-    public function updateWatch()
+    public function updateWatch($id)
     {
+        // dd('update');
         $this->validateEditWatch();
 
         // Use database transaction to ensure all records are updated together
         DB::beginTransaction();
 
         try {
+            // dd($this->editId);
             // Handle image upload if file exists
             $imagePath = $this->existingImage;
             if ($this->editImage) {
@@ -333,11 +335,11 @@ class Watches extends Component
                 $imagePath = 'images/WatchImages/' . $imageName;
             }
 
-            // $code = $this->editCode();
+            $code = $this->editCode();
             // dd($code);
             // Update the main watch record
-            WatchDetail::where('id', $this->editId)->update([
-                'code' => $this->editCode,
+            WatchDetail::where('id', $id)->update([
+                'code' => $code,
                 'name' => $this->editName,
                 'model' => $this->editModel,
                 'color' => $this->editColor,
@@ -474,7 +476,7 @@ class Watches extends Component
             'editModel' => 'required',
             'editBarcode' => 'required',
             'editDescription' => 'required',
-            'editImage' => 'image|max:2048',
+            'editImage' => $this->existingImage ? 'nullable|image|max:2048' : 'required|image|max:2048',
 
             // Classifications
             'editBrand' => 'required',
@@ -555,7 +557,7 @@ class Watches extends Component
 
         // Combine components into alphabetic prefix
         $prefix = implode('', $components);
-
+        // dd($prefix . $numericId);
         // Return the complete code
         return $prefix . $numericId;
     }

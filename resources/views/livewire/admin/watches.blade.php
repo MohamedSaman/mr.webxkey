@@ -1511,7 +1511,7 @@
                                     <div class="mb-3">
                                         <label for="editImage" class="form-label fw-bold">Image:</label>
                                         <div class="input-group mb-2">
-                                            <input type="file" class="form-control" id="editImage"
+                                            <input type="file" class="form-control" id="editImage" 
                                                 wire:model="editImage" accept="image/*">
                                         </div>
                                         <div wire:loading wire:target="editImage" class="text-primary">
@@ -1706,7 +1706,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="updateWatch">Update Watch</button>
+                    <button type="button" class="btn btn-primary" wire:click="updateWatch({{$editId}})">Update Watch</button>
                 </div>
 
             </div>
