@@ -55,7 +55,8 @@ class WatchBrandlist extends Component
         $this->editBrandName = $brand->brand_name;
         $this->editBrandId = $brand->id;
         
-        $this->js("$('#editBrandModal').modal('show')");
+        // $this->js("$('#editBrandModal').modal('show')");
+        $this->dispatch('edit-brand');
     }
 
     public function updateBrand($id){
