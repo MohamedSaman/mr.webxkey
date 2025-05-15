@@ -46,11 +46,12 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
                                             wire:click="editColor({{ $color->id }})">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                            <button class="btn btn-sm btn-danger"
-                                                wire:click="confirmDelete({{ $color->id }})">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </button>
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                            wire:click="confirmDelete({{ $color->id }})">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach

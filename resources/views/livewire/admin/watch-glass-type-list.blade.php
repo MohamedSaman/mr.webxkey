@@ -27,11 +27,12 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
                                             wire:click="editGlassType({{ $glassType->id }})">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                            <button class="btn btn-sm btn-danger"
-                                                wire:click="confirmDelete({{ $glassType->id }})">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </button>
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                            wire:click="confirmDelete({{ $glassType->id }})">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -47,8 +48,8 @@
             </div>
         </div>
         {{-- Create Glass Type Model --}}
-        <div wire:ignore.self class="modal fade" id="createGlassTypeModal" tabindex="-1" aria-labelledby="createGlassTypeModalLabel"
-            aria-hidden="true">
+        <div wire:ignore.self class="modal fade" id="createGlassTypeModal" tabindex="-1"
+            aria-labelledby="createGlassTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
@@ -60,7 +61,8 @@
 
                             <div class="mb-3">
                                 <label for="glassTypeName" class="form-label">Glass Type Name</label>
-                                <input type="text" class="form-control" id="glassTypeName" wire:model="glassTypeName">
+                                <input type="text" class="form-control" id="glassTypeName"
+                                    wire:model="glassTypeName">
                                 @error('glassTypeName')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
@@ -69,7 +71,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" wire:click="saveGlassType">Add Glass Type</button>
+                        <button type="button" class="btn btn-primary" wire:click="saveGlassType">Add Glass
+                            Type</button>
                     </div>
                 </div>
             </div>
@@ -77,8 +80,8 @@
         {{-- End Create Glass Type Model --}}
     </div>
     {{-- Edit Glass Type Model --}}
-    <div wire:ignore.self wire:key="edit-modal-{{ $editGlassTypeId ?? 'new' }}"  class="modal fade" id="editGlassTypeModal" tabindex="-1" aria-labelledby="editGlassTypeModalLabel"
-        aria-hidden="true">
+    <div wire:ignore.self wire:key="edit-modal-{{ $editGlassTypeId ?? 'new' }}" class="modal fade"
+        id="editGlassTypeModal" tabindex="-1" aria-labelledby="editGlassTypeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -90,7 +93,8 @@
 
                         <div class="mb-3">
                             <label for="editGlassTypeName" class="form-label">Glass Type Name</label>
-                            <input type="text" class="form-control" id="editGlassTypeName" wire:model="editGlassTypeName">
+                            <input type="text" class="form-control" id="editGlassTypeName"
+                                wire:model="editGlassTypeName">
                             @error('editGlassTypeName')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
@@ -99,7 +103,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="updateGlassType({{$editGlassTypeId}})">Update glassType</button>
+                    <button type="button" class="btn btn-primary"
+                        wire:click="updateGlassType({{ $editGlassTypeId }})">Update glassType</button>
                 </div>
             </div>
         </div>

@@ -27,11 +27,12 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
                                             wire:click="editStrapColor({{ $strapColor->id }})">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                            <button class="btn btn-sm btn-danger"
-                                                wire:click="confirmDelete({{ $strapColor->id }})">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </button>
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                            wire:click="confirmDelete({{ $strapColor->id }})">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -47,8 +48,8 @@
             </div>
         </div>
         {{-- Create Strap Color Model --}}
-        <div wire:ignore.self class="modal fade" id="createStrapColorModal" tabindex="-1" aria-labelledby="createStrapColorModalLabel"
-            aria-hidden="true">
+        <div wire:ignore.self class="modal fade" id="createStrapColorModal" tabindex="-1"
+            aria-labelledby="createStrapColorModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
@@ -60,7 +61,8 @@
 
                             <div class="mb-3">
                                 <label for="strapColorName" class="form-label">Strap Color Name</label>
-                                <input type="text" class="form-control" id="strapColorName" wire:model="strapColorName">
+                                <input type="text" class="form-control" id="strapColorName"
+                                    wire:model="strapColorName">
                                 @error('strapColorName')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
@@ -69,7 +71,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" wire:click="saveStrapColor">Add Strap Color</button>
+                        <button type="button" class="btn btn-primary" wire:click="saveStrapColor">Add Strap
+                            Color</button>
                     </div>
                 </div>
             </div>
@@ -77,8 +80,8 @@
         {{-- End Create Strap Color Model --}}
     </div>
     {{-- Edit Strap Color Model --}}
-    <div wire:ignore.self wire:key="edit-modal-{{ $editStrapColorId ?? 'new' }}"  class="modal fade" id="editStrapColorModal" tabindex="-1" aria-labelledby="editStrapColorModalLabel"
-        aria-hidden="true">
+    <div wire:ignore.self wire:key="edit-modal-{{ $editStrapColorId ?? 'new' }}" class="modal fade"
+        id="editStrapColorModal" tabindex="-1" aria-labelledby="editStrapColorModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -89,7 +92,8 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="editStrapColorName" class="form-label">Strap Color Name</label>
-                            <input type="text" class="form-control" id="editStrapColorName" wire:model="editStrapColorName">
+                            <input type="text" class="form-control" id="editStrapColorName"
+                                wire:model="editStrapColorName">
                             @error('editStrapColorName')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
@@ -98,7 +102,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="updateStrapColor({{$editStrapColorId}})">Update StrapColor</button>
+                    <button type="button" class="btn btn-primary"
+                        wire:click="updateStrapColor({{ $editStrapColorId }})">Update StrapColor</button>
                 </div>
             </div>
         </div>

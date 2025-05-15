@@ -27,11 +27,12 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
                                             wire:click="editType({{ $type->id }})">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                            <button class="btn btn-sm btn-danger"
-                                                wire:click="confirmDelete({{ $type->id }})">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </button>
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                            wire:click="confirmDelete({{ $type->id }})">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -47,8 +48,8 @@
             </div>
         </div>
         {{-- Create Type Model --}}
-        <div wire:ignore.self class="modal fade" id="createTypeModal" tabindex="-1" aria-labelledby="createTypeModalLabel"
-            aria-hidden="true">
+        <div wire:ignore.self class="modal fade" id="createTypeModal" tabindex="-1"
+            aria-labelledby="createTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
@@ -77,8 +78,8 @@
         {{-- End Create Type Model --}}
     </div>
     {{-- Edit Type Model --}}
-    <div wire:ignore.self wire:key="edit-modal-{{ $editTypeId ?? 'new' }}"  class="modal fade" id="editTypeModal" tabindex="-1" aria-labelledby="editTypeModalLabel"
-        aria-hidden="true">
+    <div wire:ignore.self wire:key="edit-modal-{{ $editTypeId ?? 'new' }}" class="modal fade" id="editTypeModal"
+        tabindex="-1" aria-labelledby="editTypeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -99,7 +100,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="updateType({{$editTypeId}})">Update Type</button>
+                    <button type="button" class="btn btn-primary" wire:click="updateType({{ $editTypeId }})">Update
+                        Type</button>
                 </div>
             </div>
         </div>
