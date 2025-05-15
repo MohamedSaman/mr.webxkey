@@ -1,0 +1,584 @@
+<?php
+
+namespace App\Livewire\Staff;
+
+use Exception;
+use App\Models\Sale;
+use App\Models\Payment;
+use Livewire\Component;
+use App\Models\Customer;
+use App\Models\SaleItem;
+use App\Models\WatchPrice;
+use App\Models\WatchStock;
+use App\Models\WatchDetail;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+
+#[Layout('components.layouts.staff')]
+#[Title('Billing Page')]
+class Billing extends Component
+{
+    use WithFileUploads;
+
+    public $search = '';
+    public $searchResults = [];
+    public $cart = [];
+    public $quantities = [];
+    public $discounts = [];
+    public $watchDetails = null;
+    public $subtotal = 0;
+    public $totalDiscount = 0;
+    public $grandTotal = 0;
+
+    public $customers = [];
+    public $customerId = null;
+    public $customerType = 'retail';
+
+    public $newCustomerName = '';
+    public $newCustomerPhone = '';
+    public $newCustomerEmail = '';
+    public $newCustomerType = 'retail';
+    public $newCustomerAddress = '';
+    public $newCustomerNotes = '';
+
+    public $saleNotes = '';
+    public $paymentType = 'full';
+    public $paymentMethod = '';
+    public $paymentReceiptImage;
+    public $paymentReceiptImagePreview = null;
+    public $bankName = '';
+
+    public $initialPaymentAmount = 0;
+    public $initialPaymentMethod = '';
+    public $initialPaymentReceiptImage;
+    public $initialPaymentReceiptImagePreview = null;
+    public $initialBankName = '';
+
+    public $balanceAmount = 0;
+    public $balancePaymentMethod = '';
+    public $balanceDueDate = '';
+    public $balancePaymentReceiptImage;
+    public $balancePaymentReceiptImagePreview = null;
+    public $balanceBankName = '';
+
+    public $lastSaleId = null;
+    public $showReceipt = false;
+
+    protected $listeners = ['quantityUpdated' => 'updateTotals'];
+
+    public function mount()
+    {
+        $this->loadCustomers();
+        $this->updateTotals();
+        $this->balanceDueDate = date('Y-m-d', strtotime('+7 days'));
+    }
+
+    public function loadCustomers()
+    {
+        $this->customers = Customer::orderBy('name')->get();
+    }
+
+    public function updatedSearch()
+    {
+        if (strlen($this->search) >= 2) {
+            $this->searchResults = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
+                ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
+                ->select('watch_details.*', 'watch_prices.selling_price', 'watch_prices.discount_price', 'watch_stocks.available_stock')
+                ->where('status', '=', 'active')
+                ->where('code', 'like', '%' . $this->search . '%')
+                ->orWhere('model', 'like', '%' . $this->search . '%')
+                ->orWhere('barcode', 'like', '%' . $this->search . '%')
+                ->orWhere('brand', 'like', '%' . $this->search . '%')
+                ->orWhere('name', 'like', '%' . $this->search . '%')
+                ->take(10)
+                ->get();
+        } else {
+            $this->searchResults = [];
+        }
+    }
+
+    public function addToCart($watchId)
+    {
+        $watch = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
+            ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
+            ->where('watch_details.id', $watchId)
+            ->select('watch_details.*', 'watch_prices.selling_price', 'watch_prices.discount_price', 'watch_stocks.available_stock')
+            ->first();
+
+        if (!$watch) {
+            return;
+        }
+
+        $existingItem = collect($this->cart)->firstWhere('id', $watchId);
+
+        if ($existingItem) {
+            $this->quantities[$watchId]++;
+        } else {
+            $discountPrice = $watch->selling_price - $watch->discount_price ?? 0;
+            $this->cart[$watchId] = [
+                'id' => $watch->id,
+                'code' => $watch->code,
+                'name' => $watch->name,
+                'model' => $watch->model,
+                'brand' => $watch->brand,
+                'image' => $watch->image,
+                'price' => $watch->selling_price ?? 0,
+                'discountPrice' => $discountPrice ?? 0,
+                'inStock' => $watch->available_stock ?? 0,
+            ];
+
+            $this->quantities[$watchId] = 1;
+            $this->discounts[$watchId] = 0;
+        }
+
+        $this->search = '';
+        $this->searchResults = [];
+        $this->updateTotals();
+    }
+
+    public function updateQuantity($watchId, $quantity)
+    {
+        $quantity = max(1, min($quantity, $this->cart[$watchId]['inStock']));
+        $this->quantities[$watchId] = $quantity;
+        $this->updateTotals();
+    }
+
+    public function updateDiscount($watchId, $discount)
+    {
+        $this->discounts[$watchId] = max(0, min($discount, $this->cart[$watchId]['price']));
+        $this->updateTotals();
+    }
+
+    public function removeFromCart($watchId)
+    {
+
+        unset($this->cart[$watchId]);
+        unset($this->quantities[$watchId]);
+        unset($this->discounts[$watchId]);
+        $this->updateTotals();
+
+    }
+
+    public function showDetail($watchId)
+    {
+        $this->watchDetails = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
+            ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
+            ->join('watch_suppliers', 'watch_suppliers.id', '=', 'watch_details.supplier_id')
+            ->select('watch_details.*', 'watch_prices.*', 'watch_stocks.*', 'watch_suppliers.*', 'watch_suppliers.name as supplier_name')
+            ->where('watch_details.id', $watchId)
+            ->first();
+
+        $this->js('$("#viewDetailModal").modal("show")');
+    }
+
+    public function updateTotals()
+    {
+        $this->subtotal = 0;
+        $this->totalDiscount = 0;
+
+        foreach ($this->cart as $id => $item) {
+            $price = $item['discountPrice'] ?: $item['price'];
+            $this->subtotal += $price * $this->quantities[$id];
+            $this->totalDiscount += $this->discounts[$id] * $this->quantities[$id];
+        }
+
+        $this->grandTotal = $this->subtotal - $this->totalDiscount;
+    }
+
+    public function clearCart()
+    {
+        $this->cart = [];
+        $this->quantities = [];
+        $this->discounts = [];
+        $this->updateTotals();
+    }
+
+    public function saveCustomer()
+    {
+        $this->validate([
+            'newCustomerName' => 'required|min:3',
+            'newCustomerPhone' => 'required',
+        ]);
+
+        $customer = Customer::create([
+            'name' => $this->newCustomerName,
+            'phone' => $this->newCustomerPhone,
+            'email' => $this->newCustomerEmail,
+            'type' => $this->newCustomerType,
+            'address' => $this->newCustomerAddress,
+            'notes' => $this->newCustomerNotes,
+        ]);
+
+        $this->loadCustomers();
+
+        $this->newCustomerName = '';
+        $this->newCustomerPhone = '';
+        $this->newCustomerEmail = '';
+        $this->newCustomerAddress = '';
+        $this->newCustomerNotes = '';
+
+        $this->js('$("#addCustomerModal").modal("hide")');
+        $this->js('swal.fire("Success", "Customer added successfully!", "success")');
+    }
+
+    public function calculateBalanceAmount()
+    {
+        if ($this->paymentType == 'partial') {
+            if ($this->initialPaymentAmount > $this->grandTotal) {
+                $this->initialPaymentAmount = $this->grandTotal;
+            }
+
+            $this->balanceAmount = $this->grandTotal - $this->initialPaymentAmount;
+        } else {
+            $this->initialPaymentAmount = 0;
+            $this->balanceAmount = 0;
+        }
+    }
+
+    public function updatedPaymentType($value)
+    {
+        if ($value == 'partial') {
+            // Default to 50% initial payment when switching to partial
+            $this->initialPaymentAmount = round($this->grandTotal / 2, 2);
+            $this->calculateBalanceAmount();
+        } else {
+            // Reset partial payment fields when switching back to full
+            $this->initialPaymentAmount = 0;
+            $this->initialPaymentMethod = '';
+            $this->initialPaymentReceiptImage = null;
+            $this->initialPaymentReceiptImagePreview = null;
+            $this->initialBankName = '';
+
+            $this->balanceAmount = 0;
+            $this->balancePaymentMethod = '';
+            $this->balancePaymentReceiptImage = null;
+            $this->balancePaymentReceiptImagePreview = null;
+            $this->balanceBankName = '';
+        }
+    }
+
+    public function updatedPaymentReceiptImage()
+    {
+        $this->validate([
+            'paymentReceiptImage' => 'image|max:1024',
+        ]);
+
+        $this->paymentReceiptImagePreview = $this->paymentReceiptImage->temporaryUrl();
+    }
+
+    public function updatedInitialPaymentReceiptImage()
+    {
+        $this->validate([
+            'initialPaymentReceiptImage' => 'image|max:1024',
+        ]);
+
+        $this->initialPaymentReceiptImagePreview = $this->initialPaymentReceiptImage->temporaryUrl();
+    }
+
+    public function updatedBalancePaymentReceiptImage()
+    {
+        $this->validate([
+            'balancePaymentReceiptImage' => 'image|max:1024',
+        ]);
+
+        $this->balancePaymentReceiptImagePreview = $this->balancePaymentReceiptImage->temporaryUrl();
+    }
+
+    protected $validationAttributes = [
+        'paymentMethod' => 'payment method',
+        'paymentReceiptImage' => 'payment receipt',
+        'bankName' => 'bank name',
+        'initialPaymentMethod' => 'initial payment method',
+        'initialPaymentReceiptImage' => 'initial payment receipt',
+        'initialBankName' => 'initial bank name',
+        'balancePaymentMethod' => 'balance payment method',
+        'balancePaymentReceiptImage' => 'balance payment receipt',
+        'balanceBankName' => 'balance bank name',
+        'balanceDueDate' => 'balance due date'
+    ];
+
+    public function completeSale()
+    {
+        if (empty($this->cart)) {
+            $this->js('swal.fire("Error", "Please add items to the cart.", "error")');
+            return;
+        }
+
+        $this->validate([
+            'customerId' => 'required',
+            'paymentType' => 'required|in:full,partial',
+        ]);
+
+        if ($this->paymentType == 'full') {
+            if (empty($this->paymentMethod)) {
+                $this->js('swal.fire("Error", "Please select a payment method.", "error")');
+                return;
+            }
+
+            if ($this->paymentMethod == 'cheque') {
+                if (empty($this->paymentReceiptImage)) {
+                    $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                    return;
+                } elseif ($this->paymentReceiptImage && $this->paymentReceiptImage->getSize() > 1024 * 1024) {
+                    $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                    return;
+                } elseif (empty($this->bankName)) {
+                    $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
+                    return;
+                }
+            } elseif ($this->paymentMethod == 'bank_transfer') {
+                if (empty($this->paymentReceiptImage)) {
+                    $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                    return;
+                } elseif ($this->paymentReceiptImage && $this->paymentReceiptImage->getSize() > 1024 * 1024) {
+                    $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                    return;
+                }
+            }
+        } elseif ($this->paymentType == 'partial') {
+            if ($this->initialPaymentAmount > 0) {
+
+                if (empty($this->initialPaymentMethod)) {
+                    $this->js('swal.fire("Error", "Please select an initial payment method.", "error")');
+                    return;
+                }
+
+                if ($this->initialPaymentMethod == 'cheque') {
+                    if (empty($this->initialPaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                        return;
+                    } elseif (empty($this->initialBankName)) {
+                        $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
+                        return;
+                    }
+                } elseif ($this->initialPaymentMethod == 'bank_transfer') {
+                    if (empty($this->initialPaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                        return;
+                    }
+                }
+            }
+
+            if ($this->balanceAmount > 0) {
+                if (empty($this->balancePaymentMethod)) {
+                    $this->js('swal.fire("Error", "Please select a balance payment method.", "error")');
+                    return;
+                }
+
+                if (empty($this->balanceDueDate)) {
+                    $this->js('swal.fire("Error", "Please select a due date for the balance payment.", "error")');
+                    return;
+                }
+
+                if ($this->balancePaymentMethod == 'cheque') {
+                    if (empty($this->balancePaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->balancePaymentReceiptImage && $this->balancePaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                        return;
+                    } elseif (empty($this->balanceBankName)) {
+                        $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
+                        return;
+                    }
+                } elseif ($this->balancePaymentMethod == 'bank_transfer') {
+                    if (empty($this->balancePaymentReceiptImage)) {
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                        return;
+                    } elseif ($this->balancePaymentReceiptImage && $this->balancePaymentReceiptImage->getSize() > 1024 * 1024) {
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                        return;
+                    }
+                }
+            }
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $invoiceNumber = Sale::generateInvoiceNumber();
+
+            $paymentStatus = 'paid';
+            if ($this->paymentType == 'partial') {
+                $paymentStatus = $this->balanceAmount > 0 ? 'partial' : 'paid';
+            }
+
+            $customer = Customer::find($this->customerId);
+
+            $sale = Sale::create([
+                'invoice_number' => $invoiceNumber,
+                'customer_id' => $this->customerId,
+                'user_id' => auth()->id(),
+                'customer_type' => $customer->type,
+                'subtotal' => $this->subtotal,
+                'discount_amount' => $this->totalDiscount,
+                'total_amount' => $this->grandTotal,
+                'payment_type' => $this->paymentType,
+                'payment_status' => $paymentStatus,
+                'notes' => $this->saleNotes,
+                'due_amount' => $this->balanceAmount,
+            ]);
+
+            foreach ($this->cart as $id => $item) {
+                $price = $item['discountPrice'] ?: $item['price'];
+                $itemDiscount = $this->discounts[$id] ?? 0;
+                $total = ($price * $this->quantities[$id]) - ($itemDiscount * $this->quantities[$id]);
+
+                $stock = WatchStock::where('watch_id', $item['id'])->first();
+                if (!$stock || $stock->available_stock < $this->quantities[$id]) {
+                    throw new Exception("Not enough stock available for item: {$item['name']}");
+                }
+
+                SaleItem::create([
+                    'sale_id' => $sale->id,
+                    'watch_id' => $item['id'],
+                    'watch_code' => $item['code'],
+                    'watch_name' => $item['name'],
+                    'quantity' => $this->quantities[$id],
+                    'unit_price' => $price,
+                    'discount' => $itemDiscount,
+                    'total' => $total,
+                ]);
+
+                $stock->available_stock -= $this->quantities[$id];
+                $stock->sold_count += $this->quantities[$id];
+                $stock->save();
+            }
+
+            if ($this->paymentType == 'full') {
+                $receiptPath = null;
+                if ($this->paymentReceiptImage && ($this->paymentMethod == 'cheque' || $this->paymentMethod == 'bank_transfer')) {
+                    $receiptPath = $this->paymentReceiptImage->store('payment-receipts', 'public');
+                }
+
+                Payment::create([
+                    'sale_id' => $sale->id,
+                    'amount' => $this->grandTotal,
+                    'payment_method' => $this->paymentMethod,
+                    'payment_reference' => $receiptPath,
+                    'bank_name' => $this->paymentMethod == 'cheque' ? $this->bankName : null,
+                    'is_completed' => true,
+                    'payment_date' => now(),
+                ]);
+            } else {
+                if ($this->initialPaymentAmount > 0) {
+                    $initialReceiptPath = null;
+                    if ($this->initialPaymentReceiptImage && ($this->initialPaymentMethod == 'cheque' || $this->initialPaymentMethod == 'bank_transfer')) {
+                        $initialReceiptPath = $this->initialPaymentReceiptImage->store('payment-receipts', 'public');
+                    }
+
+                    Payment::create([
+                        'sale_id' => $sale->id,
+                        'amount' => $this->initialPaymentAmount,
+                        'payment_method' => $this->initialPaymentMethod,
+                        'payment_reference' => $initialReceiptPath,
+                        'bank_name' => $this->initialPaymentMethod == 'cheque' ? $this->initialBankName : null,
+                        'is_completed' => true,
+                        'payment_date' => now(),
+                    ]);
+                }
+
+                if ($this->balanceAmount > 0) {
+                    $balanceReceiptPath = null;
+                    if ($this->balancePaymentReceiptImage && ($this->balancePaymentMethod == 'cheque' || $this->balancePaymentMethod == 'bank_transfer')) {
+                        $balanceReceiptPath = $this->balancePaymentReceiptImage->store('payment-receipts', 'public');
+                    }
+
+                    Payment::create([
+                        'sale_id' => $sale->id,
+                        'amount' => $this->balanceAmount,
+                        'payment_method' => $this->balancePaymentMethod,
+                        'payment_reference' => $balanceReceiptPath,
+                        'bank_name' => $this->balancePaymentMethod == 'cheque' ? $this->balanceBankName : null,
+                        'is_completed' => false,
+                        'due_date' => $this->balanceDueDate,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            $this->lastSaleId = $sale->id;
+            $this->showReceipt = true;
+
+            $this->js('swal.fire("Success", "Sale completed successfully! Invoice #' . $invoiceNumber . '", "success")');
+
+            $this->clearCart();
+            $this->resetPaymentInfo();
+
+            $this->js('$("#receiptModal").modal("show")');
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->js('swal.fire("Error", "An error occurred while completing the sale: ' . $e->getMessage() . '", "error")');
+            Log::error('Sale completion error: ' . $e->getMessage());
+        }
+    }
+
+    public function resetPaymentInfo()
+    {
+        $this->paymentType = 'full';
+        $this->paymentMethod = '';
+        $this->paymentReceiptImage = null;
+        $this->paymentReceiptImagePreview = null;
+        $this->bankName = '';
+
+        $this->initialPaymentAmount = 0;
+        $this->initialPaymentMethod = '';
+        $this->initialPaymentReceiptImage = null;
+        $this->initialPaymentReceiptImagePreview = null;
+        $this->initialBankName = '';
+
+        $this->balanceAmount = 0;
+        $this->balancePaymentMethod = '';
+        $this->balanceDueDate = date('Y-m-d', strtotime('+7 days'));
+        $this->balancePaymentReceiptImage = null;
+        $this->balancePaymentReceiptImagePreview = null;
+        $this->balanceBankName = '';
+
+        $this->saleNotes = '';
+    }
+
+    public function viewReceipt($saleId = null)
+    {
+        if ($saleId) {
+            $this->lastSaleId = $saleId;
+        }
+
+        if ($this->lastSaleId) {
+            $this->showReceipt = true;
+            $this->js('$("#receiptModal").modal("show")');
+        }
+    }
+
+    public function printReceipt()
+    {
+        $this->dispatch('printReceipt');
+    }
+
+    public function downloadReceipt()
+    {
+        return redirect()->route('receipts.download', $this->lastSaleId);
+    }
+
+
+    public function render()
+    {
+        return view(
+            'livewire.staff.billing',
+            [
+                'receipt' => $this->showReceipt && $this->lastSaleId ? Sale::with(['customer', 'items', 'payments'])->find($this->lastSaleId) : null,
+            ]
+        );
+    }
+}
