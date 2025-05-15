@@ -31,7 +31,7 @@
                                         </button>
                                         <button class="btn btn-sm btn-danger"
                                             wire:click="confirmDelete({{ $glassType->id }})">
-                                            <i class="bi bi-trash"></i> Delete
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
