@@ -39,8 +39,8 @@ class ManageAdmin extends Component
             'name' => 'required',
             'contactNumber' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
-            'confirmPassword' => 'required|min:8',
+            'password' => 'required|min:8',
+            'confirmPassword' => 'required|min:8|same:password',
         ]);
 
         try {

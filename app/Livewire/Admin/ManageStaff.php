@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Livewire\Admin;
-use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Exception;
-use Livewire\Attributes\Layout;
+use App\Models\User;
+use Livewire\Component;
+use Livewire\Attributes\On;
+use Livewire\WithPagination;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Hash;
 
 #[Layout('components.layouts.admin')]
 #[Title('Manage Staff')]
@@ -38,8 +39,8 @@ class ManageStaff extends Component
             'name' => 'required',
             'contactNumber' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
-            'confirmPassword' => 'required|min:8',
+            'password' => 'required|min:8',
+            'confirmPassword' => 'required|min:8|same:password',
         ]);
 
         try {
