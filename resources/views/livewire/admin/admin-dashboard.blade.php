@@ -526,23 +526,39 @@
                 
                 <!-- Staff Sales Section -->
                 <div class="col-md-6">
-                    <div class="widget-container">
-                        <div class="widget-header">
-                            <h6>Staff Sales</h6>
-                            <p class="text-muted small">Sales and dues by staff</p>
+                    <div class="widget-container p-3">
+                        <div class="widget-header mb-3">
+                            <h6 class="fw-bold">Staff Sales</h6>
+                            <p class="text-muted small mb-0">Sales and dues by staff</p>
                         </div>
                         @forelse($staffSales as $staff)
-                            <div class="staff-info">
-                                <div class="staff-status">
-                                    <span class="staff-status-badge present">Staff</span>
-                                </div>
-                                <div class="staff-details">
-                                    <h6>{{ $staff->name }}</h6>
-                                    <p class="text-muted small"><i class="bi bi-envelope-fill"></i> {{ $staff->email }}</p>
-                                    <p class="text-muted small">
-                                        <span class="me-2"><i class="bi bi-cash-stack"></i> Sales: <span class="fw-bold text-success">${{ number_format($staff->total_sales, 2) }}</span></span>
-                                        <span><i class="bi bi-exclamation-circle"></i> Due: <span class="fw-bold text-danger">${{ number_format($staff->total_due, 2) }}</span></span>
-                                    </p>
+                            <div class="staff-card p-3 mb-2 bg-light rounded">
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div class="d-flex">
+                                        <span class="badge bg-success bg-opacity-25 text-success fw-medium py-1 px-2 me-2"><h4>S</h4></span>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">{{ $staff->name }}</h6>
+                                            <div class="d-flex flex-column flex-sm-row gap-2 mb-0">
+                                                <span class="text-muted small">
+                                                    <i class="bi bi-envelope-fill text-secondary"></i> {{ $staff->email }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Sales and dues information at the end of row -->
+                                    <div class="d-flex flex-column align-items-end">
+                                        <div class="mb-1">
+                                            <i class="bi bi-cash-stack text-success"></i> 
+                                            <small class="text-muted">Sales:</small> 
+                                            <span class="fw-bold text-success">${{ number_format($staff->total_sales, 2) }}</span>
+                                        </div>
+                                        <div>
+                                            <i class="bi bi-exclamation-circle text-danger"></i> 
+                                            <small class="text-muted">Due:</small> 
+                                            <span class="fw-bold text-danger">${{ number_format($staff->total_due, 2) }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @empty
