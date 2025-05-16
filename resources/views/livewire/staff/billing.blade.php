@@ -134,7 +134,7 @@
                                             </td>
                                             <td>
                                                 <p class="text-xs font-weight-bold mb-0">
-                                                    ${{ number_format($item['discountPrice'] ?: $item['price'], 2) }}
+                                                    ${{ number_format($item['price'] ?: $item['price'], 2) }}
                                                 </p>
                                             </td>
                                             <td>
@@ -162,7 +162,7 @@
                                             </td>
                                             <td>
                                                 <p class="text-xs font-weight-bold mb-0">
-                                                    ${{ number_format(($item['discountPrice'] ?: $item['price']) * $quantities[$id] - ($discounts[$id] ?? 0) * $quantities[$id], 2) }}
+                                                    ${{ number_format(($item['price'] ?: $item['price']) * $quantities[$id] - ($discounts[$id] ?? 0) * $quantities[$id], 2) }}
                                                 </p>
                                             </td>
                                             <td>
@@ -1516,7 +1516,7 @@
                 const toastInstance = new bootstrap.Toast(document.getElementById('toast-container').lastChild, {
                     delay: 3000
                 });
-                toastInstance.show();
+                toastInstance.show()  
             });
         </script>
     @endpush
