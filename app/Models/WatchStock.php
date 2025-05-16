@@ -12,7 +12,7 @@ class WatchStock extends Model
     
     protected $fillable = [
         'shop_stock', 'store_stock', 'damage_stock', 
-        'total_stock', 'available_stock', 'watch_id','sold_count'
+        'total_stock', 'available_stock', 'watch_id','sold_count','assigned_stock',
     ];
     
     /**
