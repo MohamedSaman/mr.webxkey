@@ -267,6 +267,20 @@
                 color: #dc3545;
                 /* Danger red  */
             }
+
+            /* Stats progress bars */
+            .stat-card .progress {
+                height: 6px;
+                margin-bottom: 5px;
+            }
+
+            .stat-card .progress-bar {
+                height: 6px;
+            }
+
+            .stat-info small, .stat-change-alert small {
+                font-size: 12px;
+            }
         </style>
     @endpush
 
@@ -285,30 +299,121 @@
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
                     <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value">$45,231.89</div>
-                    <div class="stat-change">+20.1% from last month</div>
+                    <div class="stat-value">${{ number_format($totalRevenue, 2) }}</div>
+                    <div class="stat-info mt-1">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Revenue</small>
+                            <small>{{ $revenuePercentage }}% of total sales</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ $revenuePercentage }}%;" 
+                                 aria-valuenow="{{ $revenuePercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">${{ number_format($totalRevenue) }} received of ${{ number_format($totalRevenue+$totalDueAmount) }} total sales value</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Added Fully Paid Invoices Information -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i> Fully Paid Invoices</small>
+                            <span class="badge bg-success">{{ $fullPaidCount }}</span>
+                        </div>
+                        <small class="d-block text-end text-success">${{ number_format($fullPaidAmount, 2) }}</small>
+                    </div>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Inventory Items</div>
-                    <div class="stat-value">+120</div>
-                    <div class="stat-change">+10 in stock</div>
-                    <div class="stat-change-alert">+20 out of stock</div>
+                    <div class="stat-label">Total Due Amount</div>
+                    <div class="stat-value">${{ number_format($totalDueAmount, 2) }}</div>
+                    <div class="stat-change-alert">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Due Amount</small>
+                            <small>{{ $duePercentage }}% of total sales</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ $duePercentage }}%;" 
+                                 aria-valuenow="{{ $duePercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">${{ number_format($totalDueAmount) }} due of ${{ number_format($totalDueAmount+$totalRevenue) }} total sales value</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Partial Payment Info -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-clock-fill text-danger me-1"></i> Partially Paid Invoices</small>
+                            <span class="badge bg-danger">{{ $partialPaidCount }}</span>
+                        </div>
+                        <small class="d-block text-end text-danger">${{ number_format($totalDueAmount, 2) }}</small>
+                    </div>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Active Staff</div>
-                    <div class="stat-value">24</div>
-                    <div class="stat-label">16 currently on duty</div>
+                    <div class="stat-label">Inventory Status</div>
+                    <div class="stat-value">{{ number_format($totalStock) }} <span class="fs-6 text-muted">units</span></div>
+                    
+                    <!-- Sales Progress -->
+                    <div class="stat-info">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Sold Stock</small>
+                            <small>{{ $soldPercentage }}% of assigned stock</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primry" role="progressbar" 
+                                 style="width: {{ $soldPercentage }}%;" 
+                                 aria-valuenow="{{ $soldPercentage }}" 
+                                 aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">{{ number_format($soldStock) }} sold of {{ number_format($assignedStock) }} assigned</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Damaged Stock Info -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-exclamation-triangle-fill text-primary me-1"></i> Damaged Inventory</small>
+                            <span class="badge bg-primary">{{ $damagedStock }}</span>
+                        </div>
+                        <small class="d-block text-end text-primary">${{ number_format($damagedValue, 2) }}</small>
+                    </div>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Active Sales</div>
-                    <div class="stat-value">+12.5%</div>
-                    <div class="stat-change">+7% from last week</div>
+                    <div class="stat-label">Staff Status</div>
+                    <div class="stat-value">{{ $totalStaffCount }} <span class="fs-6 text-muted">members</span></div>
+                    
+                    <!-- Staff Product Assignment Progress -->
+                    <div class="stat-info mt-1">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Staff with Products</small>
+                            <small>{{ $staffAssignmentPercentage }}% of total staff</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                style="width: {{ $staffAssignmentPercentage }}%;" 
+                                aria-valuenow="{{ $staffAssignmentPercentage }}" 
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">{{ $staffWithAssignmentsCount }} staff with assignments</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Assigned Stock Info -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-person-check-fill text-info me-1"></i> Currently Assigned Stock</small>
+                            <span class="badge bg-info">{{ $assignedStock }}</span>
+                        </div>
+                        <small class="d-block text-end text-info">${{number_format($totalStaffSalesValue, 2)}}</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -338,51 +443,33 @@
                 <div class="recent-sales-card">
                     <div class="card-body">
                         <div class="p-2">
-                            <h6 class="card-title ">Recent Sales</h6>
-                            <p class="card-subtitle text-muted small mb-3">Latest transactions processed in the system
-                            </p>
+                            <h6 class="card-title">Recent Sales</h6>
+                            <p class="card-subtitle text-muted small mb-3">Latest transactions processed in the system</p>
                         </div>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">JD</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">John Doe</h6>
-                                    <p class="text-muted small mb-0">john.doe@example.com</p>
-                                </div>
-                                <div class="amount">+$1,999.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">SD</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Sarah Davis</h6>
-                                    <p class="text-muted small mb-0">sarah.davis@example.com</p>
-                                </div>
-                                <div class="amount">+$39.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">RK</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Robert Kim</h6>
-                                    <p class="text-muted small mb-0">robert.kim@example.com</p>
-                                </div>
-                                <div class="amount">+$299.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">LM</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Lisa Martinez</h6>
-                                    <p class="text-muted small mb-0">lisa.martinez@example.com</p>
-                                </div>
-                                <div class="amount">+$99.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">AT</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Alex Thompson</h6>
-                                    <p class="text-muted small mb-0">alex.thompson@example.com</p>
-                                </div>
-                                <div class="amount">+$2,499.00</div>
-                            </li>
+                            @forelse($recentSales as $sale)
+                                <li class="list-group-item d-flex align-items-center">
+                                    <div class="avatar">
+                                        {{ strtoupper(substr($sale->name, 0, 1)) }}{{ strtoupper(substr(strpos($sale->name, ' ') !== false ? substr($sale->name, strpos($sale->name, ' ') + 1, 1) : '', 0, 1)) }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ $sale->name }}</h6>
+                                        <p class="text-muted small mb-0">{{ $sale->email }}</p>
+                                    </div>
+                                    <div class="amount">
+                                        +${{ number_format($sale->total_amount, 2) }}
+                                        @if($sale->due_amount > 0)
+                                            <span class="d-block text-danger small text-end">${{ number_format($sale->due_amount, 2) }}</span>
+                                        @else
+                                            <span class="d-block badge bg-success mt-1 small">Paid</span>
+                                        @endif
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="list-group-item text-center">
+                                    <p class="text-muted mb-0">No sales recorded yet</p>
+                                </li>
+                            @endforelse
                         </ul>
                     </div>
                 </div>
@@ -395,143 +482,72 @@
                     <div class="widget-container">
                         <div class="widget-header">
                             <h6>Inventory Status</h6>
-                            <p class="text-muted small">Current stock levels and alerts</p>
+                            <p class="text-muted small">Current watch stock levels and alerts</p>
                         </div>
-                        <div class="item-row">
-                            <div class="item-details">
-                                <h6>Premium T-Shirt</h6>
-                                <p class="text-muted small">SKU: TS-001</p>
-                            </div>
-                            <span class="status-badge in-stock">In Stock</span>
-                            <div class="ms-2 text-muted small">245/300</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 82%;"></div>
-                        </div>
+                        
+                        @forelse($watchInventory as $watch)
+                            @php
+                                // Calculate stock percentage and status
+                                $stockPercentage = $watch->total_stock > 0 ? 
+                                    round(($watch->available_stock / $watch->total_stock) * 100, 2) : 0;
+                                
+                                // Determine stock status badge
+                                if ($watch->available_stock == 0) {
+                                    $statusClass = 'out-of-stock';
+                                    $statusText = 'Out of Stock';
+                                    $progressClass = 'bg-danger';
+                                } elseif ($stockPercentage <= 25) {
+                                    $statusClass = 'low-stock';
+                                    $statusText = 'Low Stock';
+                                    $progressClass = 'bg-warning';
+                                } else {
+                                    $statusClass = 'in-stock';
+                                    $statusText = 'In Stock';
+                                    $progressClass = '';
+                                }
+                            @endphp
 
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Designer Jeans</h6>
-                                <p class="text-muted small">SKU: DJ-002</p>
+                            <div class="item-row @if(!$loop->first) mt-3 @endif">
+                                <div class="item-details">
+                                    <h6>{{ $watch->name }} {{ $watch->model }}</h6>
+                                    <p class="text-muted small">SKU: {{ $watch->code }}</p>
+                                </div>
+                                <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
+                                <div class="ms-2 text-muted small">{{ $watch->available_stock }}/{{ $watch->total_stock }}</div>
                             </div>
-                            <span class="status-badge low-stock">Low Stock</span>
-                            <div class="ms-2 text-muted small">12/100</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-warning" style="width: 12%;"></div>
-                        </div>
-
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Leather Wallet</h6>
-                                <p class="text-muted small">SKU: LW-003</p>
+                            <div class="progress">
+                                <div class="progress-bar {{ $progressClass }}" style="width: {{ $stockPercentage }}%;"></div>
                             </div>
-                            <span class="status-badge in-stock">In Stock</span>
-                            <div class="ms-2 text-muted small">78/150</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 52%;"></div>
-                        </div>
-
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Wireless Headphones</h6>
-                                <p class="text-muted small">SKU: WH-004</p>
-                            </div>
-                            <span class="status-badge out-of-stock">Out of Stock</span>
-                            <div class="ms-2 text-muted small">0/50</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-danger" style="width: 0%;"></div>
-                        </div>
-
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Smart Watch</h6>
-                                <p class="text-muted small">SKU: SW-005</p>
-                            </div>
-                            <span class="status-badge in-stock">In Stock</span>
-                            <div class="ms-2 text-muted small">34/75</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 45.33%;"></div>
-                        </div>
+                        @empty
+                            <div class="alert alert-info">No watch inventory data available.</div>
+                        @endforelse
                     </div>
                 </div>
+                
+                <!-- Staff Sales Section -->
                 <div class="col-md-6">
                     <div class="widget-container">
                         <div class="widget-header">
-                            <h6>Staff Attendance</h6>
-                            <p class="text-muted small">Today's attendance and location tracking</p>
+                            <h6>Staff Sales</h6>
+                            <p class="text-muted small">Sales and dues by staff</p>
                         </div>
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge present">Present</span>
+                        @forelse($staffSales as $staff)
+                            <div class="staff-info">
+                                <div class="staff-status">
+                                    <span class="staff-status-badge present">Staff</span>
+                                </div>
+                                <div class="staff-details">
+                                    <h6>{{ $staff->name }}</h6>
+                                    <p class="text-muted small"><i class="bi bi-envelope-fill"></i> {{ $staff->email }}</p>
+                                    <p class="text-muted small">
+                                        <span class="me-2"><i class="bi bi-cash-stack"></i> Sales: <span class="fw-bold text-success">${{ number_format($staff->total_sales, 2) }}</span></span>
+                                        <span><i class="bi bi-exclamation-circle"></i> Due: <span class="fw-bold text-danger">${{ number_format($staff->total_due, 2) }}</span></span>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="staff-details">
-                                <h6>Emma Wilson</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Sales Manager</p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 08:30 AM <i
-                                        class="bi bi-geo-alt-fill"></i> Main Store</p>
-                            </div>
-                            <div class="attendance-icon"><i class="bi bi-check-circle-fill"></i></div>
-                        </div>
-
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge present">Present</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>Michael Brown</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Sales Representative
-                                </p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 08:45 AM <i
-                                        class="bi bi-geo-alt-fill"></i> North Branch</p>
-                            </div>
-                            <div class="attendance-icon"><i class="bi bi-check-circle-fill"></i></div>
-                        </div>
-
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge late">Late</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>Sophia Garcia</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Inventory Specialist
-                                </p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 09:15 AM <i
-                                        class="bi bi-geo-alt-fill"></i> Warehouse</p>
-                            </div>
-                            <div class="attendance-icon late-icon"><i class="bi bi-exclamation-triangle-fill"></i>
-                            </div>
-                        </div>
-
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge absent">Absent</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>James Johnson</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Sales Representative
-                                </p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> N/A <i
-                                        class="bi bi-geo-alt-fill"></i> N/A</p>
-                            </div>
-                            <div class="attendance-icon absent-icon"><i class="bi bi-x-circle-fill"></i></div>
-                        </div>
-
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge present">Present</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>Olivia Lee</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Customer Service</p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 08:55 AM <i
-                                        class="bi bi-geo-alt-fill"></i> Main Store</p>
-                            </div>
-                            <div class="attendance-icon"><i class="bi bi-check-circle-fill"></i></div>
-                        </div>
+                        @empty
+                            <div class="alert alert-info">No staff sales data available.</div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -563,9 +579,12 @@
 {{-- @push('scripts') --}}
 
 <script>
+    // Prepare brand sales data from PHP
+    const brandLabels = @json(collect($brandSales)->pluck('brand'));
+    const brandTotals = @json(collect($brandSales)->pluck('total_sales'));
 
-    // Tab Switching Functionality
     document.addEventListener('DOMContentLoaded', function() {
+        // Tab Switching Functionality
         const tabs = document.querySelectorAll('.content-tab');
         
         tabs.forEach(tab => {
@@ -587,75 +606,34 @@
             });
         });
 
-        // Chart Initialization
+        // Chart Initialization for Brand Sales
         const ctx = document.getElementById('salesChart').getContext('2d');
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
-                labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                labels: brandLabels,
                 datasets: [{
-                    label: 'Black Friday',
-                    tension: 0.4,
-                    borderWidth: 3,
-                    borderColor: '#00ab55',
-                    backgroundColor: 'transparent',
-                    data: [20, 60, 20, 50, 90, 220, 440, 380, 500],
-                    pointRadius: 0
-                }, {
-                    label: 'Autumn Sale',
-                    tension: 0.4,
-                    borderWidth: 3,
-                    borderColor: '#212b36',
-                    backgroundColor: 'transparent',
-                    data: [30, 90, 40, 140, 290, 290, 240, 270, 230],
-                    pointRadius: 0
+                    label: 'Sales by Brand',
+                    backgroundColor: '#007bff',
+                    borderColor: '#007bff',
+                    borderWidth: 1,
+                    data: brandTotals
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: 'rgba(0,0,0,0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        borderColor: '#fff',
-                        borderWidth: 1
-                    }
+                    legend: { display: false },
+                    tooltip: { enabled: true }
                 },
                 scales: {
                     y: {
-                        grid: {
-                            borderDash: [2],
-                            color: '#dee2e6',
-                            drawBorder: false
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            padding: 10,
-                            font: {
-                                size: 11,
-                                family: 'Public Sans'
-                            }
-                        }
+                        beginAtZero: true,
+                        grid: { color: '#dee2e6' }
                     },
                     x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            padding: 10,
-                            font: {
-                                size: 11,
-                                family: 'Public Sans'
-                            }
-                        }
+                        grid: { display: false }
                     }
                 }
             }
