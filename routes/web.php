@@ -1,28 +1,32 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use App\Livewire\CustomLogin;
-use App\Livewire\Admin\AdminDashboard;
 use App\Livewire\Admin\Watches;
-use App\Livewire\Admin\AddWatchColor;
-use App\Livewire\Admin\WatchBrandlist;
-use App\Livewire\Admin\WatchCategorylist;
-use App\Livewire\Admin\WatchDialColorlist;
-use App\Livewire\Admin\WatchGlassTypeList;
-use App\Livewire\Admin\WatchStrapMaterial;
-use App\Livewire\Admin\WatchTypes;
+use App\Livewire\Staff\Billing;
 use App\Livewire\Admin\MadeByList;
-use App\Livewire\Admin\SupplierList;
-use App\Livewire\Admin\WatchStrapColorlist;
+use App\Livewire\Admin\WatchTypes;
 use App\Livewire\Admin\BillingPage;
 use App\Livewire\Admin\ManageAdmin;
 use App\Livewire\Admin\ManageStaff;
+use App\Livewire\Admin\SupplierList;
+use Illuminate\Support\Facades\Auth;
+use App\Livewire\Admin\AddWatchColor;
+use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\AdminDashboard;
 use App\Livewire\Admin\ManageCustomer;
+use App\Livewire\Admin\WatchBrandlist;
 use App\Livewire\Staff\StaffDashboard;
-use App\Livewire\Staff\Billing;
+use App\Livewire\Admin\StaffDueDetails;
+use App\Livewire\Admin\StaffSaleDetails;
+use App\Livewire\Admin\StaffStockDetails;
+use App\Livewire\Admin\WatchCategorylist;
+use App\Livewire\Admin\WatchStockDetails;
+use App\Livewire\Admin\WatchDialColorlist;
+use App\Livewire\Admin\WatchGlassTypeList;
+use App\Livewire\Admin\WatchStrapMaterial;
 use App\Http\Controllers\ReceiptController;
+use App\Livewire\Admin\WatchStrapColorlist;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +71,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/manage-admin', ManageAdmin::class)->name('manage-admin');
         Route::get('/manage-staff', ManageStaff::class)->name('manage-staff');
         Route::get('/manage-customer', ManageCustomer::class)->name('manage-customer');
+        Route::get('/watch-stock-details', WatchStockDetails::class)->name('watch-stock-details');
+        Route::get('/staff-stock-details', StaffStockDetails::class)->name('staff-stock-details');
+        Route::get('/staff-sale-details', StaffSaleDetails::class)->name('staff-sale-details');
+        Route::get('/staff-due-details', StaffDueDetails::class)->name('staff-due-details');
     });
 
     // Receipt download (accessible to authenticated users)
