@@ -15,6 +15,10 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -507,6 +511,136 @@
                 margin-left: 0;
                 width: 100%;
             }
+        }
+
+        /* Add these styles at the end of your existing style block */
+        
+        /* Updated font family to include Inter as first option */
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            letter-spacing: -0.01em;
+        }
+        
+        /* Refine typography for better readability */
+        .sidebar-title {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        
+        .nav-link.active {
+            background-color: #e9f0ff;
+            font-weight: 500;
+        }
+        
+        .content-tab.active {
+            font-weight: 600;
+        }
+        
+        /* Cleaner stats cards */
+        .stat-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: none;
+            padding: 1.25rem;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        /* More modern chart cards */
+        .chart-card {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .chart-header {
+            background-color: #ffffff;
+            padding: 1.25rem;
+        }
+        
+        .chart-container {
+            padding: 1.5rem;
+        }
+        
+        /* Improved widget containers */
+        .widget-container {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 1.25rem;
+        }
+        
+        .widget-header h6 {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        
+        /* Better badges */
+        .status-badge {
+            font-weight: 500;
+            border-radius: 6px;
+            padding: 0.35rem 0.65rem;
+        }
+        
+        /* Horizontal scrolling for charts */
+        .chart-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #dee2e6 #f8f9fa;
+        }
+        
+        .chart-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .chart-scroll-container::-webkit-scrollbar-track {
+            background: #f8f9fa;
+        }
+        
+        .chart-scroll-container::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 10px;
+        }
+        
+        /* Scrollable containers */
+        .inventory-container,
+        .staff-sales-container {
+            scrollbar-width: thin;
+            scrollbar-color: #dee2e6 #f8f9fa;
+        }
+        
+        .inventory-container::-webkit-scrollbar,
+        .staff-sales-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .inventory-container::-webkit-scrollbar-track,
+        .staff-sales-container::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .inventory-container::-webkit-scrollbar-thumb,
+        .staff-sales-container::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 10px;
+        }
+        
+        /* Avatar styling */
+        .admin-avatar, .staff-avatar, .avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            letter-spacing: -0.03em;
         }
     </style>
     @stack('styles')
