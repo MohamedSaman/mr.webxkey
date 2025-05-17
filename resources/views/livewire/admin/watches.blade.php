@@ -154,7 +154,7 @@
                             @foreach ($watches as $watch)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td class="text-center">{{ $watch->name }}</td>
+                                    <td class="text-center">{{ $watch->watch_name }}</td>
                                     <td class="text-center">{{ $watch->code }}</td>
                                     <td class="text-center">{{ $watch->barcode }}</td>
                                     <td class="text-center">{{ $watch->brand }}</td>

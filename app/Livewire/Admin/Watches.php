@@ -67,7 +67,7 @@ class Watches extends Component
         $watches = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
             ->join('watch_stocks', 'watch_details.id', '=', 'watch_stocks.watch_id')
-            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*')
+            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*','watch_details.name as watch_name')
             ->where('watch_details.name', 'like', '%' . $this->search . '%')
             ->orWhere('watch_details.code', 'like', '%' . $this->search . '%')
             ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
