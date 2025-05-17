@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? 'Page Title' }}</title>
     <!-- Bootstrap CSS -->
@@ -14,15 +15,19 @@
     <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #f5f7fa;
+            letter-spacing: -0.01em;
         }
 
+        /* Sidebar styles */
         .sidebar {
             width: 250px;
             height: 100vh;
@@ -36,13 +41,9 @@
 
         .sidebar.collapsed {
             width: 70px;
-            padding: 20px 0;
         }
 
-        .sidebar.collapsed .sidebar-title {
-            display: none;
-        }
-
+        .sidebar.collapsed .sidebar-title,
         .sidebar.collapsed .nav-link span {
             display: none;
         }
@@ -67,11 +68,13 @@
         }
 
         .sidebar-title {
-            font-weight: 700;
+            font-weight: 600;
             font-size: 1.2rem;
             color: #212529;
+            letter-spacing: -0.02em;
         }
 
+        /* Navigation styles */
         .nav-item {
             margin: 5px 0;
         }
@@ -85,8 +88,9 @@
 
         .nav-link:hover,
         .nav-link.active {
-            background-color: #f0f7ff;
+            background-color: #e9f0ff;
             color: #0d6efd;
+            font-weight: 500;
         }
 
         .nav-link i {
@@ -99,7 +103,6 @@
         .nav-link.dropdown-toggle::after {
             display: inline-block;
             margin-left: 0.255em;
-            vertical-align: 0.255em;
             content: "";
             border-top: 0.3em solid;
             border-right: 0.3em solid transparent;
@@ -118,6 +121,7 @@
             font-size: 1rem;
         }
 
+        /* Top bar styles */
         .top-bar {
             height: 60px;
             background-color: #ffffff;
@@ -137,6 +141,7 @@
             left: 70px;
         }
 
+        /* User info styles */
         .admin-info {
             display: flex;
             align-items: center;
@@ -150,7 +155,7 @@
             background-color: #f8f9fa;
         }
 
-        .admin-avatar {
+        .admin-avatar, .staff-avatar, .avatar {
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -159,20 +164,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 500;
+            font-weight: 600;
+            letter-spacing: -0.03em;
         }
 
         .admin-name {
             font-weight: 500;
         }
 
+        /* Dropdown menu styles */
         .dropdown-toggle {
             cursor: pointer;
         }
 
         .dropdown-toggle::after {
             display: none;
-            /* Remove the default dropdown arrow */
         }
 
         .dropdown-menu {
@@ -198,10 +204,7 @@
             font-size: 1rem;
         }
 
-        .text-danger {
-            color: #dc3545 !important;
-        }
-
+        /* Main content styles */
         .main-content {
             margin-left: 250px;
             margin-top: 60px;
@@ -216,23 +219,27 @@
             width: calc(100% - 70px);
         }
 
-        .stat-card {
+        /* Card styles */
+        .stat-card, .widget-container {
             background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: none;
+            padding: 1.25rem;
             height: 100%;
         }
 
         .stat-value {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
             margin-bottom: 5px;
         }
 
         .stat-label {
             color: #6c757d;
-            font-size: 14px;
+            font-size: 0.875rem;
+            font-weight: 500;
             margin-bottom: 5px;
         }
 
@@ -246,6 +253,7 @@
             font-size: 13px;
         }
 
+        /* Tab navigation */
         .content-tabs {
             display: flex;
             border-bottom: 1px solid #dee2e6;
@@ -264,6 +272,7 @@
         .content-tab.active {
             color: #0d6efd;
             border-bottom-color: #0d6efd;
+            font-weight: 600;
         }
 
         .content-tab:hover:not(.active) {
@@ -279,18 +288,19 @@
             display: block;
         }
 
+        /* Chart cards */
         .chart-card {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            border-radius: 0.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
         }
 
         .chart-header {
-            background-color: #f8f9fa;
-            padding: 1rem 1.5rem;
+            background-color: #ffffff;
+            padding: 1.25rem;
             border-bottom: 1px solid #dee2e6;
-            border-top-left-radius: 0.5rem;
-            border-top-right-radius: 0.5rem;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
 
         .chart-container {
@@ -299,9 +309,10 @@
             padding: 1.5rem;
         }
 
+        /* Recent sales */
         .recent-sales-card {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
             height: 380px;
             width: 100%;
         }
@@ -309,15 +320,7 @@
         .avatar {
             width: 40px;
             height: 40px;
-            background-color: #e9ecef;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             margin-right: 15px;
-            color: #6c757d;
-            font-size: 1rem;
-            font-weight: bold;
         }
 
         .amount {
@@ -325,27 +328,13 @@
             color: #198754;
         }
 
-        .widget-container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-            margin-left: -10px;
-
-            height: 100%;
-            width: 600px;
-        }
-
-        .widget-header {
-            margin-bottom: 15px;
-        }
-
+        /* Widget components */
         .widget-header h6 {
             font-size: 1.25rem;
             margin-bottom: 5px;
-            font-weight: 500;
+            font-weight: 600;
             color: #212529;
+            letter-spacing: -0.02em;
         }
 
         .widget-header p {
@@ -354,6 +343,7 @@
             margin-bottom: 0;
         }
 
+        /* Item rows in widgets */
         .item-row {
             display: flex;
             align-items: center;
@@ -377,11 +367,12 @@
             margin-bottom: 0;
         }
 
+        /* Status badges */
         .status-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 5px;
+            padding: 0.35rem 0.65rem;
+            border-radius: 6px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 500;
             white-space: nowrap;
         }
 
@@ -400,6 +391,7 @@
             color: #842029;
         }
 
+        /* Progress bars */
         .progress {
             height: 0.5rem;
             margin-top: 5px;
@@ -409,86 +401,50 @@
         }
 
         .progress-bar {
-            background-color: #007bff;
-            /* Default progress bar color */
             height: 0.5rem;
         }
 
-        .staff-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
+        /* Scrollable containers */
+        .inventory-container,
+        .staff-sales-container,
+        .chart-scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: #dee2e6 #f8f9fa;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
-        .staff-status {
-            margin-right: 10px;
+        .chart-scroll-container {
+            width: 100%;
+            overflow-x: auto;
         }
 
-        .staff-status-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            white-space: nowrap;
+        .inventory-container::-webkit-scrollbar,
+        .staff-sales-container::-webkit-scrollbar,
+        .chart-scroll-container::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
 
-        .present {
-            background-color: #d1e7dd;
-            color: #0f5132;
+        .inventory-container::-webkit-scrollbar-track,
+        .staff-sales-container::-webkit-scrollbar-track,
+        .chart-scroll-container::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 10px;
         }
 
-        .late {
-            background-color: #fff3cd;
-            color: #664d03;
+        .inventory-container::-webkit-scrollbar-thumb,
+        .staff-sales-container::-webkit-scrollbar-thumb,
+        .chart-scroll-container::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 10px;
         }
 
-        .absent {
-            background-color: #f8d7da;
-            color: #842029;
-        }
-
-        .staff-details {
-            flex-grow: 1;
-        }
-
-        .staff-details h6 {
-            font-size: 1rem;
-            margin-bottom: 3px;
-            color: #212529;
-        }
-
-        .staff-details p {
-            font-size: 0.875rem;
-            color: #6c757d;
-            margin-bottom: 2px;
-        }
-
-        .staff-details .bi {
-            margin-right: 5px;
-        }
-
-        .attendance-icon {
-            margin-left: auto;
-            font-size: 1.5rem;
-            color: #198754;
-            /* Success green */
-        }
-
-        .late-icon {
-            color: #ffc107;
-            /* Warning yellow  */
-        }
-
-        .absent-icon {
-            color: #dc3545;
-            /* Danger red  */
-        }
-
+        /* Responsive styles */
         @media (max-width: 767.98px) {
             .sidebar {
                 transform: translateX(-100%);
                 width: 250px;
-                /* Keep full width on mobile */
             }
 
             .sidebar.show {
@@ -497,7 +453,6 @@
 
             .sidebar.collapsed.show {
                 width: 250px;
-                /* Ensure sidebar is fully visible when shown on mobile */
             }
 
             .top-bar {
@@ -557,7 +512,6 @@
                         </ul>
                     </div>
                 </li>
-                
                 <li class="nav-item">
                     <a class="nav-link dropdown-toggle" href="#inventorySubmenu" data-bs-toggle="collapse"
                         role="button" aria-expanded="false" aria-controls="inventorySubmenu">
@@ -613,6 +567,51 @@
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.made-by-list') }}">
                                     <i class="bi bi-flag"></i> <span>Watch Made By</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#salesSubmenu" data-bs-toggle="collapse"
+                        role="button" aria-expanded="false" aria-controls="salesSubmenu">
+                        <i class="bi bi-people"></i> <span>Sales</span>
+                    </a>
+                    <div class="collapse" id="salesSubmenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.staff-sale-details') }}">
+                                    <i class="bi bi-shield-lock"></i> <span>Staff Sales</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.staff-due-details') }}">
+                                    <i class="bi bi-person-lines-fill"></i> <span>Staff Due</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="">
+                                    <i class="bi bi-people"></i> <span>Customer Sales</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#stockSubmenu" data-bs-toggle="collapse"
+                        role="button" aria-expanded="false" aria-controls="stockSubmenu">
+                        <i class="bi bi-people"></i> <span>Stock Deails</span>
+                    </a>
+                    <div class="collapse" id="stockSubmenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.watch-stock-details') }}">
+                                    <i class="bi bi-shield-lock"></i> <span>Watch Stock</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.staff-stock-details') }}">
+                                    <i class="bi bi-person-lines-fill"></i> <span>Staff Stock</span>
                                 </a>
                             </li>
                         </ul>
@@ -685,6 +684,93 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Define all elements once
+            const sidebarToggler = document.getElementById('sidebarToggler');
+            const sidebar = document.querySelector('.sidebar');
+            const topBar = document.querySelector('.top-bar');
+            const mainContent = document.querySelector('.main-content');
+
+            // Initialize sidebar state
+            function initializeSidebar() {
+                // Check if sidebar state is saved in localStorage
+                const sidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+                
+                if (sidebarCollapsed && window.innerWidth >= 768) {
+                    sidebar.classList.add('collapsed');
+                    topBar.classList.add('collapsed');
+                    mainContent.classList.add('collapsed');
+                }
+
+                // On mobile, always start with sidebar hidden
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('show');
+                    topBar.classList.remove('collapsed');
+                    mainContent.classList.remove('collapsed');
+                }
+            }
+
+            // Toggle sidebar function
+            function toggleSidebar(event) {
+                if (event) {
+                    event.stopPropagation();
+                }
+                
+                if (window.innerWidth < 768) {
+                    // Mobile behavior
+                    sidebar.classList.toggle('show');
+                } else {
+                    // Desktop behavior
+                    sidebar.classList.toggle('collapsed');
+                    topBar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('collapsed');
+
+                    // Save state to localStorage
+                    localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
+                }
+            }
+
+            // Handle sidebar interactions
+            if (sidebarToggler && sidebar) {
+                // Initialize sidebar
+                initializeSidebar();
+
+                // Set up single click handler
+                sidebarToggler.addEventListener('click', toggleSidebar);
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth < 768 &&
+                        sidebar.classList.contains('show') &&
+                        !sidebar.contains(event.target) &&
+                        !sidebarToggler.contains(event.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth >= 768) {
+                        sidebar.classList.remove('show');
+                        
+                        // Restore collapsed state on desktop
+                        const sidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+                        if (sidebarCollapsed) {
+                            sidebar.classList.add('collapsed');
+                            topBar.classList.add('collapsed');
+                            mainContent.classList.add('collapsed');
+                        } else {
+                            sidebar.classList.remove('collapsed');
+                            topBar.classList.remove('collapsed');
+                            mainContent.classList.remove('collapsed');
+                        }
+                    } else {
+                        // On mobile, remove collapsed styles
+                        topBar.classList.remove('collapsed');
+                        mainContent.classList.remove('collapsed');
+                    }
+                });
+            }
+
             // Tab Switching Functionality
             const tabs = document.querySelectorAll('.content-tab');
             if (tabs.length > 0) {
@@ -692,15 +778,15 @@
                     tab.addEventListener('click', function() {
                         // Remove active class from all tabs
                         tabs.forEach(t => t.classList.remove('active'));
-
+                        
                         // Add active class to clicked tab
                         this.classList.add('active');
-
+                        
                         // Hide all tab contents
                         document.querySelectorAll('.tab-content').forEach(content => {
                             content.classList.remove('active');
                         });
-
+                        
                         // Show the selected tab content
                         const tabId = this.getAttribute('data-tab');
                         document.getElementById(tabId).classList.add('active');
@@ -708,21 +794,51 @@
                 });
             }
 
-            // Chart Initialization - ONLY if element exists
+            // Chart Initialization with proper cleanup
             const salesChartEl = document.getElementById('salesChart');
-            if (salesChartEl) {
-                const ctx = salesChartEl.getContext('2d');
-                new Chart(ctx, {
-                    // Your existing chart configuration
-                    type: 'line',
-                    data: {
-                        // ...existing chart data
-                    },
-                    options: {
-                        // ...existing chart options
+            let salesChart = null;
+
+            function initializeChart() {
+                if (salesChartEl) {
+                    // Destroy existing chart if it exists
+                    if (window.salesChart) {
+                        window.salesChart.destroy();
                     }
-                });
+                    
+                    const ctx = salesChartEl.getContext('2d');
+                    window.salesChart = new Chart(ctx, {
+                        // Your existing chart configuration
+                        type: 'line',
+                        data: {
+                            // Your chart data
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
             }
+            
+            // Initialize chart
+            initializeChart();
+            
+            // Re-initialize chart when Livewire updates
+            document.addEventListener('livewire:load', function() {
+                Livewire.hook('message.processed', () => {
+                    initializeChart();
+                });
+            });
 
             // General submenu activation logic
             function activateParentMenuIfSubmenuActive(parentToggleSelector, submenuSelector) {
@@ -762,113 +878,8 @@
             // Initialize both HR and Inventory submenus
             activateParentMenuIfSubmenuActive('a[href="#hrSubmenu"]', '#hrSubmenu');
             activateParentMenuIfSubmenuActive('a[href="#inventorySubmenu"]', '#inventorySubmenu');
-
-            // Add sidebar toggle functionality
-            const sidebarToggler = document.getElementById('sidebarToggler');
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-
-            if (sidebarToggler && sidebar) {
-                sidebarToggler.addEventListener('click', function() {
-                    sidebar.classList.toggle('show');
-                });
-
-                // Close sidebar when clicking outside on mobile
-                document.addEventListener('click', function(event) {
-                    const isMobile = window.innerWidth < 768;
-                    const isClickInsideSidebar = sidebar.contains(event.target);
-                    const isClickOnToggler = sidebarToggler.contains(event.target);
-
-                    if (isMobile && sidebar.classList.contains('show') && !isClickInsideSidebar && !
-                        isClickOnToggler) {
-                        sidebar.classList.remove('show');
-                    }
-                });
-
-                // Handle window resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth >= 768) {
-                        sidebar.classList.remove('show');
-                    }
-                });
-            }
-
-            // Enhanced sidebar toggle functionality
-            const topBar = document.querySelector('.top-bar');
-
-            // Check if sidebar state is saved in localStorage
-            const sidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-
-            // Initialize sidebar state
-            function initializeSidebar() {
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    topBar.classList.add('collapsed');
-                    mainContent.classList.add('collapsed');
-                }
-
-                // On mobile, always start with sidebar hidden
-                if (window.innerWidth < 768) {
-                    sidebar.classList.remove('show');
-                    topBar.classList.remove('collapsed');
-                    mainContent.classList.remove('collapsed');
-                }
-            }
-
-            // Toggle sidebar function
-            function toggleSidebar() {
-                if (window.innerWidth < 768) {
-                    // Mobile behavior
-                    sidebar.classList.toggle('show');
-                } else {
-                    // Desktop behavior
-                    sidebar.classList.toggle('collapsed');
-                    topBar.classList.toggle('collapsed');
-                    mainContent.classList.toggle('collapsed');
-
-                    // Save state to localStorage
-                    localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
-                }
-            }
-
-            // Initialize
-            if (sidebarToggler && sidebar) {
-                initializeSidebar();
-
-                // Toggle button click handler
-                sidebarToggler.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                    toggleSidebar();
-                });
-
-                // Close sidebar when clicking outside on mobile
-                document.addEventListener('click', function(event) {
-                    if (window.innerWidth < 768 &&
-                        sidebar.classList.contains('show') &&
-                        !sidebar.contains(event.target) &&
-                        !sidebarToggler.contains(event.target)) {
-                        sidebar.classList.remove('show');
-                    }
-                });
-
-                // Handle window resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth >= 768) {
-                        sidebar.classList.remove('show');
-
-                        // Restore collapsed state on desktop
-                        if (sidebarCollapsed) {
-                            sidebar.classList.add('collapsed');
-                            topBar.classList.add('collapsed');
-                            mainContent.classList.add('collapsed');
-                        }
-                    } else {
-                        // On mobile, remove collapsed styles
-                        topBar.classList.remove('collapsed');
-                        mainContent.classList.remove('collapsed');
-                    }
-                });
-            }
+            activateParentMenuIfSubmenuActive('a[href="#salesSubmenu"]', '#salesSubmenu');
+            activateParentMenuIfSubmenuActive('a[href="#stockSubmenu"]', '#stockSubmenu');
         });
     </script>
     @stack('scripts')
