@@ -84,6 +84,10 @@
                 padding: 1.5rem;
             }
 
+            .chart-scroll-container {
+                overflow-x: auto;
+            }
+
             .recent-sales-card {
                 box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
                 border-radius: 0.5rem;
@@ -281,6 +285,43 @@
             .stat-info small, .stat-change-alert small {
                 font-size: 12px;
             }
+
+            .staff-avatar {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+            }
+            
+            .staff-card {
+                border-left: 3px solid #0d6efd;
+                transition: all 0.2s ease;
+            }
+            
+            .staff-card:hover {
+                transform: translateY(-2px);
+            }
+            
+            .progress {
+                background-color: #e9ecef;
+                border-radius: 0.25rem;
+                overflow: hidden;
+            }
+
+            
+            .btn-outline-primary, .btn-outline-secondary {
+                font-size: 0.8rem;
+                font-weight: 500;
+                border-radius: 6px;
+                padding: 0.3rem 0.7rem;
+                transition: all 0.15s ease;
+            }
+
+            .btn-outline-primary:hover, .btn-outline-secondary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
         </style>
     @endpush
 
@@ -298,7 +339,12 @@
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Total Revenue</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Total Revenue</div>
+                        {{-- <a href="" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a> --}}
+                    </div>
                     <div class="stat-value">${{ number_format($totalRevenue, 2) }}</div>
                     <div class="stat-info mt-1">
                         <div class="d-flex justify-content-between mb-1">
@@ -326,7 +372,12 @@
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Total Due Amount</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Total Due Amount</div>
+                        {{-- <a href="" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a> --}}
+                    </div>
                     <div class="stat-value">${{ number_format($totalDueAmount, 2) }}</div>
                     <div class="stat-change-alert">
                         <div class="d-flex justify-content-between mb-1">
@@ -354,7 +405,12 @@
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Inventory Status</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Inventory Status</div>
+                        {{-- <a href="" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a> --}}
+                    </div>
                     <div class="stat-value">{{ number_format($totalStock) }} <span class="fs-6 text-muted">units</span></div>
                     
                     <!-- Sales Progress -->
@@ -386,7 +442,12 @@
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Staff Status</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Staff Status</div>
+                        {{-- <a href="" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-right"></i>
+                        </a> --}}
+                    </div>
                     <div class="stat-value">{{ $totalStaffCount }} <span class="fs-6 text-muted">members</span></div>
                     
                     <!-- Staff Product Assignment Progress -->
@@ -424,16 +485,18 @@
                 <div class="chart-card">
                     <div class="chart-header d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-1">Sales Overview</h6>
-                            <p class="text-muted mb-0 small">Compare sales performance over the last 30 days</p>
+                            <h6 class="mb-1">Sales Overview By Brands</h6>
+                            <p class="text-muted mb-0 small">Compare sales performance Base Watch Brands</p>
                         </div>
-                        <select class="form-select form-select-sm w-auto">
-                            <option selected>2023</option>
-                            <option value="2022">2022</option>
-                        </select>
+                        <a href="" class="btn btn-sm btn-outline-primary">
+                            View Full Report <i class="bi bi-bar-chart-line"></i>
+                        </a>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="salesChart"></canvas>
+                    <!-- Add scrollable wrapper for the chart -->
+                    <div class="chart-scroll-container">
+                        <div class="chart-container" style="min-width: {{ count($brandSales) * 60 }}px;">
+                            <canvas id="salesChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -442,9 +505,14 @@
             <div class="col-md-4">
                 <div class="recent-sales-card">
                     <div class="card-body">
-                        <div class="p-2">
-                            <h6 class="card-title">Recent Sales</h6>
-                            <p class="card-subtitle text-muted small mb-3">Latest transactions processed in the system</p>
+                        <div class="p-2 d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="card-title">Recent Sales</h6>
+                                <p class="card-subtitle text-muted small mb-0">Latest transactions processed in the system</p>
+                            </div>
+                            <a href="" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-list-ul"></i>
+                            </a>
                         </div>
                         <ul class="list-group list-group-flush">
                             @forelse($recentSales as $sale)
@@ -478,92 +546,122 @@
         <!-- Inventory and staff section -->
         <div class="container-fluid mt-4 p-0">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <div class="widget-container">
-                        <div class="widget-header">
-                            <h6>Inventory Status</h6>
-                            <p class="text-muted small">Current watch stock levels and alerts</p>
+                        <div class="widget-header d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6>Inventory Status</h6>
+                                <p class="text-muted small mb-0">Current watch stock levels and alerts</p>
+                            </div>
+                            <a href="{{ route('admin.watch-stock-details') }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-box-seam"></i>
+                            </a>
                         </div>
                         
-                        @forelse($watchInventory as $watch)
-                            @php
-                                // Calculate stock percentage and status
-                                $stockPercentage = $watch->total_stock > 0 ? 
-                                    round(($watch->available_stock / $watch->total_stock) * 100, 2) : 0;
-                                
-                                // Determine stock status badge
-                                if ($watch->available_stock == 0) {
-                                    $statusClass = 'out-of-stock';
-                                    $statusText = 'Out of Stock';
-                                    $progressClass = 'bg-danger';
-                                } elseif ($stockPercentage <= 25) {
-                                    $statusClass = 'low-stock';
-                                    $statusText = 'Low Stock';
-                                    $progressClass = 'bg-warning';
-                                } else {
-                                    $statusClass = 'in-stock';
-                                    $statusText = 'In Stock';
-                                    $progressClass = '';
-                                }
-                            @endphp
+                        <!-- Scrollable container WITHOUT footer -->
+                        <div class="inventory-container" style="max-height: 400px; overflow-y: auto;">
+                            @forelse($watchInventory as $watch)
+                                @php
+                                    // Calculate stock percentage and status
+                                    $stockPercentage = $watch->total_stock > 0 ? 
+                                        round(($watch->available_stock / $watch->total_stock) * 100, 2) : 0;
+                                    
+                                    // Determine stock status badge
+                                    if ($watch->available_stock == 0) {
+                                        $statusClass = 'out-of-stock';
+                                        $statusText = 'Out of Stock';
+                                        $progressClass = 'bg-danger';
+                                    } elseif ($stockPercentage <= 25) {
+                                        $statusClass = 'low-stock';
+                                        $statusText = 'Low Stock';
+                                        $progressClass = 'bg-warning';
+                                    } else {
+                                        $statusClass = 'in-stock';
+                                        $statusText = 'In Stock';
+                                        $progressClass = '';
+                                    }
+                                @endphp
 
-                            <div class="item-row @if(!$loop->first) mt-3 @endif">
-                                <div class="item-details">
-                                    <h6>{{ $watch->name }} {{ $watch->model }}</h6>
-                                    <p class="text-muted small">SKU: {{ $watch->code }}</p>
+                                <div class="item-row @if(!$loop->first) mt-3 @endif">
+                                    <div class="item-details">
+                                        <h6>{{ $watch->name }} {{ $watch->model }}</h6>
+                                        <p class="text-muted small">SKU: {{ $watch->code }}</p>
+                                    </div>
+                                    <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
+                                    <div class="ms-2 text-muted small">{{ $watch->available_stock }}/{{ $watch->total_stock }}</div>
                                 </div>
-                                <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
-                                <div class="ms-2 text-muted small">{{ $watch->available_stock }}/{{ $watch->total_stock }}</div>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar {{ $progressClass }}" style="width: {{ $stockPercentage }}%;"></div>
-                            </div>
-                        @empty
-                            <div class="alert alert-info">No watch inventory data available.</div>
-                        @endforelse
+                                <div class="progress">
+                                    <div class="progress-bar {{ $progressClass }}" style="width: {{ $stockPercentage }}%;"></div>
+                                </div>
+                            @empty
+                                <div class="alert alert-info">No watch inventory data available.</div>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Staff Sales Section -->
-                <div class="col-md-6">
+                <div class="col-md-7">
                     <div class="widget-container p-3">
-                        <div class="widget-header mb-3">
-                            <h6 class="fw-bold">Staff Sales</h6>
-                            <p class="text-muted small mb-0">Sales and dues by staff</p>
+                        <div class="widget-header mb-3 d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="fw-bold">Staff Sales</h6>
+                                <p class="text-muted small mb-0">Sales performance and collection status</p>
+                            </div>
+                            <a href="" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-people"></i>
+                            </a>
                         </div>
-                        @forelse($staffSales as $staff)
-                            <div class="staff-card p-3 mb-2 bg-light rounded">
-                                <div class="d-flex align-items-start justify-content-between">
-                                    <div class="d-flex">
-                                        <span class="badge bg-success bg-opacity-25 text-success fw-medium py-1 px-2 me-2"><h4>S</h4></span>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">{{ $staff->name }}</h6>
-                                            <div class="d-flex flex-column flex-sm-row gap-2 mb-0">
-                                                <span class="text-muted small">
-                                                    <i class="bi bi-envelope-fill text-secondary"></i> {{ $staff->email }}
-                                                </span>
-                                            </div>
+                        
+                        <!-- Scrollable container WITHOUT footer -->
+                        <div class="staff-sales-container" style="max-height: 400px; overflow-y: auto;">
+                            @forelse($staffSales as $staff)
+                                <div class="staff-card p-3 mb-3 bg-light rounded shadow-sm">
+                                    <div class="d-flex align-items-start mb-2">
+                                        <div class="staff-avatar me-2">
+                                            <span class="badge bg-primary bg-opacity-25 text-white fw-medium py-2 px-2">
+                                                {{ strtoupper(substr($staff->name, 0, 1)) }}{{ strtoupper(substr(strpos($staff->name, ' ') !== false ? substr($staff->name, strpos($staff->name, ' ') + 1, 1) : '', 0, 1)) }}
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-0">{{ $staff->name }}</h6>
                                         </div>
                                     </div>
                                     
-                                    <!-- Sales and dues information at the end of row -->
-                                    <div class="d-flex flex-column align-items-end">
-                                        <div class="mb-1">
-                                            <i class="bi bi-cash-stack text-success"></i> 
-                                            <small class="text-muted">Sales:</small> 
-                                            <span class="fw-bold text-success">${{ number_format($staff->total_sales, 2) }}</span>
+                                    <!-- Sales Progress Section -->
+                                    <div class="sales-progress mb-2">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Sales Progress</small>
+                                            <div class="d-flex align-items-center">
+                                                <small class="me-2 text-success fw-bold">${{ number_format($staff->sold_value, 2) }}</small>
+                                                <small class="text-muted">/ ${{ number_format($staff->assigned_value, 2) }}</small>
+                                                <span class="badge bg-success ms-2">{{ $staff->sales_percentage }}%</span>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <i class="bi bi-exclamation-circle text-danger"></i> 
-                                            <small class="text-muted">Due:</small> 
-                                            <span class="fw-bold text-danger">${{ number_format($staff->total_due, 2) }}</span>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ $staff->sales_percentage }}%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Payment Progress Section -->
+                                    <div class="payment-progress">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Payment Collection</small>
+                                            <div class="d-flex align-items-center">
+                                                <small class="me-2 text-success fw-bold">${{ number_format($staff->collected_amount, 2) }}</small>
+                                                <small class="text-danger fw-bold">- ${{ number_format($staff->total_due, 2) }} due</small>
+                                                <span class="badge {{ $staff->payment_percentage >= 80 ? 'bg-success' : 'bg-danger' }} ms-2">{{ $staff->payment_percentage }}%</span>
+                                            </div>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar {{ $staff->payment_percentage >= 80 ? 'bg-success' : 'bg-danger' }}" role="progressbar" style="width: {{ $staff->payment_percentage }}%"></div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @empty
-                            <div class="alert alert-info">No staff sales data available.</div>
-                        @endforelse
+                            @empty
+                                <div class="alert alert-info">No staff sales data available.</div>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
             </div>

@@ -214,16 +214,41 @@ class AdminDashboard extends Component
     {
         $this->staffSales = DB::table('users')
             ->where('role', 'staff')
-            ->leftJoin('sales', 'users.id', '=', 'sales.user_id')
+            ->leftJoin('staff_sales', 'users.id', '=', 'staff_sales.staff_id')
             ->select(
                 'users.id',
                 'users.name',
                 'users.email',
-                DB::raw('COALESCE(SUM(sales.total_amount),0) as total_sales'),
-                DB::raw('COALESCE(SUM(sales.due_amount),0) as total_due')
+                DB::raw('COALESCE(SUM(staff_sales.total_value), 0) as assigned_value'),
+                DB::raw('COALESCE(SUM(staff_sales.sold_value), 0) as sold_value'),
+                DB::raw('COALESCE(SUM(staff_sales.total_quantity), 0) as assigned_quantity'),
+                DB::raw('COALESCE(SUM(staff_sales.sold_quantity), 0) as sold_quantity')
             )
             ->groupBy('users.id', 'users.name', 'users.email')
-            ->get();
+            ->get()
+            ->map(function($staff) {
+                // Calculate due amount from sales table
+                $salesInfo = DB::table('sales')
+                    ->where('user_id', $staff->id)
+                    ->select(
+                        DB::raw('COALESCE(SUM(total_amount), 0) as total_sales'),
+                        DB::raw('COALESCE(SUM(due_amount), 0) as total_due')
+                    )
+                    ->first();
+                
+                $staff->total_sales = $salesInfo->total_sales ?? 0;
+                $staff->total_due = $salesInfo->total_due ?? 0;
+                $staff->collected_amount = $staff->total_sales - $staff->total_due;
+                
+                // Calculate percentages for progress bars
+                $staff->sales_percentage = $staff->assigned_value > 0 ? 
+                    round(($staff->sold_value / $staff->assigned_value) * 100, 1) : 0;
+                
+                $staff->payment_percentage = $staff->total_sales > 0 ? 
+                    round(($staff->collected_amount / $staff->total_sales) * 100, 1) : 0;
+                    
+                return $staff;
+            });
     }
 
     public function render()
