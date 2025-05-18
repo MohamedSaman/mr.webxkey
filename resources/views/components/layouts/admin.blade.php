@@ -590,7 +590,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link py-2" href="">
+                                <a class="nav-link py-2" href="{{ route('admin.customer-sale-details') }}">
                                     <i class="bi bi-people"></i> <span>Customer Sales</span>
                                 </a>
                             </li>

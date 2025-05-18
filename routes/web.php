@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Admin\CustomerSaleDetails;
 use Illuminate\Http\Request;
 use App\Livewire\CustomLogin;
 use App\Livewire\Admin\Watches;
@@ -75,6 +76,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/staff-stock-details', StaffStockDetails::class)->name('staff-stock-details');
         Route::get('/staff-sale-details', StaffSaleDetails::class)->name('staff-sale-details');
         Route::get('/staff-due-details', StaffDueDetails::class)->name('staff-due-details');
+        Route::get('/customer-sale-details', CustomerSaleDetails::class)->name('customer-sale-details');
     });
 
     // Receipt download (accessible to authenticated users)
