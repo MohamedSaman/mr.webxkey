@@ -818,9 +818,9 @@
                                         <label for="gender" class="form-label fw-bold">Gender:</label>
                                         <select class="form-select" id="gender" wire:model="gender">
                                             <option value="">Select Gender</option>
-                                            <option value="men">Men</option>
-                                            <option value="women">Women</option>
-                                            <option value="unisex">Unisex</option>
+                                            <option value="Men">Men</option>
+                                            <option value="Women">Women</option>
+                                            <option value="Unisex">Unisex</option>
                                         </select>
                                         @error('gender')
                                             <span class="text-danger">{{ $message }}</span>
