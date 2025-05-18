@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire\Admin;
+use Exception;
 use Livewire\Component;
 use App\Models\StaffSale;
 use App\Models\StaffProduct;
@@ -61,6 +62,26 @@ class StaffSaleDetails extends Component
         //    $this->js("$('#salesDetails').modal('show');");
         $this->dispatch('open-sales-modal');
         
+    }
+
+    public function getSummaryStats($staffId)
+    {
+        $summaryStats = [];
+        try{
+            $summaryStats = StaffSale::where('staff_id', $staffId)
+                ->select(
+                    DB::raw('SUM(total_quantity) as total_quantity'),
+                    DB::raw('SUM(sold_quantity) as sold_quantity'),
+                    DB::raw('SUM(total_quantity) - SUM(sold_quantity) as available_quantity'),
+                    DB::raw('SUM(total_value) as total_value'),
+                    DB::raw('SUM(sold_value) as sold_value'),
+                    DB::raw('SUM(total_value) - SUM(sold_value) as available_value')
+                )
+                ->first();
+        } catch (Exception) {
+            $summaryStats = [];
+        }
+        return $summaryStats;
     }
     
     

@@ -1,6 +1,5 @@
 <?php
 
-use App\Livewire\Admin\CustomerSaleDetails;
 use Illuminate\Http\Request;
 use App\Livewire\CustomLogin;
 use App\Livewire\Admin\Watches;
@@ -27,7 +26,9 @@ use App\Livewire\Admin\WatchDialColorlist;
 use App\Livewire\Admin\WatchGlassTypeList;
 use App\Livewire\Admin\WatchStrapMaterial;
 use App\Http\Controllers\ReceiptController;
+use App\Livewire\Admin\CustomerSaleDetails;
 use App\Livewire\Admin\WatchStrapColorlist;
+use App\Livewire\Staff\CustomerSaleManagement;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,12 +81,15 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     });
 
     // Receipt download (accessible to authenticated users)
-    Route::get('/receipts/{id}/download', [ReceiptController::class, 'download'])->name('receipts.download');
+    Route::get('/receipts/{id}/download', [App\Http\Controllers\ReceiptController::class, 'download'])
+        ->name('receipts.download')
+        ->middleware(['auth']);
 
     // Staff routes
     Route::middleware('role:staff')->prefix('staff')->name('staff.')->group(function () {
         Route::get('/dashboard', StaffDashboard::class)->name('dashboard');
         Route::get('/billing', Billing::class)->name('billing');
+        Route::get('/customer-sale-management', CustomerSaleManagement::class)->name('customer-sale-management');
     });
 
 });

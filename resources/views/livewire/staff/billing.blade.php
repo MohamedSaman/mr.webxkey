@@ -52,8 +52,7 @@
                                                             <div>
                                                                 <span
                                                                     class="badge bg-success">${{ $result->selling_price ?? '-' }}</span>
-                                                                <span class="badge bg-info">Stock:
-                                                                    {{ $result->available_stock ?? '-' }}</span>
+                                                                <span class="badge bg-info">Available: {{ $result->available_stock ?? 0 }}</span>
                                                             </div>
                                                         </div>
                                                         <div class="text-muted small mt-1">
@@ -70,7 +69,7 @@
                                                     <div class="product-action d-flex align-items-center">
                                                         <button class="btn btn-sm btn-primary"
                                                             wire:click="addToCart({{ $result->id }})"
-                                                            {{ !$result->stock || $result->stock->available_stock <= 0 ? 'disabled' : '' }}>
+                                                            {{ $result->available_stock <= 0 ? 'disabled' : '' }}>
                                                             <i class="fas fa-plus"></i> Add
                                                         </button>
                                                     </div>

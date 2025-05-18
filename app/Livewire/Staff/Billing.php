@@ -94,7 +94,7 @@ class Billing extends Component
                     'watch_details.*',
                     'staff_products.unit_price as selling_price', 
                     'staff_products.discount_per_unit as discount_price',
-                    'staff_products.total_value as original_price',
+                    'staff_products.id as staff_product_id',
                     DB::raw('(staff_products.quantity - staff_products.sold_quantity) as available_stock')
                 )
                 ->where('staff_products.staff_id', auth()->id())
@@ -198,9 +198,11 @@ class Billing extends Component
                 'watch_details.*', 
                 'staff_products.unit_price as selling_price',
                 'staff_products.discount_per_unit as discount_price',
+                'staff_products.quantity as total_stock',
+                'staff_products.sold_quantity as sold_stock',
+                DB::raw('(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
                 'watch_suppliers.*',
-                'watch_suppliers.name as supplier_name',
-                DB::raw('(staff_products.quantity - staff_products.sold_quantity) as available_stock')
+                'watch_suppliers.name as supplier_name'
             )
             ->where('watch_details.id', $watchId)
             ->where('staff_products.staff_id', auth()->id())

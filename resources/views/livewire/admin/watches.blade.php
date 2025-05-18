@@ -333,8 +333,8 @@
                                                 <label for="gender" class="form-label fw-bold">Gender:</label>
                                                 <select class="form-select" id="gender" wire:model="gender">
                                                     <option value="">Select Gender</option>
-                                                    <option value="men">Men</option>
-                                                    <option value="women">Women</option>
+                                                    <option value="male">Men</option>
+                                                    <option value="female">Women</option>
                                                     <option value="unisex">Unisex</option>
                                                 </select>
                                                 @error('gender')
@@ -1796,9 +1796,9 @@
                                     <div class="mb-3">
                                         <label for="editGender" class="form-label fw-bold">Gender:</label>
                                         <select class="form-select" id="editGender" wire:model="editGender">
-                                            <option value="Men">Men</option>
-                                            <option value="Women">Women</option>
-                                            <option value="Unisex">Unisex</option>
+                                            <option value="male">Men</option>
+                                            <option value="female">Women</option>
+                                            <option value="unisex">Unisex</option>
                                         </select>
                                         @error('editGender')
                                             <span class="text-danger">{{ $message }}</span>
