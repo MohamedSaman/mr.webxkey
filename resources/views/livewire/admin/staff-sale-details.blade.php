@@ -54,7 +54,7 @@
                 </table>
             </div>
             <div class="mt-3">
-                {{ $staffSales->links() }}
+                {{-- {{ $staffSales->links() }} --}}
             </div>
         </div>
     </div>
@@ -92,7 +92,10 @@
                                 </div>
                             </div>
                         </div>
-
+                        @php
+                           $summaryStats  =  $this->getSummaryStats($staffId);
+                        //    dd($summaryStats);
+                        @endphp
                         <!-- Summary Stats Cards -->
                         <div class="row mb-4">
                             <!-- Quantity Stats -->
@@ -106,13 +109,13 @@
                                             <div class="col-4">
                                                 <div class="border-end">
                                                     <h5 class="fw-bold">
-                                                        {{ $staffSales[$staffId]->total_quantity ?? 0 }}</h5>
+                                                        {{ data_get($summaryStats, 'total_quantity', 0) }}</h5>
                                                     <p class="text-muted small">Total Qty</p>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="border-end">
-                                                    <h5 class="fw-bold">{{ $staffSales[$staffId]->sold_quantity ?? 0 }}
+                                                    <h5 class="fw-bold">{{ data_get($summaryStats, 'sold_quantity', 0) }}
                                                     </h5>
                                                     <p class="text-muted small">Sold Qty</p>
                                                 </div>
@@ -120,8 +123,8 @@
                                             <div class="col-4">
                                                 <div>
                                                     <h5
-                                                        class="fw-bold text-{{ $staffSales[$staffId]->available_quantity > 0 ? 'success' : 'danger' }}">
-                                                        {{ $staffSales[$staffId]->available_quantity ?? 0 }}
+                                                        class="fw-bold text-{{ data_get($summaryStats, 'available_quantity', 0) > 0 ? 'success' : 'danger' }}">
+                                                        {{ data_get($summaryStats, 'available_quantity', 0) }}
                                                     </h5>
                                                     <p class="text-muted small">Available Qty</p>
                                                 </div>
@@ -142,7 +145,7 @@
                                             <div class="col-4">
                                                 <div class="border-end">
                                                     <h5 class="fw-bold">
-                                                        ₹{{ number_format($staffSales[$staffId]->total_value ?? 0, 2) }}
+                                                        ₹{{ number_format(data_get($summaryStats, 'total_value', 0), 2) }}
                                                     </h5>
                                                     <p class="text-muted small">Total Value</p>
                                                 </div>
@@ -150,21 +153,19 @@
                                             <div class="col-4">
                                                 <div class="border-end">
                                                     <h5 class="fw-bold">
-                                                        ₹{{ number_format($staffSales[$staffId]->sold_value ?? 0, 2) }}
+                                                        ₹{{ number_format(data_get($summaryStats, 'sold_value', 0), 2) }}
                                                     </h5>
                                                     <p class="text-muted small">Sold Value</p>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div>
-                                                    @php
-                                                        $availableValue = $staffSales[$staffId]->total_value - $staffSales[$staffId]->sold_value;
-                                                    @endphp
+                                                   
                                                     <h5
                                                         class="fw-bold 
-                                                        text-{{ $availableValue > 0 ? 'success' : 'danger' }}
+                                                        text-{{ data_get($summaryStats, 'available_value', 0) > 0 ? 'success' : 'danger' }}
                                                         ">
-                                                        ₹{{ number_format($availableValue ?? 0, 2) }}
+                                                        ₹{{ number_format(data_get($summaryStats, 'available_value', 0) ?? 0, 2) }}
                                                     </h5>
                                                     <p class="text-muted small">Available Value</p>
                                                 </div>
