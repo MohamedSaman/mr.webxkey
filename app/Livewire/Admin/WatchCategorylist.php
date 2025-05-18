@@ -52,7 +52,8 @@ class WatchCategorylist extends Component
         $this->editCategoryName = $category->category_name;
         $this->editCategoryId = $category->id;
         
-        $this->js("$('#editCategoryModal').modal('show')");
+        $this->dispatch('edit-category');
+        // $this->js("$('#editCategoryModal').modal('show')");
     }
 
     public function updateCategory($id){

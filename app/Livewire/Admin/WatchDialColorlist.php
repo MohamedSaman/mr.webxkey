@@ -56,7 +56,8 @@ class WatchDialColorlist extends Component
         $this->editDialColorCode = $color->dial_color_code;
         $this->editDialColorId = $color->id;
         
-        $this->js("$('#editDialColorModal').modal('show')");
+        // $this->js("$('#editDialColorModal').modal('show')");
+        $this->dispatch('edit-dial-color');
     }
 
     public function updateDialColor($id){

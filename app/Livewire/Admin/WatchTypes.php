@@ -55,7 +55,8 @@ class WatchTypes extends Component
         $this->editTypeName = $type->type_name;
         $this->editTypeId = $type->id;
         
-        $this->js("$('#editTypeModal').modal('show')");
+        // $this->js("$('#editTypeModal').modal('show')");
+        $this->dispatch('edit-type-modal');
     }
 
     public function updateType($id){

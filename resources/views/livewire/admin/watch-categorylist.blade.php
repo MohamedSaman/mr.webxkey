@@ -27,11 +27,12 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
                                             wire:click="editCategory({{ $category->id }})">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                            <button class="btn btn-sm btn-danger"
-                                                wire:click="confirmDelete({{ $category->id }})">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </button>
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                            wire:click="confirmDelete({{ $category->id }})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -47,8 +48,8 @@
             </div>
         </div>
         {{-- Create Category Model --}}
-        <div wire:ignore.self class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel"
-            aria-hidden="true">
+        <div wire:ignore.self class="modal fade" id="createCategoryModal" tabindex="-1"
+            aria-labelledby="createCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
@@ -77,8 +78,8 @@
         {{-- End Create Category Model --}}
     </div>
     {{-- Edit Category Model --}}
-    <div wire:ignore.self  class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
-        aria-hidden="true">
+    <div wire:ignore.self wire:key="edit-modal-{{ $editCategoryId ?? 'new' }}" class="modal fade" id="editCategoryModal"
+        tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -90,7 +91,8 @@
 
                         <div class="mb-3">
                             <label for="editCategoryName" class="form-label">Category Name</label>
-                            <input type="text" class="form-control" id="editCategoryName" wire:model="editCategoryName">
+                            <input type="text" class="form-control" id="editCategoryName"
+                                wire:model="editCategoryName">
                             @error('editCategoryName')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
@@ -99,7 +101,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="updateCategory({{$editCategoryId}})">Update Category</button>
+                    <button type="button" class="btn btn-primary"
+                        wire:click="updateCategory({{ $editCategoryId }})">Update Category</button>
                 </div>
             </div>
         </div>
@@ -127,6 +130,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('edit-category', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush

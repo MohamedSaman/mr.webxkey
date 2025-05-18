@@ -25,15 +25,16 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">{{ $strapMaterial->strap_material_name ?? '-' }}</td>
-                                    <td class="text-center">{{ $strapMaterial->material_quality  ?? '-' }}</td>
+                                    <td class="text-center">{{ $strapMaterial->material_quality ?? '-' }}</td>
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
                                             wire:click="editStrapMaterial({{ $strapMaterial->id }})">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                            <button class="btn btn-sm btn-danger"
-                                                wire:click="confirmDelete({{ $strapMaterial->id }})">
-                                                <i class="bi bi-trash"></i> Delete
-                                            </button>
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                            wire:click="confirmDelete({{ $strapMaterial->id }})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -49,8 +50,8 @@
             </div>
         </div>
         {{-- Create Strap Material Model --}}
-        <div wire:ignore.self class="modal fade" id="createStrapMaterialModal" tabindex="-1" aria-labelledby="createStrapMaterialModalLabel"
-            aria-hidden="true">
+        <div wire:ignore.self class="modal fade" id="createStrapMaterialModal" tabindex="-1"
+            aria-labelledby="createStrapMaterialModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
@@ -61,7 +62,8 @@
                         <div class="row">
                             <div class="mb-3">
                                 <label for="strapMaterialName" class="form-label">Strap Material Name</label>
-                                <input type="text" class="form-control" id="strapMaterialName" wire:model="strapMaterialName">
+                                <input type="text" class="form-control" id="strapMaterialName"
+                                    wire:model="strapMaterialName">
                                 @error('strapMaterialName')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
@@ -88,7 +90,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" wire:click="saveStrapMaterial">Add Strap Material</button>
+                        <button type="button" class="btn btn-primary" wire:click="saveStrapMaterial">Add Strap
+                            Material</button>
                     </div>
                 </div>
             </div>
@@ -96,8 +99,8 @@
         {{-- End Create Strap Material Model --}}
     </div>
     {{-- Edit Strap Material Model --}}
-    <div wire:ignore.self  class="modal fade" id="editStrapMaterialModal" tabindex="-1" aria-labelledby="editStrapMaterialModalLabel"
-        aria-hidden="true">
+    <div wire:ignore.self wire:key="edit-modal-{{ $editStrapMaterialId ?? 'new' }}" class="modal fade"
+        id="editStrapMaterialModal" tabindex="-1" aria-labelledby="editStrapMaterialModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -108,7 +111,8 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="editStrapMaterialName" class="form-label">Strap Material Name</label>
-                            <input type="text" class="form-control" id="editStrapMaterialName" wire:model="editStrapMaterialName">
+                            <input type="text" class="form-control" id="editStrapMaterialName"
+                                wire:model="editStrapMaterialName">
                             @error('editStrapMaterialName')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
@@ -134,7 +138,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="updateStrapMaterial({{$editStrapMaterialId}})">Update Strap Material</button>
+                    <button type="button" class="btn btn-primary"
+                        wire:click="updateStrapMaterial({{ $editStrapMaterialId }})">Update Strap Material</button>
                 </div>
             </div>
         </div>
@@ -162,6 +167,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('edit-strap-material', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editStrapMaterialModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush

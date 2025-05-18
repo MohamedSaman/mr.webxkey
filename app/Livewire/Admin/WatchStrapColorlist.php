@@ -49,7 +49,8 @@ class WatchStrapColorlist extends Component
         $this->editStrapColorName = $strapColor->strap_color_name;
         $this->editStrapColorId = $strapColor->id;
         
-        $this->js("$('#editStrapColorModal').modal('show')");
+        // $this->js("$('#editStrapColorModal').modal('show')");
+        $this->dispatch("edit-strap-color");
     }
 
     public function updateStrapColor($id){

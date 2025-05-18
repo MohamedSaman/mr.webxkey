@@ -58,7 +58,8 @@ class AddWatchColor extends Component
         $this->editColorCode = $color->hex_code;
         $this->editColorId = $color->id;
         
-        $this->js("$('#editColorModal').modal('show')");
+        $this->dispatch('open-edit-modal');
+        // $this->js("$('#editColorModal').modal('show')");
     }
 
     public function updateColor($id){

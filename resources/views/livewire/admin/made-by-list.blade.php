@@ -27,10 +27,11 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-primary me-2"
                                             wire:click="editCountry({{ $country->id }})">
-                                            <i class="bi bi-pencil-square"></i> Edit
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
                                             <button class="btn btn-sm btn-danger"
                                                 wire:click="confirmDelete({{ $country->id }})">
-                                                <i class="bi bi-trash"></i> Delete
+                                                <i class="bi bi-trash"></i>
                                             </button>
                                     </td>
                                 </tr>
@@ -77,7 +78,7 @@
         {{-- End Create Country Model --}}
     </div>
     {{-- Edit Country Model --}}
-    <div wire:ignore.self  class="modal fade" id="editCountryModal" tabindex="-1" aria-labelledby="editCountryModalLabel"
+    <div wire:ignore.self wire:key="edit-modal-{{ $editCountryId ?? 'new' }}"  class="modal fade" id="editCountryModal" tabindex="-1" aria-labelledby="editCountryModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -127,6 +128,14 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        window.addEventListener('edit-country-modal', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editCountryModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
         });
     </script>
 @endpush

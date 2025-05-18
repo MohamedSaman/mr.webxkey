@@ -55,7 +55,8 @@ class MadeByList extends Component
         $this->editCountryName = $country->country_name;
         $this->editCountryId = $country->id;
         
-        $this->js("$('#editCountryModal').modal('show')");
+        // $this->js("$('#editCountryModal').modal('show')");
+        $this->dispatch('edit-country-modal');
     }
 
     public function updateCountry($id){

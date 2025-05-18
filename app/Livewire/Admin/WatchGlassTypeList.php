@@ -49,7 +49,8 @@ class WatchGlassTypeList extends Component
         $this->editGlassTypeName = $glassType->glass_type_name;
         $this->editGlassTypeId = $glassType->id;
         
-        $this->js("$('#editGlassTypeModal').modal('show')");
+        // $this->js("$('#editGlassTypeModal').modal('show')");
+        $this->dispatch('edit-glass-type');
     }
     public function updateGlassType($id){
         $this->validate([
