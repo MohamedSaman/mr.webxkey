@@ -84,6 +84,10 @@
                 padding: 1.5rem;
             }
 
+            .chart-scroll-container {
+                overflow-x: auto;
+            }
+
             .recent-sales-card {
                 box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
                 border-radius: 0.5rem;
@@ -113,34 +117,25 @@
             .widget-container {
                 background-color: #fff;
                 border-radius: 8px;
-                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-                padding: 20px;
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+                padding: 1.5rem;
                 margin-bottom: 20px;
                 height: 100%;
-                width: auto;
+                width: 100%;
                 margin-left: 0;
             }
 
             .widget-header {
-                margin-bottom: 15px;
+                margin-bottom: 20px;
             }
 
             .widget-header h6 {
-                font-size: 1.25rem;
                 margin-bottom: 5px;
-                font-weight: 500;
-                color: #212529;
-            }
-
-            .widget-header p {
-                font-size: 0.875rem;
-                color: #6c757d;
-                margin-bottom: 0;
+                font-weight: 600;
             }
 
             .item-row {
                 display: flex;
-                align-items: center;
                 margin-bottom: 10px;
             }
 
@@ -149,24 +144,14 @@
                 margin-right: 10px;
             }
 
-            .item-details h6 {
-                font-size: 1rem;
-                margin-bottom: 3px;
-                color: #212529;
-            }
-
-            .item-details p {
-                font-size: 0.875rem;
-                color: #6c757d;
-                margin-bottom: 0;
-            }
-
             .status-badge {
-                padding: 0.25rem 0.5rem;
-                border-radius: 5px;
-                font-size: 0.8rem;
-                font-weight: bold;
-                white-space: nowrap;
+                text-align: center;
+                min-width: 80px;
+                font-size: 0.7rem;
+                border-radius: 4px;
+                padding: 0.2rem 0.5rem;
+                margin-left: auto;
+                margin-right: 0.5rem;
             }
 
             .in-stock {
@@ -185,33 +170,35 @@
             }
 
             .progress {
-                height: 0.5rem;
-                margin-top: 5px;
+                height: 8px !important;
+                margin-bottom: 0.5rem;
                 background-color: #e9ecef;
                 border-radius: 0.25rem;
                 overflow: hidden;
             }
 
             .progress-bar {
+                height: 100%;
                 background-color: #007bff;
                 /* Default progress bar color */
-                height: 0.5rem;
             }
 
             .staff-info {
                 display: flex;
                 align-items: center;
                 margin-bottom: 15px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #eee;
             }
 
             .staff-status {
-                margin-right: 10px;
+                margin-right: 15px;
             }
 
             .staff-status-badge {
-                padding: 0.25rem 0.5rem;
+                padding: 6px 10px;
                 border-radius: 5px;
-                font-size: 0.8rem;
+                font-size: 0.75rem;
                 font-weight: bold;
                 white-space: nowrap;
             }
@@ -236,9 +223,7 @@
             }
 
             .staff-details h6 {
-                font-size: 1rem;
-                margin-bottom: 3px;
-                color: #212529;
+                margin-bottom: 5px;
             }
 
             .staff-details p {
@@ -252,20 +237,79 @@
             }
 
             .attendance-icon {
-                margin-left: auto;
-                font-size: 1.5rem;
-                color: #198754;
-                /* Success green */
+                margin-left: 10px;
+                color: #0f5132;
+                font-size: 1.2rem;
             }
 
             .late-icon {
-                color: #ffc107;
-                /* Warning yellow  */
+                color: #664d03;
             }
 
             .absent-icon {
-                color: #dc3545;
-                /* Danger red  */
+                color: #842029;
+            }
+
+            .avatar-circle {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 16px;
+            }
+
+            .customer-card {
+                transition: all 0.2s ease;
+            }
+
+            .customer-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            }
+
+            /* Additional styles to match admin dashboard */
+            .widget-header {
+                margin-bottom: 15px;
+            }
+
+            .widget-header h6 {
+                font-size: 1.25rem;
+                margin-bottom: 5px;
+                font-weight: 500;
+                color: #212529;
+            }
+
+            .widget-header p {
+                font-size: 0.875rem;
+                color: #6c757d;
+                margin-bottom: 0;
+            }
+
+            .staff-avatar {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+            }
+
+            .staff-card {
+                transition: all 0.2s ease;
+            }
+
+            .staff-card:hover {
+                transform: translateY(-2px);
+            }
+
+            /* Ensure proper progress bar display */
+            .inventory-container,
+            .staff-sales-container {
+                max-height: 380px;
+                overflow-y: auto;
+                padding-right: 5px;
             }
         </style>
     @endpush
@@ -282,53 +326,180 @@
     <div id="overview" class="tab-content active">
         <!-- Stats Cards Row -->
         <div class="row mb-4">
+            <!-- Total Revenue Card -->
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value">$45,231.89</div>
-                    <div class="stat-change">+20.1% from last month</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-value">${{ number_format($totalRevenue, 2) }}</div>
+                    <div class="stat-info mt-1">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Revenue</small>
+                            <small>{{ $revenuePercentage }}% of total sales</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                style="width: {{ $revenuePercentage }}%;" aria-valuenow="{{ $revenuePercentage }}"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">${{ number_format($totalRevenue) }} received of
+                                ${{ number_format($totalRevenue + $totalDueAmount) }} total sales value</small>
+                        </div>
+                    </div>
+
+                    <!-- Fully Paid Invoices Information -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i> Fully
+                                Paid Invoices</small>
+                            <span class="badge bg-success">{{ $fullPaidCount }}</span>
+                        </div>
+                        <small class="d-block text-end text-success">${{ number_format($fullPaidAmount, 2) }}</small>
+                    </div>
                 </div>
             </div>
+
+            <!-- Total Due Amount Card - Fixed Font Size -->
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Inventory Items</div>
-                    <div class="stat-value">+120</div>
-                    <div class="stat-change">+10 in stock</div>
-                    <div class="stat-change-alert">+20 out of stock</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Total Due Amount</div>
+                    </div>
+                    <div class="stat-value">${{ number_format($totalDueAmount, 2) }}</div>
+                    <div class="stat-info mt-1">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Due Amount</small>
+                            <small>{{ $duePercentage }}% of total sales</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" role="progressbar"
+                                style="width: {{ $duePercentage }}%;" aria-valuenow="{{ $duePercentage }}"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">${{ number_format($totalDueAmount) }} due of
+                                ${{ number_format($totalDueAmount + $totalRevenue) }} total sales value</small>
+                        </div>
+                    </div>
+
+                    <!-- Partial Payment Info -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-clock-fill text-danger me-1"></i> Partially Paid
+                                Invoices</small>
+                            <span class="badge bg-danger">{{ $partialPaidCount }}</span>
+                        </div>
+                        <small class="d-block text-end text-danger">${{ number_format($totalDueAmount, 2) }}</small>
+                    </div>
                 </div>
             </div>
+
+            <!-- Inventory Status Card -->
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Active Staff</div>
-                    <div class="stat-value">24</div>
-                    <div class="stat-label">16 currently on duty</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Inventory Status</div>
+                    </div>
+                    <div class="stat-value">{{ number_format($totalInventory) }} <span
+                            class="fs-6 text-muted">units</span></div>
+
+                    <!-- Sales Progress -->
+                    <div class="stat-info mt-1">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Sold Stock</small>
+                            <small>{{ $soldPercentage }}% of assigned stock</small>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar"
+                                style="width: {{ $soldPercentage }}%;" aria-valuenow="{{ $soldPercentage }}"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">{{ number_format($soldInventory) }} sold of
+                                {{ number_format($totalInventory) }} assigned</small>
+                        </div>
+                    </div>
+
+                    <!-- Available Stock Info -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-box-seam-fill text-primary me-1"></i> Available
+                                Stock</small>
+                            <span class="badge bg-primary">{{ $totalInventory - $soldInventory }}</span>
+                        </div>
+                        <small class="d-block text-end text-primary">
+                            ${{ number_format(($totalInventory - $soldInventory) * 15000, 2) }}
+                        </small>
+                    </div>
                 </div>
             </div>
+
+            <!-- Customer Status Card - Fixed Progress Bar Gap & Count Logic -->
             <div class="col-md-3 mb-3">
                 <div class="stat-card">
-                    <div class="stat-label">Active Sales</div>
-                    <div class="stat-value">+12.5%</div>
-                    <div class="stat-change">+7% from last week</div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="stat-label">Customer Status</div>
+                    </div>
+                    <div class="stat-value">{{ $totalCustomers }} <span
+                            class="fs-6 text-muted">{{ Str::plural('customer', $totalCustomers) }}</span></div>
+
+                    <!-- Customer Types - Fixed Spacing & Count Logic -->
+                    <div class="stat-info mt-1">
+                        @foreach ($customerTypes as $type => $count)
+                            <div class="d-flex justify-content-between mb-1">
+                                <small>{{ ucfirst($type) }} {{ Str::plural('Customer', $count) }}</small>
+                                <small>{{ round(($count / $totalCustomers) * 100) }}% of total</small>
+                            </div>
+                            <div class="progress mb-1">
+                                <div class="progress-bar {{ $type == 'wholesale' ? 'bg-info' : 'bg-success' }}"
+                                    role="progressbar" style="width: {{ round(($count / $totalCustomers) * 100) }}%;"
+                                    aria-valuenow="{{ round(($count / $totalCustomers) * 100) }}" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+                            </div>
+                            <small class="d-block text-muted mb-2">{{ $count }} {{ ucfirst($type) }}
+                                {{ Str::plural('customer', $count) }}</small>
+                        @endforeach
+                    </div>
+
+                    <!-- Customer Info -->
+                    <div class="stat-info mt-3 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="bi bi-person-check-fill text-info me-1"></i> Active
+                                Customers</small>
+                            <span class="badge bg-info">{{ $totalCustomers }}</span>
+                        </div>
+                        <small class="d-block text-end text-info">
+                            ${{ number_format($recentSales->sum('total_amount'), 2) }}
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Chart Section -->
-        <div class="row">
+        <div class="row ">
             <div class="col-md-8">
                 <div class="chart-card">
                     <div class="chart-header d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-1">Sales Overview</h6>
-                            <p class="text-muted mb-0 small">Compare sales performance over the last 30 days</p>
+                            <h6 class="mb-1">Brand-wise Sales</h6>
+                            <p class="text-muted mb-0 small">Your sales performance by watch brands</p>
                         </div>
-                        <select class="form-select form-select-sm w-auto">
-                            <option selected>2023</option>
-                            <option value="2022">2022</option>
-                        </select>
+                        <div>
+                            {{-- <select class="form-select form-select-sm w-auto" id="chart-time-range">
+                                <option selected value="all">All Time</option>
+                                <option value="year">This Year</option>
+                                <option value="month">This Month</option>
+                            </select> --}}
+                        </div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="salesChart"></canvas>
+                    <!-- Add scrollable wrapper for the chart -->
+                    <div class="chart-scroll-container">
+                        <div class="chart-container" style="min-width: {{ count($brandSales) * 60 }}px;">
+                            <canvas id="salesChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -338,206 +509,206 @@
                 <div class="recent-sales-card">
                     <div class="card-body">
                         <div class="p-2">
-                            <h6 class="card-title ">Recent Sales</h6>
-                            <p class="card-subtitle text-muted small mb-3">Latest transactions processed in the system
-                            </p>
+                            <h6 class="card-title">Recent Sales</h6>
+                            <p class="card-subtitle text-muted small mb-3">Your latest customer transactions</p>
                         </div>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">JD</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">John Doe</h6>
-                                    <p class="text-muted small mb-0">john.doe@example.com</p>
-                                </div>
-                                <div class="amount">+$1,999.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">SD</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Sarah Davis</h6>
-                                    <p class="text-muted small mb-0">sarah.davis@example.com</p>
-                                </div>
-                                <div class="amount">+$39.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">RK</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Robert Kim</h6>
-                                    <p class="text-muted small mb-0">robert.kim@example.com</p>
-                                </div>
-                                <div class="amount">+$299.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">LM</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Lisa Martinez</h6>
-                                    <p class="text-muted small mb-0">lisa.martinez@example.com</p>
-                                </div>
-                                <div class="amount">+$99.00</div>
-                            </li>
-                            <li class="list-group-item d-flex align-items-center">
-                                <div class="avatar">AT</div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">Alex Thompson</h6>
-                                    <p class="text-muted small mb-0">alex.thompson@example.com</p>
-                                </div>
-                                <div class="amount">+$2,499.00</div>
-                            </li>
+                            @forelse($recentSales as $sale)
+                                <li class="list-group-item d-flex align-items-center">
+                                    <div class="avatar">
+                                        {{ strtoupper(substr($sale->name, 0, 1)) }}{{ strtoupper(substr(strpos($sale->name, ' ') !== false ? substr($sale->name, strpos($sale->name, ' ') + 1, 1) : '', 0, 1)) }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ $sale->name }}</h6>
+                                        <p class="text-muted small mb-0">{{ $sale->email }}</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="amount">+${{ number_format($sale->total_amount, 2) }}</div>
+                                        @if ($sale->due_amount > 0)
+                                            <div class="text-danger small fw-bold">
+                                                ${{ number_format($sale->due_amount, 2) }}</div>
+                                        @else
+                                            <span class="badge bg-success">Paid</span>
+                                        @endif
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="list-group-item text-center py-4">
+                                    <i class="bi bi-receipt text-muted d-block mb-2" style="font-size: 1.5rem;"></i>
+                                    <p class="text-muted mb-0">No sales recorded yet</p>
+                                </li>
+                            @endforelse
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Inventory and staff section -->
+
+        <!-- Inventory Status Widget Row -->
         <div class="container-fluid mt-4 p-0">
-            <div class="row">
-                <div class="col-md-6">
+            <div class="row ">
+                <!-- Watch Inventory Status -->
+                <div class="col-md-5">
                     <div class="widget-container">
                         <div class="widget-header">
-                            <h6>Inventory Status</h6>
-                            <p class="text-muted small">Current stock levels and alerts</p>
-                        </div>
-                        <div class="item-row">
-                            <div class="item-details">
-                                <h6>Premium T-Shirt</h6>
-                                <p class="text-muted small">SKU: TS-001</p>
-                            </div>
-                            <span class="status-badge in-stock">In Stock</span>
-                            <div class="ms-2 text-muted small">245/300</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 82%;"></div>
+                            <h6>Watch Inventory Status</h6>
+                            <p class="text-muted small mb-0">Your current watch stock levels</p>
                         </div>
 
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Designer Jeans</h6>
-                                <p class="text-muted small">SKU: DJ-002</p>
-                            </div>
-                            <span class="status-badge low-stock">Low Stock</span>
-                            <div class="ms-2 text-muted small">12/100</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-warning" style="width: 12%;"></div>
-                        </div>
+                        <div class="inventory-container">
+                            @forelse($productInventory as $item)
+                                @php
+                                    $stockPercentage =
+                                        $item->total_quantity > 0
+                                            ? round(($item->available_quantity / $item->total_quantity) * 100, 1)
+                                            : 0;
 
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Leather Wallet</h6>
-                                <p class="text-muted small">SKU: LW-003</p>
-                            </div>
-                            <span class="status-badge in-stock">In Stock</span>
-                            <div class="ms-2 text-muted small">78/150</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 52%;"></div>
-                        </div>
+                                    // Determine stock status and colors
+                                    if ($stockPercentage == 0) {
+                                        $statusBadge = 'out-of-stock';
+                                        $statusText = 'Out of Stock';
+                                        $progressBarColor = 'bg-danger';
+                                    } elseif ($stockPercentage <= 20) {
+                                        $statusBadge = 'low-stock';
+                                        $statusText = 'Low Stock';
+                                        $progressBarColor = 'bg-warning';
+                                    } else {
+                                        $statusBadge = 'in-stock';
+                                        $statusText = 'In Stock';
+                                        $progressBarColor = '';
+                                    }
+                                @endphp
 
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Wireless Headphones</h6>
-                                <p class="text-muted small">SKU: WH-004</p>
-                            </div>
-                            <span class="status-badge out-of-stock">Out of Stock</span>
-                            <div class="ms-2 text-muted small">0/50</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-danger" style="width: 0%;"></div>
-                        </div>
+                                <div class="d-flex align-items-center mt-3">
+                                    @if ($item->image)
+                                        <div class="me-2" style="width: 40px; height: 40px;">
+                                            <img src="{{ asset('storage/' . $item->image) }}"
+                                                alt="{{ $item->name }}" class="img-fluid rounded"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <h6 class="mb-0">{{ $item->brand }} {{ $item->name }}
+                                            {{ $item->model }}</h6>
+                                        <p class="text-muted small mb-0">SKU: {{ $item->code }}</p>
+                                    </div>
+                                    <span class="status-badge {{ $statusBadge }}">{{ $statusText }}</span>
+                                    <div class="ms-2 text-muted small">
+                                        {{ $item->available_quantity }}/{{ $item->total_quantity }}</div>
+                                </div>
 
-                        <div class="item-row mt-3">
-                            <div class="item-details">
-                                <h6>Smart Watch</h6>
-                                <p class="text-muted small">SKU: SW-005</p>
-                            </div>
-                            <span class="status-badge in-stock">In Stock</span>
-                            <div class="ms-2 text-muted small">34/75</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: 45.33%;"></div>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" style="width: {{ $stockPercentage }}%;"></div>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div class="text-muted small">Available value:
+                                        ${{ number_format($item->available_value, 2) }}</div>
+                                    <div class="text-muted small">{{ $stockPercentage }}% remaining</div>
+                                </div>
+
+                                @if (!$loop->last)
+                                    <hr class="my-2">
+                                @endif
+                            @empty
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i> No watch inventory has been assigned to you
+                                    yet.
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="widget-container">
-                        <div class="widget-header">
-                            <h6>Staff Attendance</h6>
-                            <p class="text-muted small">Today's attendance and location tracking</p>
-                        </div>
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge present">Present</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>Emma Wilson</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Sales Manager</p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 08:30 AM <i
-                                        class="bi bi-geo-alt-fill"></i> Main Store</p>
-                            </div>
-                            <div class="attendance-icon"><i class="bi bi-check-circle-fill"></i></div>
-                        </div>
 
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge present">Present</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>Michael Brown</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Sales Representative
+                <!-- Customer Payment Dashboard -->
+                <div class="col-md-7">
+                    <div class="widget-container p-3">
+                        <div class="widget-header mb-3 d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="fw-bold">Customer Payment Dashboard</h6>
+                                <p class="text-muted small mb-0">Sales performance and collection status by customer
                                 </p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 08:45 AM <i
-                                        class="bi bi-geo-alt-fill"></i> North Branch</p>
-                            </div>
-                            <div class="attendance-icon"><i class="bi bi-check-circle-fill"></i></div>
-                        </div>
-
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge late">Late</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>Sophia Garcia</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Inventory Specialist
-                                </p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 09:15 AM <i
-                                        class="bi bi-geo-alt-fill"></i> Warehouse</p>
-                            </div>
-                            <div class="attendance-icon late-icon"><i class="bi bi-exclamation-triangle-fill"></i>
                             </div>
                         </div>
 
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge absent">Absent</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>James Johnson</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Sales Representative
-                                </p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> N/A <i
-                                        class="bi bi-geo-alt-fill"></i> N/A</p>
-                            </div>
-                            <div class="attendance-icon absent-icon"><i class="bi bi-x-circle-fill"></i></div>
-                        </div>
+                        <!-- Make content scrollable if many customers exist -->
+                        <div class="staff-sales-container">
+                            @forelse($customerPaymentStats ?? [] as $customer)
+                                <div
+                                    class="staff-card p-3 mb-3 bg-light rounded shadow-sm border-start border-4 {{ $loop->even ? 'border-primary' : 'border-info' }}">
+                                    <div class="d-flex align-items-start mb-2">
+                                        <div class="staff-avatar me-2">
+                                            <span
+                                                class="badge {{ $loop->even ? 'bg-primary' : 'bg-info' }} bg-opacity-25 text-white fw-medium py-2 px-2">
+                                                {{ strtoupper(substr($customer->name, 0, 1)) }}
+                                            </span>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-0">{{ $customer->name }}</h6>
+                                        </div>
+                                    </div>
 
-                        <div class="staff-info">
-                            <div class="staff-status">
-                                <span class="staff-status-badge present">Present</span>
-                            </div>
-                            <div class="staff-details">
-                                <h6>Olivia Lee</h6>
-                                <p class="text-muted small"><i class="bi bi-briefcase-fill"></i> Customer Service</p>
-                                <p class="text-muted small"><i class="bi bi-clock-fill"></i> 08:55 AM <i
-                                        class="bi bi-geo-alt-fill"></i> Main Store</p>
-                            </div>
-                            <div class="attendance-icon"><i class="bi bi-check-circle-fill"></i></div>
+                                    <!-- Sales Progress Section -->
+                                    <div class="sales-progress mb-2">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Sales Progress</small>
+                                            <div class="d-flex align-items-center">
+                                                <small
+                                                    class="me-2 text-success fw-bold">${{ number_format($customer->collected_amount, 2) }}</small>
+                                                <small class="text-muted">/
+                                                    ${{ number_format($customer->total_sales, 2) }}</small>
+                                                <span class="badge bg-success ms-2">{{ round(($customer->collected_amount / $customer->total_sales) * 100) }}%</span>
+                                            </div>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-success" 
+                                                 role="progressbar"
+                                                 style="width: {{ round(($customer->collected_amount / $customer->total_sales) * 100) }}%"
+                                                 aria-valuenow="{{ round(($customer->collected_amount / $customer->total_sales) * 100) }}"
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Payment Collection Section -->
+                                    <div class="payment-progress">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Payment Collection</small>
+                                            <div class="d-flex align-items-center">
+                                                <small
+                                                    class="me-2 text-success fw-bold">${{ number_format($customer->collected_amount, 2) }}</small>
+                                                @if ($customer->due_amount > 0)
+                                                    <small class="text-danger fw-bold">-
+                                                        ${{ number_format($customer->due_amount, 2) }} due</small>
+                                                    <span
+                                                        class="badge bg-danger ms-2">{{ 100 - round(($customer->collected_amount / $customer->total_sales) * 100) }}%</span>
+                                                @else
+                                                    <span class="badge bg-success ms-2">Paid in Full</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar {{ $customer->due_amount > 0 ? 'bg-danger' : 'bg-success' }}"
+                                                role="progressbar"
+                                                style="width: {{ round(($customer->collected_amount / $customer->total_sales) * 100) }}%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i> No customer payment data available yet.
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
+
+    </div>
 
     <!-- Analytics Content -->
     <div id="analytics" class="tab-content">
@@ -560,55 +731,20 @@
         </div>
     </div>
 </div>
-{{-- @push('scripts') --}}
 
 <script>
-
-    // Tab Switching Functionality
+    // Chart configuration
     document.addEventListener('DOMContentLoaded', function() {
-        const tabs = document.querySelectorAll('.content-tab');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs
-                tabs.forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                this.classList.add('active');
-                
-                // Hide all tab contents
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                
-                // Show the selected tab content
-                const tabId = this.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // Chart Initialization
         const ctx = document.getElementById('salesChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
+
+        const chart = new Chart(ctx, {
+            type: 'bar',
             data: {
-                labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                labels: @json(collect($brandSales)->pluck('brand')),
                 datasets: [{
-                    label: 'Black Friday',
-                    tension: 0.4,
-                    borderWidth: 3,
-                    borderColor: '#00ab55',
-                    backgroundColor: 'transparent',
-                    data: [20, 60, 20, 50, 90, 220, 440, 380, 500],
-                    pointRadius: 0
-                }, {
-                    label: 'Autumn Sale',
-                    tension: 0.4,
-                    borderWidth: 3,
-                    borderColor: '#212b36',
-                    backgroundColor: 'transparent',
-                    data: [30, 90, 40, 140, 290, 290, 240, 270, 230],
-                    pointRadius: 0
+                    label: 'Sales by Brand',
+                    backgroundColor: '#0d6efd',
+                    data: @json(collect($brandSales)->pluck('total_sales'))
                 }]
             },
             options: {
@@ -619,47 +755,48 @@
                         display: false
                     },
                     tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: 'rgba(0,0,0,0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        borderColor: '#fff',
-                        borderWidth: 1
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + new Intl.NumberFormat().format(context.raw);
+                            }
+                        }
                     }
                 },
                 scales: {
                     y: {
+                        beginAtZero: true,
                         grid: {
-                            borderDash: [2],
-                            color: '#dee2e6',
-                            drawBorder: false
+                            color: 'rgba(0, 0, 0, 0.1)'
                         },
                         ticks: {
-                            beginAtZero: true,
-                            padding: 10,
-                            font: {
-                                size: 11,
-                                family: 'Public Sans'
+                            callback: function(value) {
+                                return '$' + new Intl.NumberFormat().format(value);
                             }
                         }
                     },
                     x: {
                         grid: {
                             display: false
-                        },
-                        ticks: {
-                            padding: 10,
-                            font: {
-                                size: 11,
-                                family: 'Public Sans'
-                            }
                         }
                     }
                 }
             }
         });
+
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.content-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
     });
 </script>
-{{-- @endpush --}}
