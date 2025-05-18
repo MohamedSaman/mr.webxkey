@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sale extends Model
 {
@@ -28,14 +29,19 @@ class Sale extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(SaleItem::class);
+    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function items()
+    public function user() 
     {
-        return $this->hasMany(SaleItem::class);
+        return $this->belongsTo(User::class);
     }
     
     // Generate unique invoice numbers
