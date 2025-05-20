@@ -163,7 +163,6 @@
         
         <!-- Centered login form overlay -->
         <div class="login-form-overlay">
-            <h1>NEW WATCH COMPANY ( MR TRADING )</h1>
             <!-- User icon -->
             <div class="user-icon-container">
                 <i class="bi bi-person-circle"></i>
@@ -214,7 +213,7 @@
                     <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
                     <a href="#" class="social-icon"><i class="bi bi-google"></i></a>
                     <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://www.linkedin.com/company/webxkey" class="social-icon"><i class="bi bi-linkedin"></i></a>
                 </div>
             </div>
         </div>
