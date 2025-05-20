@@ -37,6 +37,6 @@ class CustomLogin extends Component
             }
         }
 
-        $this->addError('email', trans('auth.failed'));
+        return redirect()->route('login');
     }
 }

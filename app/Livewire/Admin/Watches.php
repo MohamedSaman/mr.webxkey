@@ -419,6 +419,11 @@ class Watches extends Component
         }
     }
 
+    public function exportToCsv()
+    {
+        return redirect()->route('watches.export');
+    }
+
     private function validateCretaeWatch()
     {
         // Organize validation rules by categories for better readability

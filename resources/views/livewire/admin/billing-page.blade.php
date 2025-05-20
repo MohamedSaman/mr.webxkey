@@ -51,7 +51,7 @@
                                                                 {{ $result->name ?? 'Unnamed Watch' }}</h6>
                                                             <div>
                                                                 <span
-                                                                    class="badge bg-success">${{ $result->selling_price ?? '-' }}</span>
+                                                                    class="badge bg-success">Rs.{{ $result->selling_price ?? '-' }}</span>
                                                                 <span class="badge bg-info">Stock:
                                                                     {{ $result->available_stock ?? '-' }}</span>
                                                             </div>
@@ -134,7 +134,7 @@
                                             </td>
                                             <td>
                                                 <p class="text-xs font-weight-bold mb-0">
-                                                    ${{ number_format($item['discountPrice'] ?: $item['price'], 2) }}
+                                                    Rs.{{ number_format($item['discountPrice'] ?: $item['price'], 2) }}
                                                 </p>
                                             </td>
                                             <td>
@@ -162,7 +162,7 @@
                                             </td>
                                             <td>
                                                 <p class="text-xs font-weight-bold mb-0">
-                                                    ${{ number_format(($item['discountPrice'] ?: $item['price']) * $quantities[$id] - ($discounts[$id] ?? 0) * $quantities[$id], 2) }}
+                                                    Rs.{{ number_format(($item['discountPrice'] ?: $item['price']) * $quantities[$id] - ($discounts[$id] ?? 0) * $quantities[$id], 2) }}
                                                 </p>
                                             </td>
                                             <td>
@@ -222,16 +222,16 @@
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between mb-2">
                                                 <span>Subtotal:</span>
-                                                <span>${{ number_format($subtotal, 2) }}</span>
+                                                <span>Rs.{{ number_format($subtotal, 2) }}</span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-2">
                                                 <span>Total Discount:</span>
-                                                <span>${{ number_format($totalDiscount, 2) }}</span>
+                                                <span>Rs.{{ number_format($totalDiscount, 2) }}</span>
                                             </div>
                                             <hr>
                                             <div class="d-flex justify-content-between">
                                                 <span class="fw-bold">Grand Total:</span>
-                                                <span class="fw-bold">${{ number_format($grandTotal, 2) }}</span>
+                                                <span class="fw-bold">Rs.{{ number_format($grandTotal, 2) }}</span>
                                             </div>
 
                                             <div class="d-flex mt-4">

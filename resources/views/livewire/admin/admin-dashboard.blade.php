@@ -345,7 +345,7 @@
                             <i class="bi bi-arrow-right"></i>
                         </a> --}}
                     </div>
-                    <div class="stat-value">${{ number_format($totalRevenue, 2) }}</div>
+                    <div class="stat-value">Rs.{{ number_format($totalRevenue, 2) }}</div>
                     <div class="stat-info mt-1">
                         <div class="d-flex justify-content-between mb-1">
                             <small>Revenue</small>
@@ -356,7 +356,7 @@
                                  aria-valuenow="{{ $revenuePercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <small class="text-muted">${{ number_format($totalRevenue) }} received of ${{ number_format($totalRevenue+$totalDueAmount) }} total sales value</small>
+                            <small class="text-muted">Rs.{{ number_format($totalRevenue) }} received of Rs.{{ number_format($totalRevenue+$totalDueAmount) }} total sales value</small>
                         </div>
                     </div>
                     
@@ -366,7 +366,7 @@
                             <small class="text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i> Fully Paid Invoices</small>
                             <span class="badge bg-success">{{ $fullPaidCount }}</span>
                         </div>
-                        <small class="d-block text-end text-success">${{ number_format($fullPaidAmount, 2) }}</small>
+                        <small class="d-block text-end text-success">Rs.{{ number_format($fullPaidAmount, 2) }}</small>
                     </div>
                 </div>
             </div>
@@ -378,7 +378,7 @@
                             <i class="bi bi-arrow-right"></i>
                         </a> --}}
                     </div>
-                    <div class="stat-value">${{ number_format($totalDueAmount, 2) }}</div>
+                    <div class="stat-value">Rs.{{ number_format($totalDueAmount, 2) }}</div>
                     <div class="stat-change-alert">
                         <div class="d-flex justify-content-between mb-1">
                             <small>Due Amount</small>
@@ -389,7 +389,7 @@
                                  aria-valuenow="{{ $duePercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <small class="text-muted">${{ number_format($totalDueAmount) }} due of ${{ number_format($totalDueAmount+$totalRevenue) }} total sales value</small>
+                            <small class="text-muted">Rs.{{ number_format($totalDueAmount) }} due of Rs.{{ number_format($totalDueAmount+$totalRevenue) }} total sales value</small>
                         </div>
                     </div>
                     
@@ -399,7 +399,7 @@
                             <small class="text-muted"><i class="bi bi-clock-fill text-danger me-1"></i> Partially Paid Invoices</small>
                             <span class="badge bg-danger">{{ $partialPaidCount }}</span>
                         </div>
-                        <small class="d-block text-end text-danger">${{ number_format($totalDueAmount, 2) }}</small>
+                        <small class="d-block text-end text-danger">Rs.{{ number_format($totalDueAmount, 2) }}</small>
                     </div>
                 </div>
             </div>
@@ -436,7 +436,7 @@
                             <small class="text-muted"><i class="bi bi-exclamation-triangle-fill text-primary me-1"></i> Damaged Inventory</small>
                             <span class="badge bg-primary">{{ $damagedStock }}</span>
                         </div>
-                        <small class="d-block text-end text-primary">${{ number_format($damagedValue, 2) }}</small>
+                        <small class="d-block text-end text-primary">Rs.{{ number_format($damagedValue, 2) }}</small>
                     </div>
                 </div>
             </div>
@@ -473,7 +473,7 @@
                             <small class="text-muted"><i class="bi bi-person-check-fill text-info me-1"></i> Currently Assigned Stock</small>
                             <span class="badge bg-info">{{ $assignedStock }}</span>
                         </div>
-                        <small class="d-block text-end text-info">${{number_format($totalStaffSalesValue, 2)}}</small>
+                        <small class="d-block text-end text-info">Rs.{{number_format($totalStaffSalesValue, 2)}}</small>
                     </div>
                 </div>
             </div>
@@ -525,9 +525,9 @@
                                         <p class="text-muted small mb-0">{{ $sale->email }}</p>
                                     </div>
                                     <div class="amount">
-                                        +${{ number_format($sale->total_amount, 2) }}
+                                        +Rs.{{ number_format($sale->total_amount, 2) }}
                                         @if($sale->due_amount > 0)
-                                            <span class="d-block text-danger small text-end">${{ number_format($sale->due_amount, 2) }}</span>
+                                            <span class="d-block text-danger small text-end">Rs.{{ number_format($sale->due_amount, 2) }}</span>
                                         @else
                                             <span class="d-block badge bg-success mt-1 small">Paid</span>
                                         @endif
@@ -633,8 +633,8 @@
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <small class="text-muted">Sales Progress</small>
                                             <div class="d-flex align-items-center">
-                                                <small class="me-2 text-success fw-bold">${{ number_format($staff->sold_value, 2) }}</small>
-                                                <small class="text-muted">/ ${{ number_format($staff->assigned_value, 2) }}</small>
+                                                <small class="me-2 text-success fw-bold">Rs.{{ number_format($staff->sold_value, 2) }}</small>
+                                                <small class="text-muted">/ Rs.{{ number_format($staff->assigned_value, 2) }}</small>
                                                 <span class="badge bg-success ms-2">{{ $staff->sales_percentage }}%</span>
                                             </div>
                                         </div>
@@ -648,8 +648,8 @@
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <small class="text-muted">Payment Collection</small>
                                             <div class="d-flex align-items-center">
-                                                <small class="me-2 text-success fw-bold">${{ number_format($staff->collected_amount, 2) }}</small>
-                                                <small class="text-danger fw-bold">- ${{ number_format($staff->total_due, 2) }} due</small>
+                                                <small class="me-2 text-success fw-bold">Rs.{{ number_format($staff->collected_amount, 2) }}</small>
+                                                <small class="text-danger fw-bold">- Rs.{{ number_format($staff->total_due, 2) }} due</small>
                                                 <span class="badge {{ $staff->payment_percentage >= 80 ? 'bg-success' : 'bg-danger' }} ms-2">{{ $staff->payment_percentage }}%</span>
                                             </div>
                                         </div>

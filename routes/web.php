@@ -29,6 +29,8 @@ use App\Http\Controllers\ReceiptController;
 use App\Livewire\Admin\CustomerSaleDetails;
 use App\Livewire\Admin\WatchStrapColorlist;
 use App\Livewire\Staff\CustomerSaleManagement;
+use App\Http\Controllers\WatchesExportController;
+use App\Http\Controllers\StaffSaleExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,8 +80,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/staff-sale-details', StaffSaleDetails::class)->name('staff-sale-details');
         Route::get('/staff-due-details', StaffDueDetails::class)->name('staff-due-details');
         Route::get('/customer-sale-details', CustomerSaleDetails::class)->name('customer-sale-details');
+       
     });
 
+    Route::get('/watches/export', [WatchesExportController::class, 'export'])->name('watches.export')->middleware(['auth']);
+    Route::get('/staff-sales/export', [StaffSaleExportController::class, 'export'])
+    ->name('staff-sales.export')->middleware(['auth']);
     // Receipt download (accessible to authenticated users)
     Route::get('/receipts/{id}/download', [App\Http\Controllers\ReceiptController::class, 'download'])
         ->name('receipts.download')

@@ -84,6 +84,38 @@ class StaffSaleDetails extends Component
         return $summaryStats;
     }
     
+    public function exportToCsv()
+    {
+        return redirect()->route('staff-sales.export');
+    }
+    
+    public function printStaffDetails($staffId = null)
+    {
+        // If no staffId provided, use the currently selected staff
+        $staffId = $staffId ?? $this->staffId;
+        
+        if (!$staffId) {
+            return redirect()->back()->with('error', 'No staff selected for printing');
+        }
+        
+        // Get all the necessary data for printing
+        $staffDetails = DB::table('users')->where('id', $staffId)->first();
+        $summaryStats = $this->getSummaryStats($staffId);
+        $productDetails = StaffProduct::join('watch_details', 'staff_products.watch_id', '=', 'watch_details.id')
+            ->where('staff_products.staff_id', $staffId)
+            ->select(
+                'staff_products.*',
+                'watch_details.name as watch_name',
+                'watch_details.brand as watch_brand',
+                'watch_details.model as watch_model',
+                'watch_details.code as watch_code',
+                'watch_details.image as watch_image'
+            )
+            ->get();
+        
+        // Return a view optimized for printing
+        return view('admin.print.staff-details', compact('staffDetails', 'summaryStats', 'productDetails'));
+    }
     
     public function render()
     {

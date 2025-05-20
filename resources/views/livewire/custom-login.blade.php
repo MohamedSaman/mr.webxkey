@@ -168,7 +168,7 @@
                 <i class="bi bi-person-circle"></i>
             </div>
             
-            <form wire:submit.prevent="login">
+            <div>
                 <!-- Error messages -->
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -200,7 +200,7 @@
                 </div>
                 
                 <!-- Login button -->
-                <button type="submit" class="btn btn-primary login-btn">Login</button>
+                <button type="button" wire:click="login" class="btn btn-primary login-btn">Login</button>
                 
                 <!-- Divider with text -->
                 <div class="divider">
@@ -215,7 +215,7 @@
                     <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
                     <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
     

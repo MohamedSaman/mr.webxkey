@@ -96,9 +96,9 @@
                     <td>{{ $item->brand }} {{ $item->watch_name }}</td>
                     <td>{{ $item->watch_code }}</td>
                     <td>{{ $item->quantity }}</td>
-                    <td>${{ number_format($item->unit_price, 2) }}</td>
-                    <td>${{ number_format($item->discount, 2) }}</td>
-                    <td>${{ number_format($item->total, 2) }}</td>
+                    <td>Rs.{{ number_format($item->unit_price, 2) }}</td>
+                    <td>Rs.{{ number_format($item->discount, 2) }}</td>
+                    <td>Rs.{{ number_format($item->total, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -108,23 +108,23 @@
         <table>
             <tr>
                 <td>Subtotal:</td>
-                <td align="right">${{ number_format($sale->subtotal, 2) }}</td>
+                <td align="right">Rs.{{ number_format($sale->subtotal, 2) }}</td>
             </tr>
             <tr>
                 <td>Discount:</td>
-                <td align="right">${{ number_format($sale->discount_amount, 2) }}</td>
+                <td align="right">Rs.{{ number_format($sale->discount_amount, 2) }}</td>
             </tr>
             <tr class="total">
                 <td>Total:</td>
-                <td align="right">${{ number_format($sale->total_amount, 2) }}</td>
+                <td align="right">Rs.{{ number_format($sale->total_amount, 2) }}</td>
             </tr>
             <tr>
                 <td>Amount Paid:</td>
-                <td align="right">${{ number_format($sale->total_amount - $sale->due_amount, 2) }}</td>
+                <td align="right">Rs.{{ number_format($sale->total_amount - $sale->due_amount, 2) }}</td>
             </tr>
             <tr>
                 <td>Amount Due:</td>
-                <td align="right">${{ number_format($sale->due_amount, 2) }}</td>
+                <td align="right">Rs.{{ number_format($sale->due_amount, 2) }}</td>
             </tr>
         </table>
     </div>

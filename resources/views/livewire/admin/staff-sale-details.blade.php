@@ -1,7 +1,15 @@
 <div>
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">Staff Sales Details</h4>
+            <div>
+                <button onclick="printStaffSales()" class="btn btn-primary me-2">
+                    <i class="bi bi-printer me-1"></i> Print
+                </button>
+                <button wire:click="exportToCsv" class="btn btn-success">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -267,8 +275,10 @@
                     @endif
                 </div>
                 <div class="modal-footer">
+                    <button type="button" onclick="printStaffDetails()" class="btn btn-primary">
+                        <i class="bi bi-printer me-1"></i> Print Details
+                    </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    {{-- <button type="button" class="btn btn-primary">Save changes</button> --}}
                 </div>
             </div>
         </div>
@@ -280,7 +290,170 @@
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('salesDetails'));
                 modal.show();
-            }, 500); // 500ms delay before showing the modal
+            }, 500);
         });
+
+        // Improved print function with better isolation
+        function printStaffSales() {
+            // Store a reference to the original window styles
+            const originalStyles = document.head.innerHTML;
+            
+            // Create a new window for printing that's fully isolated
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            
+            // Get the table content
+            const tableContent = document.querySelector('.table-responsive').innerHTML;
+            
+            // Create print-friendly HTML with complete document structure
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Staff Sales Report</title>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+                        th { background-color: #f2f2f2; }
+                        .text-center { text-align: center; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                        .header h2 { margin-bottom: 5px; }
+                        .header p { margin-top: 0; color: #666; }
+                        .badge { padding: 3px 8px; border-radius: 4px; font-size: smaller; }
+                        .bg-primary { background-color: #0d6efd; color: white; }
+                        .bg-danger { background-color: #dc3545; color: white; }
+                        .bg-success { background-color: #198754; color: white; }
+                        .bg-warning { background-color: #ffc107; color: black; }
+                        .bg-info { background-color: #0dcaf0; color: white; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>Staff Sales Report</h2>
+                        <p>Generated on ${new Date().toLocaleString()}</p>
+                    </div>
+                    ${tableContent}
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="window.print();" style="padding: 8px 16px; background: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">Print Report</button>
+                        <button onclick="window.close();" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Close</button>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Write to the new window
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+            
+            // Wait for content to load before focusing
+            printWindow.onload = function() {
+                printWindow.focus();
+                // Let user initiate print from the new window
+                // This avoids the auto-print dialog that can cause style issues when canceled
+            };
+        }
+        
+        // Improved staff details print function
+        function printStaffDetails() {
+            // Create a new window for printing with complete isolation
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            
+            // Get staff info and product details
+            const staffInfo = document.querySelector('.modal-body .card-body').innerHTML;
+            const summaryStats = document.querySelectorAll('.modal-body .row.mb-4 .card');
+            const productsTable = document.querySelector('.modal-body .table-responsive').innerHTML;
+            const staffName = document.querySelector('#salesDetailsModalLabel').textContent.trim();
+            
+            // Create HTML for summary stats cards
+            let summaryHtml = '<div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap;">';
+            summaryStats.forEach(card => {
+                summaryHtml += '<div style="width: 48%; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">';
+                summaryHtml += '<div style="background-color: #f8f9fa; padding: 10px; border-bottom: 1px solid #ddd;">';
+                summaryHtml += card.querySelector('.card-header').textContent;
+                summaryHtml += '</div>';
+                summaryHtml += '<div style="padding: 15px;">';
+                summaryHtml += card.querySelector('.card-body').innerHTML;
+                summaryHtml += '</div>';
+                summaryHtml += '</div>';
+            });
+            summaryHtml += '</div>';
+            
+            // Create print-friendly HTML with self-contained CSS
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${staffName} - Sales Details</title>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; margin: 0; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+                        .staff-info { margin-bottom: 20px; }
+                        .row { display: flex; }
+                        .col-4 { width: 33.33%; }
+                        .text-center { text-align: center; }
+                        .border-end { border-right: 1px solid #eee; }
+                        .fw-bold { font-weight: bold; }
+                        .text-success { color: green; }
+                        .text-danger { color: red; }
+                        .text-muted { color: #6c757d; }
+                        .badge { padding: 3px 8px; border-radius: 4px; font-size: smaller; }
+                        .bg-success { background-color: #198754; color: white; }
+                        .bg-danger { background-color: #dc3545; color: white; }
+                        .bg-warning { background-color: #ffc107; color: black; }
+                        .bg-info { background-color: #0dcaf0; color: white; }
+                        .bg-light { background-color: #f8f9fa; color: black; }
+                        .bg-primary { background-color: #0d6efd; color: white; }
+                        img { max-width: 100%; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${staffName}</h1>
+                        <p>Sales Report - Generated on ${new Date().toLocaleString()}</p>
+                    </div>
+                    
+                    <div class="staff-info">
+                        <h3>Staff Information</h3>
+                        ${staffInfo}
+                    </div>
+                    
+                    <div class="summary-stats">
+                        <h3>Sales Summary</h3>
+                        ${summaryHtml}
+                    </div>
+                    
+                    <div class="products">
+                        <h3>Product Details</h3>
+                        ${productsTable}
+                    </div>
+                    
+                    <div class="no-print" style="text-align: center; margin-top: 30px;">
+                        <button onclick="window.print();" style="padding: 8px 16px; background: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">Print Report</button>
+                        <button onclick="window.close();" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Close</button>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Write to the new window
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+            
+            // Wait for images to load
+            printWindow.onload = function() {
+                printWindow.focus();
+                // Let the user manually print using the button
+            };
+        }
     </script>
 @endpush

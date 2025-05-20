@@ -118,6 +118,7 @@
             <div class="inventory-header">
                 <h2>Product Inventory</h2>
                 <div class="d-flex gap-3">
+
                     <div class="search-bar">
                         <div class="input-group">
                             <input type="text" class="form-control" id="product-search" wire:model.live ="search"
@@ -129,6 +130,9 @@
                     </div>
                     <button class="btn btn-primary add-product-btn" id="add-product-btn" wire:click="createWatch">
                         <i class="bi bi-plus-lg"></i> Add Product
+                    </button>
+                    <button wire:click="exportToCsv" class="btn btn-success">
+                        <i class="fas fa-file-csv"></i> Export to CSV
                     </button>
                 </div>
             </div>

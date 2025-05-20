@@ -256,7 +256,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <div class="stat-label">Total Sales</div>
-                            <div class="stat-value text-primary">${{ number_format($totals->total_sales ?? 0, 2) }}</div>
+                            <div class="stat-value text-primary">Rs.{{ number_format($totals->total_sales ?? 0, 2) }}</div>
                             <div class="text-muted small">From {{ $sales->total() }} transactions</div>
                         </div>
                         <div class="stat-icon bg-primary bg-opacity-10">
@@ -271,7 +271,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <div class="stat-label">Total Due</div>
-                            <div class="stat-value text-danger">${{ number_format($totals->total_due ?? 0, 2) }}</div>
+                            <div class="stat-value text-danger">Rs.{{ number_format($totals->total_due ?? 0, 2) }}</div>
                             <div class="text-muted small">
                                 {{ round(($totals->total_due/$totals->total_sales)*100, 1) }}% of total sales
                             </div>
@@ -385,10 +385,10 @@
                                     <div>{{ \Carbon\Carbon::parse($sale->created_at)->format('d M Y') }}</div>
                                     <div class="text-muted small">{{ \Carbon\Carbon::parse($sale->created_at)->format('h:i A') }}</div>
                                 </td>
-                                <td class="fw-semibold">${{ number_format($sale->total_amount, 2) }}</td>
-                                <td class="fw-semibold text-success">${{ number_format($sale->total_amount - $sale->due_amount, 2) }}</td>
+                                <td class="fw-semibold">Rs.{{ number_format($sale->total_amount, 2) }}</td>
+                                <td class="fw-semibold text-success">Rs.{{ number_format($sale->total_amount - $sale->due_amount, 2) }}</td>
                                 <td class="fw-semibold {{ $sale->due_amount > 0 ? 'text-danger' : 'text-muted' }}">
-                                    ${{ number_format($sale->due_amount, 2) }}
+                                    Rs.{{ number_format($sale->due_amount, 2) }}
                                 </td>
                                 <td>
                                     <span class="status-badge badge-{{ $sale->payment_status }}">
@@ -493,20 +493,20 @@
                                         <div class="col-md-6">
                                             <div class="mb-2">
                                                 <div class="field-label">Subtotal</div>
-                                                <div>${{ number_format($selectedSale->subtotal, 2) }}</div>
+                                                <div>Rs.{{ number_format($selectedSale->subtotal, 2) }}</div>
                                             </div>
                                             <div class="mb-2">
                                                 <div class="field-label">Discount</div>
-                                                <div>${{ number_format($selectedSale->discount_amount, 2) }}</div>
+                                                <div>Rs.{{ number_format($selectedSale->discount_amount, 2) }}</div>
                                             </div>
                                             <div class="mb-2">
                                                 <div class="field-label">Total Amount</div>
-                                                <div class="fw-bold">${{ number_format($selectedSale->total_amount, 2) }}</div>
+                                                <div class="fw-bold">Rs.{{ number_format($selectedSale->total_amount, 2) }}</div>
                                             </div>
                                             <div class="mb-0">
                                                 <div class="field-label">Due Amount</div>
                                                 <div class="fw-bold {{ $selectedSale->due_amount > 0 ? 'text-danger' : 'text-success' }}">
-                                                    ${{ number_format($selectedSale->due_amount, 2) }}
+                                                    Rs.{{ number_format($selectedSale->due_amount, 2) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -582,9 +582,9 @@
                                                     <span class="badge bg-light text-dark">{{ $item->watch_code }}</span>
                                                 </td>
                                                 <td class="text-center fw-semibold">{{ $item->quantity }}</td>
-                                                <td class="text-end">${{ number_format($item->unit_price, 2) }}</td>
-                                                <td class="text-end">${{ number_format($item->discount, 2) }}</td>
-                                                <td class="text-end fw-bold">${{ number_format($item->total, 2) }}</td>
+                                                <td class="text-end">Rs.{{ number_format($item->unit_price, 2) }}</td>
+                                                <td class="text-end">Rs.{{ number_format($item->discount, 2) }}</td>
+                                                <td class="text-end fw-bold">Rs.{{ number_format($item->total, 2) }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -599,25 +599,25 @@
                                         <h6 class="mb-3">Order Summary</h6>
                                         <div class="d-flex justify-content-between mb-2">
                                             <span class="text-muted">Subtotal</span>
-                                            <span>${{ number_format($selectedSale->subtotal, 2) }}</span>
+                                            <span>Rs.{{ number_format($selectedSale->subtotal, 2) }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-2">
                                             <span class="text-muted">Discount</span>
-                                            <span>${{ number_format($selectedSale->discount_amount, 2) }}</span>
+                                            <span>Rs.{{ number_format($selectedSale->discount_amount, 2) }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-3">
                                             <span class="text-muted">Total</span>
-                                            <span class="fw-semibold">${{ number_format($selectedSale->total_amount, 2) }}</span>
+                                            <span class="fw-semibold">Rs.{{ number_format($selectedSale->total_amount, 2) }}</span>
                                         </div>
                                         <hr>
                                         <div class="d-flex justify-content-between mb-2">
                                             <span class="text-success">Paid Amount</span>
-                                            <span class="fw-semibold text-success">${{ number_format($selectedSale->total_amount - $selectedSale->due_amount, 2) }}</span>
+                                            <span class="fw-semibold text-success">Rs.{{ number_format($selectedSale->total_amount - $selectedSale->due_amount, 2) }}</span>
                                         </div>
                                         <div class="d-flex justify-content-between">
                                             <span class="text-danger">Due Amount</span>
                                             <span class="fw-semibold {{ $selectedSale->due_amount > 0 ? 'text-danger' : 'text-success' }}">
-                                                ${{ number_format($selectedSale->due_amount, 2) }}
+                                                Rs.{{ number_format($selectedSale->due_amount, 2) }}
                                             </span>
                                         </div>
                                     </div>
