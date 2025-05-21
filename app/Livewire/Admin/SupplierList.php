@@ -21,14 +21,19 @@ class SupplierList extends Component
             'suppliers'=> $suppliers
         ]);
     }
-    public $name;
-    public $contactNumber;
-    public $address;
-    public $email;
+    public $name = '';
+    public $contactNumber = '';
+    public $address = '';
+    public $email = '';
+
 
     public function createSupplier(){
-        $this->reset();
-        $this->js("$('#createSupplierModal').modal('show')");
+        $this->name = '';
+        $this->contactNumber = '';
+        $this->address = '';
+        $this->email = '';
+        $this->dispatch('create-supplier');
+        // $this->js("$('#createSupplierModal').modal('show')");
     }
     public function saveSupplier(){
         $this->validate([
@@ -44,6 +49,10 @@ class SupplierList extends Component
                 'address' => $this->address,
                 'email' => $this->email
             ]);
+            
+            // Reset form fields after successful creation
+            $this->reset(['name', 'contactNumber', 'address', 'email']);
+            
             $this->js("Swal.fire('Success!', 'Supplier Created Successfully', 'success')");
         }catch(Exception $e){
             // log($e->getMessage());
@@ -51,7 +60,6 @@ class SupplierList extends Component
         }
         
         $this->js('$("#createSupplierModal").modal("hide")');
-        
     }
     public $editSupplierId;
     public $editName;
@@ -67,7 +75,8 @@ class SupplierList extends Component
         $this->editEmail = $supplier->email;
         $this->editSupplierId = $supplier->id;
         
-        $this->js("$('#editSupplierModal').modal('show')");
+        // $this->js("$('#editSupplierModal').modal('show')");
+        $this->dispatch('edit-supplier');
     }
     public function updateSupplier($id){
         $this->validate([
@@ -107,5 +116,12 @@ class SupplierList extends Component
             // log($e->getMessage());
             $this->js("Swal.fire('Error!', '".$e->getMessage()."', 'error')");
         }
+    }
+
+    public function resetForm()
+    {
+        $this->reset(['name', 'contactNumber', 'address', 'email']);
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
 }

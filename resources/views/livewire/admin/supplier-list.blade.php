@@ -54,24 +54,24 @@
                     </tbody>
                 </table>
                 <div class="d-flex justify-content-center">
-                    {{ $suppliers->links() }}
+                    {{ $suppliers->links('livewire.custom-pagination') }}
                 </div>
             </div>
         </div>
-        {{-- Create Suplier Modal --}}
-        <div wire:ignore.self class="modal fade" id="createSupplierModal" tabindex="-1"
-            aria-labelledby="createSupplierModalLabel" aria-hidden="true">
+        {{-- Create Supplier Modal --}}
+        <div wire:ignore.self wire:key="create-supplier-modal-{{ rand() }}" class="modal fade" id="createSupplierModal" tabindex="-1"
+            aria-labelledby="createSupplierModalLabel" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="createSupplierModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="modal-title fs-5" id="createSupplierModalLabel">Add New Supplier</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" wire:click="resetForm" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="supplierName" class="form-label">Supplier Name</label>
-                                <input type="text" class="form-control" id="supplierName" wire:model="name"
+                                <input type="text" class="form-control" id="supplierName" wire:model.defer="name"
                                     placeholder="Enter supplier name">
                                 @error('name')
                                     <span class="text-danger">* {{ $message }}</span>
@@ -80,7 +80,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="contactNumber" class="form-label">Contact Number</label>
                                 <input type="text" class="form-control" id="contactNumber"
-                                    wire:model="contactNumber" placeholder="Enter contact number">
+                                    wire:model.defer="contactNumber" placeholder="Enter contact number">
                                 @error('contactNumber')
                                     <span class="text-danger">* {{ $message }}</span>    
                                 @enderror
@@ -89,7 +89,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" wire:model="email"
+                                <input type="email" class="form-control" id="email" wire:model.defer="email"
                                     placeholder="Enter email">  
                                 @error('email')     
                                     <span class="text-danger">* {{ $message }}</span>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="address" wire:model="address"
+                                <input type="text" class="form-control" id="address" wire:model.defer="address"
                                     placeholder="Enter address">
                                 @error('address')                       
                                     <span class="text-danger">* {{ $message }}</span>
@@ -106,7 +106,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" wire:click="resetForm" data-bs-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" wire:click="saveSupplier">Add Supplier</button>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
         </div>
     </div>
     {{-- Edit Supplier Modal --}}
-    <div wire:ignore.self class="modal fade" id="editSupplierModal" tabindex="-1"
+    <div wire:ignore.self wire:key="edit-supplier-modal-{{ $editSupplierId ?? 'new' }}" class="modal fade" id="editSupplierModal" tabindex="-1"
         aria-labelledby="editSupplierModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -191,5 +191,33 @@
             }
         });
     });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let createModal = document.getElementById('createSupplierModal');
+        if (createModal) {
+            createModal.addEventListener('hidden.bs.modal', function () {
+                Livewire.dispatch('resetForm');
+            });
+        }
+    });
+
+    window.addEventListener('create-supplier', event => {
+        @this.resetForm();
+        setTimeout(() => {
+            const modal = new bootstrap.Modal(document.getElementById('createSupplierModal'));
+            modal.show();
+        }, 300);
+    });
+</script>
+<script>
+
+        window.addEventListener('edit-supplier', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('editSupplierModal'));
+                modal.show();
+            }, 300); // 500ms delay before showing the modal
+        });
+ 
 </script>
 @endpush
