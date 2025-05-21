@@ -22,8 +22,14 @@ class WatchStrapColorlist extends Component
     }
 
     public function createStrapColor(){
-        $this->reset();
-        $this->js("$('#createStrapColorModal').modal('show')");
+       $this->dispatch('create-strap-color');
+    }
+    public function resetForm(){
+        $this->reset([
+            'strapColorName',
+        ]);
+        $this->resetValidation();
+        $this->resetErrorBag();
     }
     public function saveStrapColor(){
         $this->validate([

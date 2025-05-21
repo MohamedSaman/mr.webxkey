@@ -18,7 +18,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="strap-color-list-{{now()}}">
                         @if ($strapColors->count() > 0)
                             @foreach ($strapColors as $strapColor)
                                 <tr>
@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Strap Color Model --}}
-        <div wire:ignore.self class="modal fade" id="createStrapColorModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createStrapColorModal" tabindex="-1"
             aria-labelledby="createStrapColorModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -137,6 +137,15 @@
         window.addEventListener('edit-strap-color', event => {
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('editStrapColorModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
+        });
+    </script>
+    <script>
+        window.addEventListener('create-strap-color', event => {
+            @this.resetForm();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createStrapColorModal'));
                 modal.show();
             }, 500); // 500ms delay before showing the modal
         });
