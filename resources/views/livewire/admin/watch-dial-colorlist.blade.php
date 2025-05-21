@@ -20,7 +20,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key ="dial-color-list-{{ now() }}">
                         @if ($dialColors->count() > 0)
                             @foreach ($dialColors as $dialColor)
                                 <tr>
@@ -63,7 +63,7 @@
             </div>
         </div>
         {{-- Create Dial Color Model --}}
-        <div wire:ignore.self class="modal fade" id="createDialColorModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createDialColorModal" tabindex="-1"
             aria-labelledby="createDialColorModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -175,6 +175,15 @@
                 const modal = new bootstrap.Modal(document.getElementById('editDialColorModal'));
                 modal.show();
             }, 500);
+        });
+    </script>
+     <script>
+        window.addEventListener('create-dial-color', event => {
+            @this.resetForm();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createDialColorModal'));
+                modal.show();
+            }, 200);
         });
     </script>
 @endpush

@@ -23,8 +23,16 @@ class WatchDialColorlist extends Component
     }
 
     public function createDialColor(){
-        $this->reset();
-        $this->js("$('#createDialColorModal').modal('show')");
+        $this->dialColorName = '';
+        $this->dialColorCode = '';
+        $this->dispatch('create-dial-color');
+    }
+
+    public function resetForm(){
+        $this->reset([
+            'dialColorName',
+            'dialColorCode',
+        ]);
     }
     public function saveDialColor(){
         $this->validate([
