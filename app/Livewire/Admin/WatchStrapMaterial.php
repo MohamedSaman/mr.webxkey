@@ -28,8 +28,16 @@ class WatchStrapMaterial extends Component
     }
 
     public function createStrapMaterial(){
-        $this->reset();
-        $this->js("$('#createStrapMaterialModal').modal('show')");
+      
+      $this->dispatch('create-strap-material');
+    }
+    public function resetForm(){
+        $this->reset([
+            'strapMaterialName',
+            'materialQuality',
+        ]);
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
     public function saveStrapMaterial(){
         // dd('here');

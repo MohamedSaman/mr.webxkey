@@ -19,7 +19,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="strap-materials-table-{{now()}}">
                         @if ($strapMaterials->count() > 0)
                             @foreach ($strapMaterials as $strapMaterial)
                                 <tr>
@@ -50,7 +50,7 @@
             </div>
         </div>
         {{-- Create Strap Material Model --}}
-        <div wire:ignore.self class="modal fade" id="createStrapMaterialModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-strap-material-modal-{{ rand() }}" class="modal fade" id="createStrapMaterialModal" tabindex="-1"
             aria-labelledby="createStrapMaterialModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -173,6 +173,15 @@
         window.addEventListener('edit-strap-material', event => {
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('editStrapMaterialModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
+        });
+    </script>
+    <script>
+        window.addEventListener('create-strap-material', event => {
+            @this.resetForm();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createStrapMaterialModal'));
                 modal.show();
             }, 500); // 500ms delay before showing the modal
         });
