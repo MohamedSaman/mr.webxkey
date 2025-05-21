@@ -770,7 +770,7 @@
                                             <div class="position-relative h-100">
                                                 @if ($watchDetails->image)
                                                     <img src="{{ asset('public/storage/' . $watchDetails->image) }}"
-                                                        alt="{{ $watchDetails->name }}"
+                                                        alt="{{ $watchDetails->watch_name }}"
                                                         class="img-fluid rounded-start h-100 w-100 object-fit-cover">
                                                 @else
                                                     <div

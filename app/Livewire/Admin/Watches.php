@@ -110,7 +110,7 @@ class Watches extends Component
         $this->watchDetails = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
             ->join('watch_stocks', 'watch_details.id', '=', 'watch_stocks.watch_id')
-            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*','watch_suppliers.name as supplier_name')
+            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*','watch_suppliers.name as supplier_name', 'watch_details.name as watch_name')
             ->where('watch_details.id', $id)
             ->first();
         // dd($this->watchDetails);
