@@ -24,8 +24,14 @@ class WatchTypes extends Component
     }
 
     public function createType(){
-        $this->reset();
-        $this->js("$('#createTypeModal').modal('show')");
+        $this->dispatch('create-type-modal');
+    }
+    public function resetForm(){
+        $this->reset([
+            'typeName',
+        ]);
+        $this->resetValidation();
+        $this->resetErrorBag();
     }
 
     public function saveType(){

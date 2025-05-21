@@ -18,7 +18,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="type-list-{{now()}}">
                         @if ($types->count() > 0)
                             @foreach ($types as $type)
                                 <tr>
@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Type Model --}}
-        <div wire:ignore.self class="modal fade" id="createTypeModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createTypeModal" tabindex="-1"
             aria-labelledby="createTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -137,6 +137,15 @@
                 const modal = new bootstrap.Modal(document.getElementById('editTypeModal'));
                 modal.show();
             }, 500); // 500ms delay before showing the modal
+        });
+    </script>
+    <script>
+        window.addEventListener('create-type-modal', event => {
+            @this.resetForm();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createTypeModal'));
+                modal.show();
+            }, 300); // 500ms delay before showing the modal
         });
     </script>
 @endpush
