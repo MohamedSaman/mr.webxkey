@@ -52,7 +52,7 @@ class Watches extends Component
     public $description;
     public $barcode;
     public $supplier;
-    public $supplierPrice;
+    public $supplierPrice = 0;
     public $sellingPrice;
     public $discountPrice;
     public $shopStock = 0;
@@ -62,6 +62,28 @@ class Watches extends Component
     public $location;
     public $search = '';
 
+    private function getDefaultSupplier()
+    {
+        // Cache the supplier ID to avoid repeated database queries
+        static $supplierId = null;
+        
+        if ($supplierId === null) {
+            $defaultSupplier = WatchSupplier::latest('id')->first();
+            
+            if (!$defaultSupplier) {
+                $defaultSupplier = WatchSupplier::create([
+                    'name' => 'Default Supplier',
+                    'email' => null,
+                    'contact' => null,
+                    'address' => null,
+                ]);
+            }
+            
+            $supplierId = $defaultSupplier->id;
+        }
+        
+        return $supplierId;
+    }
     public function render()
     {
         $watches = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
@@ -191,9 +213,18 @@ class Watches extends Component
 
     public function createWatch()
     {
-        $this->reset();
-        $this->js("$('#createWatchModal').modal('show')");
-
+        $this->resetForm();
+        
+        // Set default supplier
+        $this->supplier = $this->getDefaultSupplier();
+        $this->supplierPrice = 0;
+        
+        $this->js("
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createWatchModal'));
+                modal.show();
+            }, 500);
+        ");
     }
 
     public function saveWatch()
@@ -201,6 +232,7 @@ class Watches extends Component
         $this->validateCretaeWatch();
 
         $this->code = $this->generateCode();
+        $this->supplier = $this->getDefaultSupplier();
 
         DB::beginTransaction();
 
@@ -241,7 +273,7 @@ class Watches extends Component
             ]);
 
             WatchPrice::create([
-                'supplier_price' => $this->supplierPrice,
+                'supplier_price' => $this->supplierPrice ?? 0,
                 'selling_price' => $this->sellingPrice,
                 'discount_price' => $this->discountPrice,
                 'watch_id' => $watch->id
@@ -262,14 +294,14 @@ class Watches extends Component
 
             DB::commit();
 
-            $this->js("Swal.fire('Success!', 'Watch created successfully', 'success')");
-            $this->reset();
             $this->js('$("#createWatchModal").modal("hide")');
+            $this->resetForm();
+            $this->dispatch('watch-created');
+            $this->js("Swal.fire('Success!', 'Watch created successfully', 'success')");
 
         } catch (Exception $e) {
             DB::rollBack();
             logger('Error creating watch: ' . $e->getMessage());
-            dd($e->getMessage());
             $this->js("Swal.fire({
                 icon: 'error',
                 title: 'Watch Creation Failed',
@@ -303,7 +335,7 @@ class Watches extends Component
     public $editLocation;
     public $editSupplier;
     public $editSupplierName; // Add this to store the supplier name for display
-    public $editSupplierPrice;
+    public $editSupplierPrice = 0;
     public $editSellingPrice;
     public $editDiscountPrice;
     public $editShopStock;
@@ -390,8 +422,8 @@ class Watches extends Component
 
         // Supplier Information - Store both ID and name
         $this->editSupplier = $watch->supplier_id; // Store the ID for the update
-        $this->editSupplierName = $watch->supplier_name; // Store name for display
-        $this->editSupplierPrice = $watch->supplier_price;
+        $this->editSupplierName = $watch->supplier_name ?? $this->getDefaultSupplier(); // Store name for display
+        $this->editSupplierPrice = $watch->supplier_price ?? 0;
 
         // Pricing and Inventory
         $this->editSellingPrice = $watch->selling_price;
@@ -449,12 +481,12 @@ class Watches extends Component
                 'image' => $imagePath,
                 'status' => $this->editStatus,
                 'location' => $this->editLocation,
-                'supplier_id' => $this->editSupplier, // Use the correct supplier ID
+                'supplier_id' => $this->editSupplier ?? $this->getDefaultSupplier(), // Use the correct supplier ID
             ]);
 
             // Update the price record
             WatchPrice::where('watch_id', $this->editId)->update([
-                'supplier_price' => $this->editSupplierPrice,
+                'supplier_price' => $this->editSupplierPrice ?? 0,
                 'selling_price' => $this->editSellingPrice,
                 'discount_price' => $this->editDiscountPrice,
             ]);
@@ -482,6 +514,111 @@ class Watches extends Component
             $this->js("Swal.fire('Error!', '" . $e->getMessage() . "', 'error')");
         }
     }   
+
+    public function duplicateWatch()
+    {
+        $this->validateEditWatch();
+
+        // Generate a new code for the duplicated watch
+        $this->code = $this->generateDuplicateCode();
+        $this->supplier = $this->editSupplier ?? $this->getDefaultSupplier();
+
+        DB::beginTransaction();
+
+        try {
+            // Handle image - use the existing image or the newly uploaded one
+            $imagePath = $this->existingImage;
+            if ($this->editImage) {
+                $imageName = time() . '-' . $this->code . '.' . $this->editImage->getClientOriginalExtension();
+                $this->editImage->storeAs('public/images/WatchImages', $imageName);
+                $imagePath = 'images/WatchImages/' . $imageName;
+            }
+
+            // Create a new watch record with the edited values
+            $watch = WatchDetail::create([
+                'code' => $this->code,
+                'name' => $this->editName,  // Add (Copy) to indicate it's a duplicate
+                'model' => $this->editModel,
+                'color' => $this->editColor,
+                'made_by' => $this->editMadeBy,
+                'gender' => $this->editGender,
+                'type' => $this->editType,
+                'movement' => $this->editMovement,
+                'dial_color' => $this->editDialColor,
+                'strap_color' => $this->editStrapColor,
+                'strap_material' => $this->editStrapMaterial,
+                'case_diameter_mm' => $this->editCaseDiameter,
+                'case_thickness_mm' => $this->editCaseThickness,
+                'glass_type' => $this->editGlassType,
+                'water_resistance' => $this->editWaterResistance,
+                'features' => $this->editFeatures,
+                'image' => $imagePath,
+                'warranty' => $this->editWarranty,
+                'description' => $this->editDescription,
+                'barcode' => $this->editBarcode,  // Modify barcode to avoid duplicates
+                'status' => $this->editStatus,
+                'location' => $this->editLocation,
+                'brand' => $this->editBrand,
+                'category' => $this->editCategory,
+                'supplier_id' => $this->supplier
+            ]);
+
+            // Create pricing record
+            WatchPrice::create([
+                'supplier_price' => $this->editSupplierPrice ?? 0,
+                'selling_price' => $this->editSellingPrice,
+                'discount_price' => $this->editDiscountPrice,
+                'watch_id' => $watch->id
+            ]);
+
+            // Create stock record
+            $shopStock = (int) $this->editShopStock;
+            $storeStock = (int) $this->editStoreStock;
+            $damageStock = (int) $this->editDamageStock;
+
+            WatchStock::create([
+                'shop_stock' => $shopStock,
+                'store_stock' => $storeStock,
+                'damage_stock' => $damageStock,
+                'total_stock' => $shopStock + $storeStock + $damageStock,
+                'available_stock' => $shopStock + $storeStock,
+                'watch_id' => $watch->id
+            ]);
+
+            DB::commit();
+
+            // Close the modal and show success message
+            $this->js('$("#editWatchModal").modal("hide")');
+            $this->resetForm();
+            $this->js("Swal.fire('Success!', 'Watch duplicated successfully', 'success')");
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            logger('Error duplicating watch: ' . $e->getMessage());
+            $this->js("Swal.fire({
+                icon: 'error',
+                title: 'Watch Duplication Failed',
+                text: '" . $e->getMessage() . "',
+            })");
+        }
+    }
+
+    private function generateDuplicateCode()
+    {
+        $lastWatch = WatchDetail::latest('id')->first();
+        $numericId = $lastWatch ? $lastWatch->id + 1 : 1;
+
+        $components = [
+            'brand' => strtoupper(substr($this->editBrand ?? '', 0, 3)),
+            'color' => strtoupper(substr($this->editColor ?? '', 0, 1)),
+            'strap' => strtoupper(substr($this->editStrapMaterial ?? '', 0, 1)),
+            'gender' => strtoupper(substr($this->editGender ?? '', 0, 1)),
+        ];
+
+        $prefix = implode('', $components);
+
+        return $prefix . $numericId;
+    }
 
     public $deleteId;
     public function confirmDelete($id)
@@ -541,10 +678,10 @@ class Watches extends Component
             'waterResistance' => 'required',
             'features' => 'required',
             'warranty' => 'required',
-            'supplier' => 'required',
+            // 'supplier' => 'required',
             'status' => 'required',
             'location' => 'required',
-            'supplierPrice' => 'required|numeric|min:0',
+            // 'supplierPrice' => 'required|numeric|min:0',
             'sellingPrice' => 'required|numeric|min:0',
             'discountPrice' => 'required|numeric|min:0',
             'shopStock' => 'required|numeric|min:0',
@@ -577,10 +714,10 @@ class Watches extends Component
             'editWaterResistance' => 'required',
             'editFeatures' => 'required',
             'editWarranty' => 'required',
-            'editSupplier' => 'required',
+            // 'editSupplier' => 'required',
             'editStatus' => 'required',
             'editLocation' => 'required',
-            'editSupplierPrice' => 'required|numeric|min:0',
+            // 'editSupplierPrice' => 'required|numeric|min:0',
             'editSellingPrice' => 'required|numeric|min:0',
             'editDiscountPrice' => 'required|numeric|min:0',
             'editShopStock' => 'required|numeric|min:0',
@@ -620,5 +757,28 @@ class Watches extends Component
         $prefix = implode('', $components);
 
         return $prefix . $numericId;
+    }
+
+    #[On('reset-create-form')]
+    public function resetCreateForm()
+    {
+        $this->resetForm();
+    }
+
+    public function resetForm()
+    {
+        // Enhanced reset that clears all relevant properties
+        $this->reset([
+            'code', 'name', 'model', 'color', 'madeBy', 'category', 'gender',
+            'type', 'movement', 'dialColor', 'strapColor', 'strapMaterial',
+            'caseDiameter', 'caseThickness', 'glassType', 'waterResistance',
+            'features', 'warranty', 'description', 'barcode', 'status',
+            'location', 'sellingPrice', 'discountPrice', 'shopStock',
+            'storeStock', 'damageStock', 'image', 'supplier', 'supplierPrice'
+        ]);
+        
+        // Reset validation errors
+        $this->resetValidation();
+        $this->resetErrorBag();
     }
 }

@@ -148,12 +148,14 @@
                         <th scope="col" class="text-center">Barcode</th>
                         <th scope="col" class="text-center">Brand</th>
                         <th scope="col" class="text-center">Model</th>
+                        <th scope="col" class="text-center">Color</th>
                         <th scope="col" class="text-center">Stock</th>
                         <th scope="col" class="text-center">Selling Price</th>
                         <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Actions</th>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="watches-{{now()}}">
+                        {{-- Loading Spinner --}}
                         @if ($watches->count() > 0)
                             @foreach ($watches as $watch)
                                 <tr>
@@ -163,6 +165,7 @@
                                     <td class="text-center">{{ $watch->barcode }}</td>
                                     <td class="text-center">{{ $watch->brand }}</td>
                                     <td class="text-center">{{ $watch->model }}</td>
+                                    <td class="text-center">{{ $watch->color }}</td>
                                     <td class="text-center">
                                         @if ($watch->available_stock > 0)
                                             <span class="badge bg-success rounded-pill">In Stock</span>
@@ -570,7 +573,7 @@
                             </div>
 
                             <!-- Supplier Information Card -->
-                            <div class="card mb-4 shadow border border-primary">
+                            {{-- <div class="card mb-4 shadow border border-primary">
                                 <div class="card-header bg-primary bg-opacity-10">
                                     <h5 class="card-title mb-0 text-primary">Supplier Information</h5>
                                 </div>
@@ -606,8 +609,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
+                            <!-- Hidden Supplier Fields -->
+                            <input type="hidden" id="supplier" wire:model="supplier">
+                            <input type="hidden" id="supplierPrice" wire:model="supplierPrice" value="0">
                             <!-- Pricing and Inventory Card -->
                             <div class="card mb-4 shadow border border-primary">
                                 <div class="card-header bg-primary bg-opacity-10">
@@ -751,8 +757,8 @@
         </div>
 
         <!-- View Watch Modal -->
-        <div wire:ignore.self class="modal fade" id="viewWatchModal" tabindex="-1"
-            aria-labelledby="viewWatchModalLabel" aria-hidden="true">
+        <div wire:ignore.self  class="modal fade" id="viewWatchModal"
+            tabindex="-1" aria-labelledby="viewWatchModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-primary">
@@ -807,7 +813,8 @@
                                         <div class="col-md-8">
                                             <div class="p-4">
                                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <h3 class="fw-bold mb-0 text-primary">{{ $watchDetails->watch_name }}</h3>
+                                                    <h3 class="fw-bold mb-0 text-primary">
+                                                        {{ $watchDetails->watch_name }}</h3>
                                                 </div>
 
                                                 <!-- Display code prominently -->
@@ -1078,7 +1085,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Supplier Section -->
+                                {{-- <!-- Supplier Section -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed" type="button"
@@ -1185,6 +1192,99 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div> --}}
+
+                                <!-- Product Details Section -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#product-details-collapse"
+                                            aria-expanded="false" aria-controls="product-details-collapse">
+                                            <i class="bi bi-info-circle me-2"></i> Product Details
+                                        </button>
+                                    </h2>
+                                    <div id="product-details-collapse" class="accordion-collapse collapse"
+                                        data-bs-parent="#watchDetailsAccordion">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h5 class="fw-bold mb-3">Product Information</h5>
+                                                    <table class="table table-borderless">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th class="text-muted" width="40%">Barcode</th>
+                                                                <td class="text-primary fw-medium">
+                                                                    {{ $watchDetails->barcode }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="text-muted">Warranty</th>
+                                                                <td class="text-primary fw-medium">
+                                                                    {{ $watchDetails->warranty }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="text-muted">Status</th>
+                                                                <td class="text-primary fw-medium">
+                                                                    {{ ucfirst($watchDetails->status) }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="text-muted">Category</th>
+                                                                <td class="text-primary fw-medium">
+                                                                    {{ $watchDetails->category }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="text-muted">Location</th>
+                                                                <td class="text-primary fw-medium">
+                                                                    {{ $watchDetails->location }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <h5 class="fw-bold mb-3">Pricing Information</h5>
+                                                    <div class="card mb-3 border-primary">
+                                                        <div class="card-body">
+                                                            <div class="d-flex justify-content-between">
+                                                                <p class="card-text fw-bold">Selling Price</p>
+                                                                <h5 class="card-title text-primary">Rs.
+                                                                    {{ number_format($watchDetails->selling_price, 2) }}
+                                                                </h5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    @if ($watchDetails->discount_price > 0)
+                                                        <div class="card border-success bg-success bg-opacity-10">
+                                                            <div class="card-header bg-success bg-opacity-25 border-success">
+                                                                <h6 class="text-success mb-0 fw-bold">SPECIAL DISCOUNT</h6>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <p class="card-text fw-bold text-success">Discount Amount</p>
+                                                                    <h5 class="card-title text-success">
+                                                                        Rs. {{ number_format($watchDetails->discount_price, 2) }}
+                                                                    </h5>
+                                                                </div>
+                                                                <div class="progress mt-2" style="height: 10px;">
+                                                                    <div class="progress-bar bg-success"
+                                                                        role="progressbar"
+                                                                        style="width: {{ min(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 100) }}%"
+                                                                        aria-valuenow="{{ ($watchDetails->discount_price / $watchDetails->selling_price) * 100 }}"
+                                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                                </div>
+                                                                <div class="d-flex justify-content-between mt-1">
+                                                                    <small class="text-muted">0%</small>
+                                                                    <small class="text-muted">Save
+                                                                        {{ number_format(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 0) }}%</small>
+                                                                    <small class="text-muted">100%</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1192,9 +1292,6 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        {{--                         <button type="button" class="btn btn-primary" wire:click="editWatch({{ $watchDetails->id }})">
-                            <i class="bi bi-pencil-square"></i> Edit Watch
-                        </button> --}}
                     </div>
                 </div>
             </div>
@@ -1514,7 +1611,7 @@
                                     <div class="mb-3">
                                         <label for="editImage" class="form-label fw-bold">Image:</label>
                                         <div class="input-group mb-2">
-                                            <input type="file" class="form-control" id="editImage" 
+                                            <input type="file" class="form-control" id="editImage"
                                                 wire:model="editImage" accept="image/*">
                                         </div>
                                         <div wire:loading wire:target="editImage" class="text-primary">
@@ -1577,7 +1674,7 @@
                     </div>
 
                     {{-- Supplier Information --}}
-                    <div class="card mb-4 shadow border border-primary">
+                    {{-- <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
                             <h5 class="card-title mb-0 text-primary">Supplier Information</h5>
                         </div>
@@ -1611,8 +1708,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
+                    {{-- Hidden Supplier Fields --}}
+                    <input type="hidden" id="editSupplier" wire:model="editSupplier">
+                    <input type="hidden" id="editSupplierPrice" wire:model="editSupplierPrice" value="0">
                     {{-- Pricing and Inventory --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
@@ -1709,7 +1809,11 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="updateWatch({{$editId}})">Update Watch</button>
+                    <button type="button" class="btn btn-success" wire:click="duplicateWatch">
+                        <i class="bi bi-copy"></i> Duplicate Watch
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                        wire:click="updateWatch({{ $editId }})">Update Watch</button>
                 </div>
 
             </div>
@@ -1786,4 +1890,5 @@
             }, 500); // 500ms delay before showing the modal
         });
     </script>
+  
 @endpush
