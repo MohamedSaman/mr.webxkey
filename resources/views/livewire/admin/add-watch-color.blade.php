@@ -182,7 +182,7 @@
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('createColorModal'));
                 modal.show();
-            }, 500); // 500ms delay before showing the modal
+            }, 200); // 500ms delay before showing the modal
         });
     </script>
 @endpush
