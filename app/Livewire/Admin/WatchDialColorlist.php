@@ -52,6 +52,7 @@ class WatchDialColorlist extends Component
         }
         
         $this->js('$("#createDialColorModal").modal("hide")');
+        return redirect()->route('admin.watch-dial-color');
         
     }
 

@@ -44,7 +44,7 @@ class WatchCategorylist extends Component
         }
         
         $this->js('$("#createCategoryModal").modal("hide")');
-        
+        return redirect()->route('admin.watch-category');
     }
 
     public $editCategoryId;

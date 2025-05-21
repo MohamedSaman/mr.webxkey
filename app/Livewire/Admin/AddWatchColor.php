@@ -47,6 +47,7 @@ class AddWatchColor extends Component
         }
         
         $this->js('$("#createColorModal").modal("hide")');
+        return redirect()->route('admin.watch-color');
         
     }
 

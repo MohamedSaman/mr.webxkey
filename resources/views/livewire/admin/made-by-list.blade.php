@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Country Model --}}
-        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createCountryModal" tabindex="-1" aria-labelledby="createCountryModalLabel"
+        <div wire:ignore.self wire:key="create-modal" class="modal fade" id="createCountryModal" tabindex="-1" aria-labelledby="createCountryModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

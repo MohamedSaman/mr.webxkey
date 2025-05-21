@@ -50,6 +50,7 @@ class WatchTypes extends Component
         }
         
         $this->js('$("#createTypeModal").modal("hide")');
+        return redirect()->route('admin.watch-types');
         
     }
 

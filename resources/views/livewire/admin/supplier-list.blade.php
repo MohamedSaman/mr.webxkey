@@ -59,7 +59,7 @@
             </div>
         </div>
         {{-- Create Supplier Modal --}}
-        <div wire:ignore.self wire:key="create-supplier-modal-{{ rand() }}" class="modal fade" id="createSupplierModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-supplier-modal" class="modal fade" id="createSupplierModal" tabindex="-1"
             aria-labelledby="createSupplierModalLabel" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">

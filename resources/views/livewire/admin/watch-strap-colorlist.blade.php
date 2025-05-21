@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Strap Color Model --}}
-        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createStrapColorModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal" class="modal fade" id="createStrapColorModal" tabindex="-1"
             aria-labelledby="createStrapColorModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

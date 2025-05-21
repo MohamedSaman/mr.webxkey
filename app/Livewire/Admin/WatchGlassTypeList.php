@@ -44,6 +44,7 @@ class WatchGlassTypeList extends Component
         }
         
         $this->js('$("#createGlassTypeModal").modal("hide")');
+        return redirect()->route('admin.watch-glass-type');
         
     }
     public $editGlassTypeId;

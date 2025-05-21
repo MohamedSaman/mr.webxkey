@@ -50,6 +50,7 @@ class MadeByList extends Component
         }
         
         $this->js('$("#createCountryModal").modal("hide")');
+        return redirect()->route('admin.made-by-list');
         
     }
 
