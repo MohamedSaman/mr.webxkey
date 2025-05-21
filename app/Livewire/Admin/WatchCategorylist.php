@@ -22,8 +22,11 @@ class WatchCategorylist extends Component
     }
 
     public function createCategory(){
-        $this->reset();
-        $this->js("$('#createCategoryModal').modal('show')");
+        $this->dispatch('create-category');
+    }
+
+    public function resetForm(){
+        $this->categoryName = '';
     }
 
     public function saveCategory(){

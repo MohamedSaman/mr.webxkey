@@ -18,7 +18,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody  wire:key="category-list-{{ now() }}">
                         @if ($categories->count() > 0)
                             @foreach ($categories as $category)
                                 <tr>
@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Category Model --}}
-        <div wire:ignore.self class="modal fade" id="createCategoryModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createCategoryModal" tabindex="-1"
             aria-labelledby="createCategoryModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -137,7 +137,16 @@
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
                 modal.show();
-            }, 500); // 500ms delay before showing the modal
+            }, 300); // 500ms delay before showing the modal
+        });
+    </script>
+    <script>
+        window.addEventListener('create-category', event => {
+            @this.resetForm();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createCategoryModal'));
+                modal.show();
+            }, 300); // 500ms delay before showing the modal
         });
     </script>
 @endpush
