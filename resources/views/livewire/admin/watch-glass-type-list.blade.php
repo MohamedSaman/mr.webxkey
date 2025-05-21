@@ -18,7 +18,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="glass-types-{{now()}}">
                         @if ($glassTypes->count() > 0)
                             @foreach ($glassTypes as $glassType)
                                 <tr>
@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Glass Type Model --}}
-        <div wire:ignore.self class="modal fade" id="createGlassTypeModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createGlassTypeModal" tabindex="-1"
             aria-labelledby="createGlassTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -138,6 +138,14 @@
         window.addEventListener('edit-glass-type', event => {
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('editGlassTypeModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
+        });
+    </script>
+     <script>
+        window.addEventListener('create-glass-type', event => {
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createGlassTypeModal'));
                 modal.show();
             }, 500); // 500ms delay before showing the modal
         });

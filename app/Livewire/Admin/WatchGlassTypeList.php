@@ -22,8 +22,12 @@ class WatchGlassTypeList extends Component
         ]);
     }
     public function createGlassType(){
-        $this->reset();
-        $this->js("$('#createGlassTypeModal').modal('show')");
+        $this->glassTypeName = '';
+        $this->dispatch('create-glass-type');
+    }
+
+    public function resetForm(){
+        $this->reset('glassTypeName');
     }
     public function saveGlassType(){
         $this->validate([
