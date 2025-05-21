@@ -123,7 +123,7 @@
                                                     <div
                                                         class="p-3 h-100 d-flex align-items-center justify-content-center bg-light rounded-start">
                                                         @if ($item->watch_image)
-                                                            <img src="{{ asset('storage/' . $item->watch_image) }}"
+                                                            <img src="{{ asset('public/storage/' . $item->watch_image) }}"
                                                                 alt="{{ $item->watch_name }}" class="img-fluid"
                                                                 style="max-height: 100px; object-fit: contain;">
                                                         @else
