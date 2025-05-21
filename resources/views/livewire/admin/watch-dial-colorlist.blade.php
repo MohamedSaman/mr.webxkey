@@ -63,7 +63,7 @@
             </div>
         </div>
         {{-- Create Dial Color Model --}}
-        <div wire:ignore.self wire:key="create-modal-dial" class="modal fade" id="createDialColorModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal" class="modal fade" id="createDialColorModal" tabindex="-1"
             aria-labelledby="createDialColorModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

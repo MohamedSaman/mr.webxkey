@@ -57,6 +57,7 @@ class WatchBrandlist extends Component
         } catch(Exception $e) {
             $this->js("Swal.fire('Error!', '".$e->getMessage()."', 'error')");
         }
+        return redirect()->route('admin.watch-brand');
     }
 
     public function editBrand($id)

@@ -50,6 +50,7 @@ public $modalKey = 1;
         }
         
         $this->js('$("#createColorModal").modal("hide")');
+        return redirect()->route('admin.watch-color');
         
     }
 

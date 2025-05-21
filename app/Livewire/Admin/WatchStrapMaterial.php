@@ -57,6 +57,7 @@ class WatchStrapMaterial extends Component
         }
         
         $this->js('$("#createStrapMaterialModal").modal("hide")');
+        return redirect()->route('admin.watch-strap-material');
         
     }
     public function editStrapMaterial($id){

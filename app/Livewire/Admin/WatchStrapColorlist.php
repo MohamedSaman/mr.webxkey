@@ -46,6 +46,7 @@ class WatchStrapColorlist extends Component
         }
         
         $this->js('$("#createStrapColorModal").modal("hide")');
+        return redirect()->route('admin.watch-strap-color');
     }
 
     public $editStrapColorId;

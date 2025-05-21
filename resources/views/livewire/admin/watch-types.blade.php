@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Type Model --}}
-        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createTypeModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal" class="modal fade" id="createTypeModal" tabindex="-1"
             aria-labelledby="createTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

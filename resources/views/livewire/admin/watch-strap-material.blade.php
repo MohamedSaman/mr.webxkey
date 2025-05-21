@@ -50,7 +50,7 @@
             </div>
         </div>
         {{-- Create Strap Material Model --}}
-        <div wire:ignore.self wire:key="create-strap-material-modal-{{ rand() }}" class="modal fade" id="createStrapMaterialModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-strap-material-modal" class="modal fade" id="createStrapMaterialModal" tabindex="-1"
             aria-labelledby="createStrapMaterialModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

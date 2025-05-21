@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Glass Type Model --}}
-        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createGlassTypeModal" tabindex="-1"
+        <div wire:ignore.self wire:key="create-modal" class="modal fade" id="createGlassTypeModal" tabindex="-1"
             aria-labelledby="createGlassTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
