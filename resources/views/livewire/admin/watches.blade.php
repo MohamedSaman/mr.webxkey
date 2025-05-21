@@ -807,8 +807,7 @@
                                         <div class="col-md-8">
                                             <div class="p-4">
                                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <h3 class="fw-bold mb-0 text-primary">{{ $watchDetails->name }}
-                                                    </h3>
+                                                    <h3 class="fw-bold mb-0 text-primary">{{ $watchDetails->watch_name }}</h3>
                                                 </div>
 
                                                 <!-- Display code prominently -->

@@ -67,7 +67,44 @@ class Watches extends Component
         $watches = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
             ->join('watch_stocks', 'watch_details.id', '=', 'watch_stocks.watch_id')
-            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*','watch_details.name as watch_name')
+            ->select(
+                'watch_details.id',
+                'watch_details.code',
+                'watch_details.name as watch_name',
+                'watch_details.model',
+                'watch_details.color',
+                'watch_details.made_by',
+                'watch_details.gender',
+                'watch_details.type',
+                'watch_details.movement',
+                'watch_details.dial_color',
+                'watch_details.strap_color',
+                'watch_details.strap_material',
+                'watch_details.case_diameter_mm',
+                'watch_details.case_thickness_mm',
+                'watch_details.glass_type',
+                'watch_details.water_resistance',
+                'watch_details.features',
+                'watch_details.image',
+                'watch_details.warranty',
+                'watch_details.description',
+                'watch_details.barcode',
+                'watch_details.status',
+                'watch_details.location',
+                'watch_details.brand',
+                'watch_details.category',
+                'watch_details.supplier_id',
+                'watch_suppliers.id as supplier_id',
+                'watch_suppliers.name as supplier_name',
+                'watch_prices.supplier_price',
+                'watch_prices.selling_price',
+                'watch_prices.discount_price',
+                'watch_stocks.shop_stock',
+                'watch_stocks.store_stock',
+                'watch_stocks.damage_stock',
+                'watch_stocks.total_stock',
+                'watch_stocks.available_stock'
+            )
             ->where('watch_details.name', 'like', '%' . $this->search . '%')
             ->orWhere('watch_details.code', 'like', '%' . $this->search . '%')
             ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
@@ -76,7 +113,7 @@ class Watches extends Component
             ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
             ->orderBy('watch_details.created_at', 'desc')
             ->paginate(10);
-        // dd($watches);
+
         $watchColors = WatchColors::orderBy('id', 'asc')->get();
         $watchStrapColors = StrapColorList::orderBy('id', 'asc')->get();
         $watchStrapMaterials = StrapMaterialList::orderBy('id', 'asc')->get();
@@ -87,7 +124,6 @@ class Watches extends Component
         $watchMadeins = WatchMadeBy::orderBy('id', 'asc')->get();
         $watchType = WatchTypeList::orderBy('id', 'asc')->get();
         $watchSuppliers = WatchSupplier::orderBy('id', 'asc')->get();
-        // dd($watchSuppliers);
         return view('livewire.admin.watches', [
             'watches' => $watches,
             'watchColors' => $watchColors,
@@ -110,10 +146,46 @@ class Watches extends Component
         $this->watchDetails = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
             ->join('watch_stocks', 'watch_details.id', '=', 'watch_stocks.watch_id')
-            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*','watch_suppliers.name as supplier_name', 'watch_details.name as watch_name')
+            ->select(
+                'watch_details.id',
+                'watch_details.code',
+                'watch_details.name as watch_name',
+                'watch_details.model',
+                'watch_details.color',
+                'watch_details.made_by',
+                'watch_details.gender',
+                'watch_details.type',
+                'watch_details.movement',
+                'watch_details.dial_color',
+                'watch_details.strap_color',
+                'watch_details.strap_material',
+                'watch_details.case_diameter_mm',
+                'watch_details.case_thickness_mm',
+                'watch_details.glass_type',
+                'watch_details.water_resistance',
+                'watch_details.features',
+                'watch_details.image',
+                'watch_details.warranty',
+                'watch_details.description',
+                'watch_details.barcode',
+                'watch_details.status',
+                'watch_details.location',
+                'watch_details.brand',
+                'watch_details.category',
+                'watch_details.supplier_id',
+                'watch_suppliers.name as supplier_name',
+                'watch_prices.supplier_price',
+                'watch_prices.selling_price',
+                'watch_prices.discount_price',
+                'watch_stocks.shop_stock',
+                'watch_stocks.store_stock',
+                'watch_stocks.damage_stock',
+                'watch_stocks.total_stock',
+                'watch_stocks.available_stock'
+            )
             ->where('watch_details.id', $id)
             ->first();
-        // dd($this->watchDetails);
+// dd($this->watchDetails);        
         $this->js("$('#viewWatchModal').modal('show')");
     }
 
@@ -128,16 +200,11 @@ class Watches extends Component
     {
         $this->validateCretaeWatch();
 
-        // Generate code first
         $this->code = $this->generateCode();
-        // dd($this->code);
 
-        // Use database transaction to ensure all records are created together
         DB::beginTransaction();
 
         try {
-
-            // Handle image upload if file exists
             $imagePath = null;
             if ($this->image) {
                 $imageName = time() . '-' . $this->code . '.' . $this->image->getClientOriginalExtension();
@@ -145,8 +212,6 @@ class Watches extends Component
                 $imagePath = 'images/WatchImages/' . $imageName;
             }
 
-
-            // 1. Create main watch record
             $watch = WatchDetail::create([
                 'code' => $this->code,
                 'name' => $this->name,
@@ -175,7 +240,6 @@ class Watches extends Component
                 'supplier_id' => $this->supplier
             ]);
 
-            // 2. Create price record
             WatchPrice::create([
                 'supplier_price' => $this->supplierPrice,
                 'selling_price' => $this->sellingPrice,
@@ -183,7 +247,6 @@ class Watches extends Component
                 'watch_id' => $watch->id
             ]);
 
-            // 3. Create stock record
             $shopStock = (int) $this->shopStock;
             $storeStock = (int) $this->storeStock;
             $damageStock = (int) $this->damageStock;
@@ -197,22 +260,16 @@ class Watches extends Component
                 'watch_id' => $watch->id
             ]);
 
-            // Commit the transaction - everything was successful
             DB::commit();
 
-            // Show success message and clean up
             $this->js("Swal.fire('Success!', 'Watch created successfully', 'success')");
             $this->reset();
             $this->js('$("#createWatchModal").modal("hide")');
 
         } catch (Exception $e) {
-            // Roll back the transaction if anything failed
             DB::rollBack();
-
-            // Log the detailed error for developers
             logger('Error creating watch: ' . $e->getMessage());
             dd($e->getMessage());
-            // Show a user-friendly error message
             $this->js("Swal.fire({
                 icon: 'error',
                 title: 'Watch Creation Failed',
@@ -245,6 +302,7 @@ class Watches extends Component
     public $editStatus;
     public $editLocation;
     public $editSupplier;
+    public $editSupplierName; // Add this to store the supplier name for display
     public $editSupplierPrice;
     public $editSellingPrice;
     public $editDiscountPrice;
@@ -257,16 +315,48 @@ class Watches extends Component
     public $isLoading = false;
     public function editWatch($id)
     {
-        // $this->isLoading = true;
         // Find the watch with its related data
         $watch = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
             ->join('watch_stocks', 'watch_details.id', '=', 'watch_stocks.watch_id')
-            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*','watch_suppliers.name as supplier_name', 'watch_details.name as watch_name')
+            ->select(
+                'watch_details.id',
+                'watch_details.code',
+                'watch_details.name as watch_name',
+                'watch_details.model',
+                'watch_details.color',
+                'watch_details.made_by',
+                'watch_details.gender',
+                'watch_details.type',
+                'watch_details.movement',
+                'watch_details.dial_color',
+                'watch_details.strap_color',
+                'watch_details.strap_material',
+                'watch_details.case_diameter_mm',
+                'watch_details.case_thickness_mm',
+                'watch_details.glass_type',
+                'watch_details.water_resistance',
+                'watch_details.features',
+                'watch_details.image',
+                'watch_details.warranty',
+                'watch_details.description',
+                'watch_details.barcode',
+                'watch_details.status',
+                'watch_details.location',
+                'watch_details.brand',
+                'watch_details.category',
+                'watch_details.supplier_id',
+                'watch_suppliers.name as supplier_name',
+                'watch_prices.supplier_price',
+                'watch_prices.selling_price',
+                'watch_prices.discount_price',
+                'watch_stocks.shop_stock',
+                'watch_stocks.store_stock',
+                'watch_stocks.damage_stock'
+            )
             ->where('watch_details.id', $id)
             ->first();
 
-        // dd($watch);
         // Basic information
         $this->editId = $id;
         $this->editCode = $watch->code;
@@ -298,8 +388,9 @@ class Watches extends Component
         $this->editBarcode = $watch->barcode;
         $this->editDescription = $watch->description;
 
-        // Supplier Information
-        $this->editSupplier = $watch->supplier_name;
+        // Supplier Information - Store both ID and name
+        $this->editSupplier = $watch->supplier_id; // Store the ID for the update
+        $this->editSupplierName = $watch->supplier_name; // Store name for display
         $this->editSupplierPrice = $watch->supplier_price;
 
         // Pricing and Inventory
@@ -311,23 +402,17 @@ class Watches extends Component
         $this->editStatus = $watch->status;
         $this->editLocation = $watch->location;
 
-        // dd($this->editId,$this->editCode,$this->editName,$this->editModel,$this->editBrand,$this->editColor,$this->editMadeBy,$this->editCategory,$this->editType,$this->editGender,$this->editMovement,$this->editDialColor,$this->editStrapColor,$this->editStrapMaterial,$this->editCaseDiameter,$this->editCaseThickness,$this->editGlassType,$this->editWaterResistance,$this->editFeatures,$this->existingImage,$this->editWarranty,$this->editBarcode,$this->editDescription,$this->editSupplierPrice,$this->editSellingPrice,$this->editDiscountPrice);
-        // Show the modal
-        // $this->isLoading = false;
-        // $this->js("$('#editWatchModal').modal('show')");
         $this->dispatch('open-edit-modal');
     }
 
     public function updateWatch($id)
     {
-        // dd('update');
         $this->validateEditWatch();
 
         // Use database transaction to ensure all records are updated together
         DB::beginTransaction();
 
         try {
-            // dd($this->editId);
             // Handle image upload if file exists
             $imagePath = $this->existingImage;
             if ($this->editImage) {
@@ -337,7 +422,7 @@ class Watches extends Component
             }
 
             $code = $this->editCode();
-            // dd($code);
+            
             // Update the main watch record
             WatchDetail::where('id', $id)->update([
                 'code' => $code,
@@ -364,6 +449,7 @@ class Watches extends Component
                 'image' => $imagePath,
                 'status' => $this->editStatus,
                 'location' => $this->editLocation,
+                'supplier_id' => $this->editSupplier, // Use the correct supplier ID
             ]);
 
             // Update the price record
@@ -373,22 +459,17 @@ class Watches extends Component
                 'discount_price' => $this->editDiscountPrice,
             ]);
 
-            // 3. Create stock record
+            // Update stock record
             $shopStock = (int) $this->editShopStock;
             $storeStock = (int) $this->editStoreStock;
             $damageStock = (int) $this->editDamageStock;
-            // Update the stock record
+            
             WatchStock::where('watch_id', $this->editId)->update([
                 'shop_stock' => $shopStock,
                 'store_stock' => $storeStock,
                 'damage_stock' => $damageStock,
                 'total_stock' => $shopStock + $storeStock + $damageStock,
                 'available_stock' => $shopStock + $storeStock
-            ]);
-
-            // Update the supplier record
-            WatchSupplier::where('id', $this->editSupplier)->update([
-                'name' => $this->editSupplier,
             ]);
 
             DB::commit();
@@ -398,7 +479,6 @@ class Watches extends Component
             $this->js("Swal.fire('Success!', 'Watch updated successfully!', 'success')");
         } catch (Exception $e) {
             DB::rollBack();
-            // log($e->getMessage());
             $this->js("Swal.fire('Error!', '" . $e->getMessage() . "', 'error')");
         }
     }   
@@ -413,10 +493,22 @@ class Watches extends Component
     public function deleteWatch()
     {
         try {
+            DB::beginTransaction();
+            
+            // First delete any related sale_items
+            DB::table('sale_items')->where('watch_id', $this->deleteId)->delete();
+            
+            // Then delete the watch and its related data
+            WatchStock::where('watch_id', $this->deleteId)->delete();
+            WatchPrice::where('watch_id', $this->deleteId)->delete();
             WatchDetail::where('id', $this->deleteId)->delete();
+            
+            DB::commit();
+            return true;
         } catch (Exception $e) {
-            // log($e->getMessage());
+            DB::rollBack();
             $this->js("Swal.fire('Error!', '" . $e->getMessage() . "', 'error')");
+            return false;
         }
     }
 
@@ -427,22 +519,16 @@ class Watches extends Component
 
     private function validateCretaeWatch()
     {
-        // Organize validation rules by categories for better readability
         $this->validate([
-            // Basic information
             'name' => 'required',
             'model' => 'required',
             'barcode' => 'required',
             'description' => 'required',
             'image' => 'required|image|max:2048',
-
-            // Classifications
             'brand' => 'required',
             'category' => 'required',
             'gender' => 'required',
             'type' => 'required',
-
-            // Technical specifications
             'color' => 'required',
             'madeBy' => 'required',
             'movement' => 'required',
@@ -455,18 +541,12 @@ class Watches extends Component
             'waterResistance' => 'required',
             'features' => 'required',
             'warranty' => 'required',
-
-            // Inventory information
             'supplier' => 'required',
             'status' => 'required',
             'location' => 'required',
-
-            // Price information
             'supplierPrice' => 'required|numeric|min:0',
             'sellingPrice' => 'required|numeric|min:0',
             'discountPrice' => 'required|numeric|min:0',
-
-            // Stock information
             'shopStock' => 'required|numeric|min:0',
             'storeStock' => 'required|numeric|min:0',
             'damageStock' => 'required|numeric|min:0',
@@ -475,22 +555,16 @@ class Watches extends Component
 
     private function validateEditWatch()
     {
-        // Organize validation rules by categories for better readability
         $this->validate([
-            // Basic information
             'editName' => 'required',
             'editModel' => 'required',
             'editBarcode' => 'required',
             'editDescription' => 'required',
             'editImage' => $this->existingImage ? 'nullable|image|max:2048' : 'required|image|max:2048',
-
-            // Classifications
             'editBrand' => 'required',
             'editCategory' => 'required',
             'editGender' => 'required',
             'editType' => 'required',
-
-            // Technical specifications
             'editColor' => 'required',
             'editMadeBy' => 'required',
             'editMovement' => 'required',
@@ -503,36 +577,23 @@ class Watches extends Component
             'editWaterResistance' => 'required',
             'editFeatures' => 'required',
             'editWarranty' => 'required',
-
-            // Inventory information
             'editSupplier' => 'required',
             'editStatus' => 'required',
             'editLocation' => 'required',
-
-            // Price information
             'editSupplierPrice' => 'required|numeric|min:0',
             'editSellingPrice' => 'required|numeric|min:0',
             'editDiscountPrice' => 'required|numeric|min:0',
-
-            // Stock information
             'editShopStock' => 'required|numeric|min:0',
             'editStoreStock' => 'required|numeric|min:0',
             'editDamageStock' => 'required|numeric|min:0',
         ]);
     }
 
-    /**
-     * Generate a unique watch code consisting of brand, color, strap, gender prefixes + numeric ID
-     * 
-     * @return string Formatted watch code (e.g. "ROGSM1")
-     */
     private function generateCode()
     {
-        // Get the next numeric ID (last ID + 1)
         $lastWatch = WatchDetail::latest('id')->first();
         $numericId = $lastWatch ? $lastWatch->id + 1 : 1;
 
-        // Extract code components from properties
         $components = [
             'brand' => strtoupper(substr($this->brand ?? '', 0, 3)),
             'color' => strtoupper(substr($this->color ?? '', 0, 1)),
@@ -540,20 +601,15 @@ class Watches extends Component
             'gender' => strtoupper(substr($this->gender ?? '', 0, 1)),
         ];
 
-        // Combine components into alphabetic prefix
         $prefix = implode('', $components);
 
-        // Return the complete code
         return $prefix . $numericId;
     }
 
     private function editCode()
     {
-        // Get the next numeric ID (last ID + 1)
-       
         $numericId = $this->editId;
 
-        // Extract code components from properties
         $components = [
             'brand' => strtoupper(substr($this->editBrand ?? '', 0, 3)),
             'color' => strtoupper(substr($this->editColor ?? '', 0, 1)),
@@ -561,10 +617,8 @@ class Watches extends Component
             'gender' => strtoupper(substr($this->editGender ?? '', 0, 1)),
         ];
 
-        // Combine components into alphabetic prefix
         $prefix = implode('', $components);
-        // dd($prefix . $numericId);
-        // Return the complete code
+
         return $prefix . $numericId;
     }
 }
