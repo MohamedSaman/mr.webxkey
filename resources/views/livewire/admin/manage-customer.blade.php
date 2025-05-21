@@ -63,7 +63,7 @@
                     </tbody>
                 </table>
                 {{-- <div class="d-flex justify-content-center">
-                    {{ $customers->links() }}
+                    {{ $customers->links('livewire.custom-pagination') }}
                 </div> --}}
             </div>
         </div>

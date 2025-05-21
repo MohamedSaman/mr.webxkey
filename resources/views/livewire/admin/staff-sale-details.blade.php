@@ -62,7 +62,7 @@
                 </table>
             </div>
             <div class="mt-3">
-                {{-- {{ $staffSales->links() }} --}}
+                {{-- {{ $staffSales->links('livewire.custom-pagination') }} --}}
             </div>
         </div>
     </div>

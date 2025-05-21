@@ -417,7 +417,7 @@
             </div>
             
             <div class="p-3">
-                {{ $sales->links() }}
+                {{ $sales->links('livewire.custom-pagination') }}
             </div>
         </div>
     </div>

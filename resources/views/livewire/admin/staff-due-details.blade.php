@@ -76,7 +76,7 @@
                     </table>
                 </div>
                 <div class="mt-3">
-                    {{ $staffDues->links() }}
+                    {{ $staffDues->links('livewire.custom-pagination') }}
                 </div>
             </div>
         </div>
