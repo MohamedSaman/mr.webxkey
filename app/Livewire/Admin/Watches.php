@@ -298,6 +298,7 @@ class Watches extends Component
             $this->resetForm();
             $this->dispatch('watch-created');
             $this->js("Swal.fire('Success!', 'Watch created successfully', 'success')");
+            return redirect()->route('admin.watches');
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -308,6 +309,7 @@ class Watches extends Component
                 text: '" . $e->getMessage() . "',
             })");
         }
+        
     }
 
     public $editId;
