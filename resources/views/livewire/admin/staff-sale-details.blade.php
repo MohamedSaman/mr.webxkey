@@ -153,7 +153,7 @@
                                             <div class="col-4">
                                                 <div class="border-end">
                                                     <h5 class="fw-bold">
-                                                        ₹{{ number_format(data_get($summaryStats, 'total_value', 0), 2) }}
+                                                        Rs.{{ number_format(data_get($summaryStats, 'total_value', 0), 2) }}
                                                     </h5>
                                                     <p class="text-muted small">Total Value</p>
                                                 </div>
@@ -161,7 +161,7 @@
                                             <div class="col-4">
                                                 <div class="border-end">
                                                     <h5 class="fw-bold">
-                                                        ₹{{ number_format(data_get($summaryStats, 'sold_value', 0), 2) }}
+                                                        Rs.{{ number_format(data_get($summaryStats, 'sold_value', 0), 2) }}
                                                     </h5>
                                                     <p class="text-muted small">Sold Value</p>
                                                 </div>
@@ -173,7 +173,7 @@
                                                         class="fw-bold 
                                                         text-{{ data_get($summaryStats, 'available_value', 0) > 0 ? 'success' : 'danger' }}
                                                         ">
-                                                        ₹{{ number_format(data_get($summaryStats, 'available_value', 0) ?? 0, 2) }}
+                                                        Rs.{{ number_format(data_get($summaryStats, 'available_value', 0) ?? 0, 2) }}
                                                     </h5>
                                                     <p class="text-muted small">Available Value</p>
                                                 </div>
@@ -244,10 +244,10 @@
                                                         </span>
                                                     </td>
                                                     <td class="text-center">
-                                                        ₹{{ number_format($product->total_value, 2) }}
+                                                        Rs.{{ number_format($product->total_value, 2) }}
                                                     </td>
                                                     <td class="text-center">
-                                                        ₹{{ number_format($product->sold_value, 2) }}
+                                                        Rs.{{ number_format($product->sold_value, 2) }}
                                                     </td>
                                                     <td class="text-center">
                                                         @if ($product->status == 'completed')
