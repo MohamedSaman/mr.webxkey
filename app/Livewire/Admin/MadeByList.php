@@ -24,10 +24,16 @@ class MadeByList extends Component
     }
 
     public function createCountry(){
-        $this->reset();
-        $this->js("$('#createCountryModal').modal('show')");
+       $this->dispatch('create-country-modal');
     }
 
+    public function resetForm(){
+       $this->reset([
+            'countryName',
+        ]);
+        $this->resetErrorBag();
+        $this->resetValidation();
+    }
     public function saveCountry(){
         $this->validate([
             'countryName' => 'required|unique:watch_made_bies,country_name'

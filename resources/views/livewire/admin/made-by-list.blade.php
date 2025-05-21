@@ -18,7 +18,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="countries-table-{{now()}}">
                         @if ($countries->count() > 0)
                             @foreach ($countries as $country)
                                 <tr>
@@ -48,7 +48,7 @@
             </div>
         </div>
         {{-- Create Country Model --}}
-        <div wire:ignore.self class="modal fade" id="createCountryModal" tabindex="-1" aria-labelledby="createCountryModalLabel"
+        <div wire:ignore.self wire:key="create-modal-{{ rand() }}" class="modal fade" id="createCountryModal" tabindex="-1" aria-labelledby="createCountryModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -136,6 +136,15 @@
                 const modal = new bootstrap.Modal(document.getElementById('editCountryModal'));
                 modal.show();
             }, 500); // 500ms delay before showing the modal
+        });
+    </script>
+    <script>
+        window.addEventListener('create-country-modal', event => {
+            @this.resetForm();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createCountryModal'));
+                modal.show();
+            }, 300); // 500ms delay before showing the modal
         });
     </script>
 @endpush
