@@ -31,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('{{ asset('images/bgwatch.jpg') }}');
+            background-image: url('{{ asset('public/images/bgwatch.jpg') }}');
             background-size: cover;
             background-position: center;
             z-index: 0;
