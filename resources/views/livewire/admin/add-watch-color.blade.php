@@ -20,7 +20,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="color-list-{{ now() }}">
                         @if ($colors->count() > 0)
                             @foreach ($colors as $color)
                                 <tr>
