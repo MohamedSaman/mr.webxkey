@@ -19,6 +19,7 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "alpinejs": "^3.14.9",
         "sweetalert2": "^11.21.0"
     }
 }
