@@ -115,7 +115,7 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         @if ($item['image'])
-                                                            <img src="{{ asset('storage/' . $item['image']) }}"
+                                                            <img src="{{ asset('public/storage/' . $item['image']) }}"
                                                                 class="avatar avatar-sm me-3"
                                                                 alt="{{ $item['name'] }}">
                                                         @else
