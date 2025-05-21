@@ -20,7 +20,7 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody wire:key="color-list-{{ now() }}">
                         @if ($colors->count() > 0)
                             @foreach ($colors as $color)
                                 <tr>
@@ -67,7 +67,7 @@
             </div>
         </div>
         {{-- Create Color Model --}}
-        <div wire:ignore.self wire:key="create-color-modal-{{ rand() }}"   class="modal fade" id="createColorModal" tabindex="-1" aria-labelledby="createColorModalLabel"
+        <div wire:ignore.self wire:key="create-color-modal-{{rand() }}"   class="modal fade" id="createColorModal" tabindex="-1" aria-labelledby="createColorModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

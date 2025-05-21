@@ -45,6 +45,7 @@ class WatchDialColorlist extends Component
                 'dial_color_name' => $this->dialColorName,
                 'dial_color_code' => $this->dialColorCode,
             ]);
+            
             $this->js("Swal.fire('Success!', 'Dial Color Created Successfully', 'success')");
         }catch(Exception $e){
             // log($e->getMessage());
@@ -52,6 +53,7 @@ class WatchDialColorlist extends Component
         }
         
         $this->js('$("#createDialColorModal").modal("hide")');
+        return redirect()->route('admin.watch-dial-color');
         
     }
 

@@ -61,7 +61,7 @@ class WatchCategorylist extends Component
 
     public function updateCategory($id){
         $this->validate([
-            'editCategoryName' => 'required|unique:category_lists,category_name'.$id
+            'editCategoryName' => 'required|unique:category_lists,category_name,'.$id
         ]);
         try{
             CategoryList::where('id', $id)->update([

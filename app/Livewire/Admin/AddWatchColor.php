@@ -15,6 +15,7 @@ use Livewire\Attributes\Layout;
 
 class AddWatchColor extends Component
 {
+public $modalKey = 1;
     public $colorName;
     public $colorCode = '#000000';
     public function render()
@@ -40,7 +41,9 @@ class AddWatchColor extends Component
                 'name' => $this->colorName,
                 'hex_code' => $this->colorCode,
             ]);
+            $this->modalKey++;
             $this->js("Swal.fire('Success!', 'Color Created Successfully', 'success')");
+        
         }catch(Exception $e){
             // log($e->getMessage());
             $this->js("Swal.fire('Error!', '".$e->getMessage()."', 'error')");
