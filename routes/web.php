@@ -98,4 +98,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/customer-sale-management', CustomerSaleManagement::class)->name('customer-sale-management');
     });
 
+    // Export staff stock details
+    Route::get('/export/staff-stock', function() {
+        return app(StaffStockDetails::class)->exportToCSV();
+    })->name('export.staff-stock');
+
 });
