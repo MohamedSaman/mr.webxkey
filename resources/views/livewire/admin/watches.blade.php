@@ -212,7 +212,7 @@
                     </tbody>
                 </table>
                 <div class="d-flex justify-content-center">
-                    {{ $watches->links() }}
+                    {{ $watches->links('livewire.custom-pagination') }}
                 </div>
             </div>
             {{-- <!-- Create Watch Modal --> --}}

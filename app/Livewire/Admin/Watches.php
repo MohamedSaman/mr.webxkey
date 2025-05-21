@@ -87,6 +87,7 @@ class Watches extends Component
         $watchMadeins = WatchMadeBy::orderBy('id', 'asc')->get();
         $watchType = WatchTypeList::orderBy('id', 'asc')->get();
         $watchSuppliers = WatchSupplier::orderBy('id', 'asc')->get();
+        // dd($watchSuppliers);
         return view('livewire.admin.watches', [
             'watches' => $watches,
             'watchColors' => $watchColors,
@@ -261,7 +262,7 @@ class Watches extends Component
         $watch = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
             ->join('watch_stocks', 'watch_details.id', '=', 'watch_stocks.watch_id')
-            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*')
+            ->select('watch_details.*', 'watch_suppliers.*', 'watch_prices.*', 'watch_stocks.*','watch_suppliers.name as supplier_name', 'watch_details.name as watch_name')
             ->where('watch_details.id', $id)
             ->first();
 
@@ -269,7 +270,7 @@ class Watches extends Component
         // Basic information
         $this->editId = $id;
         $this->editCode = $watch->code;
-        $this->editName = $watch->name;
+        $this->editName = $watch->watch_name;
         $this->editModel = $watch->model;
         $this->editBrand = $watch->brand;
         $this->editColor = $watch->color;
@@ -298,15 +299,15 @@ class Watches extends Component
         $this->editDescription = $watch->description;
 
         // Supplier Information
-        $this->editSupplier = $watch->supplier_id;
-        $this->editSupplierPrice = $watch->price->supplier_price;
+        $this->editSupplier = $watch->supplier_name;
+        $this->editSupplierPrice = $watch->supplier_price;
 
         // Pricing and Inventory
-        $this->editSellingPrice = $watch->price->selling_price;
-        $this->editDiscountPrice = $watch->price->discount_price;
-        $this->editShopStock = $watch->stock->shop_stock;
-        $this->editStoreStock = $watch->stock->store_stock;
-        $this->editDamageStock = $watch->stock->damage_stock;
+        $this->editSellingPrice = $watch->selling_price;
+        $this->editDiscountPrice = $watch->discount_price;
+        $this->editShopStock = $watch->shop_stock;
+        $this->editStoreStock = $watch->store_stock;
+        $this->editDamageStock = $watch->damage_stock;
         $this->editStatus = $watch->status;
         $this->editLocation = $watch->location;
 
