@@ -4,7 +4,7 @@
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light">
                 <h4 class="card-title mb-2 mb-md-0">Watch Stock Details</h4>
                 <div class="card-tools">
-                    <button class="btn btn-outline-secondary btn-sm">
+                    <button wire:click="exportToCSV" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-download me-1"></i> Export
                     </button>
                 </div>
@@ -204,7 +204,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" id="printReportBtn" class="btn btn-primary">
                         <i class="bi bi-printer me-1"></i> Print Report
                     </button>
                 </div>
@@ -238,6 +238,76 @@
                     });
                 }
             });
+
+            const printBtn = document.getElementById('printReportBtn');
+            if (printBtn) {
+                printBtn.addEventListener('click', function() {
+                    printStaffInventory();
+                });
+            }
         });
+
+        function printStaffInventory() {
+            // Get the modal content
+            const modalContent = document.querySelector('#stockDetailsModal .modal-content').cloneNode(true);
+            
+            // Remove buttons and search input
+            if (modalContent.querySelector('.modal-footer')) {
+                modalContent.querySelector('.modal-footer').remove();
+            }
+            
+            const searchInput = modalContent.querySelector('#watchSearchInput');
+            if (searchInput) {
+                searchInput.parentElement.remove();
+            }
+            
+            // Create print window
+            const printWindow = window.open('', '_blank', 'height=600,width=800');
+            
+            // Get staff name for title
+            let staffName = "Staff Inventory";
+            const titleElement = modalContent.querySelector('.modal-title');
+            if (titleElement) {
+                staffName = titleElement.textContent.trim();
+            }
+            
+            // Create HTML content for print
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${staffName} - Print Report</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+                    <style>
+                        body { padding: 20px; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container-fluid">
+                        <div class="d-flex justify-content-between mb-4">
+                            <h2>${staffName}</h2>
+                            <div class="text-end no-print">
+                                <button class="btn btn-primary" onclick="window.print();">Print</button>
+                                <button class="btn btn-secondary ms-2" onclick="window.close();">Close</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            ${modalContent.querySelector('.modal-body').innerHTML}
+                        </div>
+                        <div class="mt-4 text-center text-muted">
+                            <small>Generated on ${new Date().toLocaleString()}</small>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+        }
     </script>
 @endpush
