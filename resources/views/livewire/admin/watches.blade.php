@@ -769,7 +769,7 @@
                                         <div class="col-md-4 border-end">
                                             <div class="position-relative h-100">
                                                 @if ($watchDetails->image)
-                                                    <img src="{{ asset('storage/' . $watchDetails->image) }}"
+                                                    <img src="{{ asset('public/storage/' . $watchDetails->image) }}"
                                                         alt="{{ $watchDetails->name }}"
                                                         class="img-fluid rounded-start h-100 w-100 object-fit-cover">
                                                 @else
