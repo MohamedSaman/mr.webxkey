@@ -1530,7 +1530,7 @@
                                                     style="height: 100px">
                                             @elseif($existingImage)
                                                 <div class="mb-2">Current image:</div>
-                                                <img src="{{ asset('storage/' . $existingImage) }}"
+                                                <img src="{{ asset('public/storage/' . $existingImage) }}"
                                                     class="img-thumbnail" style="height: 100px">
                                             @endif
                                         </div>
