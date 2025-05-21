@@ -67,7 +67,7 @@
             </div>
         </div>
         {{-- Create Color Model --}}
-        <div wire:ignore.self  class="modal fade" id="createColorModal" tabindex="-1" aria-labelledby="createColorModalLabel"
+        <div wire:ignore.self wire:key="create-color-modal-{{ rand() }}"   class="modal fade" id="createColorModal" tabindex="-1" aria-labelledby="createColorModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -172,6 +172,15 @@
         window.addEventListener('open-edit-modal', event => {
             setTimeout(() => {
                 const modal = new bootstrap.Modal(document.getElementById('editColorModal'));
+                modal.show();
+            }, 500); // 500ms delay before showing the modal
+        });
+    </script>
+    <script>
+        window.addEventListener('create-color-modal', event => {
+            @this.resetForm();
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('createColorModal'));
                 modal.show();
             }, 500); // 500ms delay before showing the modal
         });

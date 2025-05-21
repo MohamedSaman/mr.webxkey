@@ -16,7 +16,7 @@ use Livewire\Attributes\Layout;
 class AddWatchColor extends Component
 {
     public $colorName;
-    public $colorCode;
+    public $colorCode = '#000000';
     public function render()
     {
         $colors = WatchColors::orderBy('id','asc')->get();
@@ -26,8 +26,9 @@ class AddWatchColor extends Component
     }
 
     public function createColor(){
-        $this->reset();
-        $this->js("$('#createColorModal').modal('show')");
+        // $this->reset();
+        // $this->js("$('#createColorModal').modal('show')");
+        $this->dispatch('create-color-modal');
     }
     public function saveColor(){
         $this->validate([
@@ -82,6 +83,8 @@ class AddWatchColor extends Component
         
         $this->js('$("#editColorModal").modal("hide")');
     }
+
+    
     
     public $deleteId;
     public function confirmDelete($id)
@@ -97,5 +100,15 @@ class AddWatchColor extends Component
             // log($e->getMessage());
             $this->js("Swal.fire('Error!', '".$e->getMessage()."', 'error')");
         }
+    }
+
+    public function resetForm()
+    {
+        $this->reset([
+            'colorName',
+            'colorCode',
+        ]);
+        $this->resetErrorBag();
+        $this->resetValidation();
     }
 }
