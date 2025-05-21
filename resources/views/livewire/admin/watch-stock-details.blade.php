@@ -31,7 +31,7 @@
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">
-                                        <img src="{{ asset('storage/' . $watchStock->watch_image) }}" alt="Watch Image"
+                                        <img src="{{ asset('public/storage/' . $watchStock->watch_image) }}" alt="Watch Image"
                                             class="img-fluid" style="width: 50px; height: 50px;">
                                     </td>
                                     <td class="text-center">{{ $watchStock->watch_name ?? '-' }}</td>
