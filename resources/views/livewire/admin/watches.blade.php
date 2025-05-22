@@ -150,6 +150,7 @@
                         <th scope="col" class="text-center">Model</th>
                         <th scope="col" class="text-center">Color</th>
                         <th scope="col" class="text-center">Stock</th>
+                        <th scope="col" class="text-center">Supplier Price</th>
                         <th scope="col" class="text-center">Selling Price</th>
                         <th scope="col" class="text-center">Status</th>
                         <th scope="col" class="text-center">Actions</th>
@@ -173,6 +174,7 @@
                                             <span class="badge bg-danger rounded-pill">Out of Stock</span>
                                         @endif
                                     </td>
+                                    <td class="text-center">{{ $watch->supplier_price }}</td>
                                     <td class="text-center">{{ $watch->selling_price }}</td>
                                     <td class="text-center">
                                         @if ($watch->status == 'active')
@@ -622,6 +624,17 @@
                                 <div class="card-body p-4">
                                     <div class="row">
                                         <div class="col-md-4">
+                                             <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="supplierPrice" class="form-label fw-bold">Supplier
+                                                    Price:</label>
+                                                <input type="number" step="0.01" class="form-control"
+                                                    id="supplierPrice" wire:model="supplierPrice">
+                                                @error('supplierPrice')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
                                             <div class="mb-3">
                                                 <label for="sellingPrice" class="form-label fw-bold">Selling
                                                     Price:</label>
