@@ -121,7 +121,7 @@
 
                     <div class="search-bar">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="product-search" wire:model.live ="search"
+                            <input type="text" class="form-control" id="product-search" wire:model.live="search"
                                 placeholder="Search products...">
                             {{-- <button class="btn btn-outline-secondary" type="button" id="search-btn">
                                 <i class="bi bi-search"></i>
@@ -185,8 +185,7 @@
                                     <td class="text-center">
                                         <div class="action-btns" style="justify-content: center;">
                                             <button class="btn action-btn edit" title="Edit"
-                                                wire:click="editWatch({{ $watch->id }})"
-                                                wire:loading.attr="disabled">
+                                                wire:click="editWatch({{ $watch->id }})" wire:loading.attr="disabled">
                                                 <i class="bi bi-pencil" wire:loading.class="d-none"
                                                     wire:target="editWatch({{ $watch->id }})"></i>
                                                 <span wire:loading wire:target="editWatch({{ $watch->id }})">
@@ -197,8 +196,7 @@
                                                 wire:click="confirmDelete({{ $watch->id }})">
                                                 <i class="bi bi-trash"></i>
                                             </button>
-                                            <button class="action-btn qr" title="View"
-                                                wire:click="viewWatch({{ $watch->id }})">
+                                            <button class="action-btn qr" title="View" wire:click="viewWatch({{ $watch->id }})">
                                                 <i class="bi bi-eye"></i>
                                             </button>
                                         </div>
@@ -227,8 +225,7 @@
                     <div class="modal-content">
                         <div class="modal-header bg-primary">
                             <h1 class="modal-title fs-5 text-white" id="createWatchModalLabel">Create New Watch</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body bg-light p-4">
                             <!-- Basic Information Card -->
@@ -242,8 +239,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label fw-bold">Name:</label>
-                                                <input type="text" class="form-control" id="name"
-                                                    wire:model="name">
+                                                <input type="text" class="form-control" id="name" wire:model="name">
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -252,8 +248,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="model" class="form-label fw-bold">Model:</label>
-                                                <input type="text" class="form-control" id="model"
-                                                    wire:model="model">
+                                                <input type="text" class="form-control" id="model" wire:model="model">
                                                 @error('model')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -386,6 +381,16 @@
                                                     <option value="Mechanical">Mechanical</option>
                                                     <option value="Quartz">Quartz</option>
                                                     <option value="Automatic">Automatic</option>
+                                                    <option value="PC">PC</option>
+                                                    <option value="SL68">SL68</option>
+                                                    <option value="2035 japan">2035 japan</option>
+                                                    <option value="2030 japan">2030 japan</option>
+                                                    <option value="VGA quartz">VGA quartz</option>
+                                                    <option value="SL68 DATE">SL68 DATE</option>
+                                                    <option value="SL68 DAY & DATE">SL68 DAY & DATE</option>
+                                                    <option value="2035 DATE">2035 DATE</option>
+                                                    <option value="2035 DAY & DATE">2035 DAY & DATE</option>
+
                                                 </select>
                                                 @error('movement')
                                                     <span class="text-danger">{{ $message }}</span>
@@ -455,8 +460,8 @@
                                             <div class="mb-3">
                                                 <label for="caseDiameter" class="form-label fw-bold">Case Diameter
                                                     (mm):</label>
-                                                <input type="number" step="0.1" class="form-control"
-                                                    id="caseDiameter" wire:model="caseDiameter">
+                                                <input type="number" step="0.1" class="form-control" id="caseDiameter"
+                                                    wire:model="caseDiameter">
                                                 @error('caseDiameter')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -466,8 +471,8 @@
                                             <div class="mb-3">
                                                 <label for="caseThickness" class="form-label fw-bold">Case Thickness
                                                     (mm):</label>
-                                                <input type="number" step="0.1" class="form-control"
-                                                    id="caseThickness" wire:model="caseThickness">
+                                                <input type="number" step="0.1" class="form-control" id="caseThickness"
+                                                    wire:model="caseThickness">
                                                 @error('caseThickness')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -526,12 +531,12 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="image" class="form-label fw-bold">Watch Image:</label>
-                                                <input type="file" class="form-control" id="image"
-                                                    wire:model="image" accept="image/*">
+                                                <input type="file" class="form-control" id="image" wire:model="image"
+                                                    accept="image/*">
                                                 <div wire:loading wire:target="image">Uploading...</div>
                                                 @if ($image && is_object($image))
-                                                    <img src="{{ $image->temporaryUrl() }}"
-                                                        class="mt-2 img-thumbnail" style="height: 100px">
+                                                    <img src="{{ $image->temporaryUrl() }}" class="mt-2 img-thumbnail"
+                                                        style="height: 100px">
                                                 @endif
                                                 @error('image')
                                                     <span class="text-danger">{{ $message }}</span>
@@ -562,9 +567,9 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="mb-3">
-                                                <label for="description"
-                                                    class="form-label fw-bold">Description:</label>
-                                                <textarea class="form-control" id="description" rows="3" wire:model="description"></textarea>
+                                                <label for="description" class="form-label fw-bold">Description:</label>
+                                                <textarea class="form-control" id="description" rows="3"
+                                                    wire:model="description"></textarea>
                                                 @error('description')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -587,13 +592,13 @@
                                                 <select class="form-select" id="supplier" wire:model="supplier">
                                                     <option value="">Select Supplier</option>
                                                     @foreach ($watchSuppliers as $supplier)
-                                                        <option value="{{ $supplier->id }}">
-                                                            {{ $supplier->name }}
-                                                        </option>
+                                                    <option value="{{ $supplier->id }}">
+                                                        {{ $supplier->name }}
+                                                    </option>
                                                     @endforeach
                                                 </select>
                                                 @error('supplier')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         </div>
@@ -602,10 +607,10 @@
                                             <div class="mb-3">
                                                 <label for="supplierPrice" class="form-label fw-bold">Supplier
                                                     Price:</label>
-                                                <input type="number" step="0.01" class="form-control"
-                                                    id="supplierPrice" wire:model="supplierPrice">
+                                                <input type="number" step="0.01" class="form-control" id="supplierPrice"
+                                                    wire:model="supplierPrice">
                                                 @error('supplierPrice')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         </div>
@@ -627,8 +632,8 @@
                                             <div class="mb-3">
                                                 <label for="supplierPrice" class="form-label fw-bold">Supplier
                                                     Price:</label>
-                                                <input type="number" step="0.01" class="form-control"
-                                                    id="supplierPrice" wire:model="supplierPrice">
+                                                <input type="number" step="0.01" class="form-control" id="supplierPrice"
+                                                    wire:model="supplierPrice">
                                                 @error('supplierPrice')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -638,8 +643,8 @@
                                             <div class="mb-3">
                                                 <label for="sellingPrice" class="form-label fw-bold">Selling
                                                     Price:</label>
-                                                <input type="number" step="0.01" class="form-control"
-                                                    id="sellingPrice" wire:model="sellingPrice">
+                                                <input type="number" step="0.01" class="form-control" id="sellingPrice"
+                                                    wire:model="sellingPrice">
                                                 @error('sellingPrice')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -649,8 +654,8 @@
                                             <div class="mb-3">
                                                 <label for="discountPrice" class="form-label fw-bold">Discount
                                                     Price:</label>
-                                                <input type="number" step="0.01" class="form-control"
-                                                    id="discountPrice" wire:model="discountPrice">
+                                                <input type="number" step="0.01" class="form-control" id="discountPrice"
+                                                    wire:model="discountPrice">
                                                 @error('discountPrice')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -760,14 +765,13 @@
         </div>
 
         <!-- View Watch Modal -->
-        <div wire:ignore.self  class="modal fade" id="viewWatchModal"
-            tabindex="-1" aria-labelledby="viewWatchModalLabel" aria-hidden="true">
+        <div wire:ignore.self class="modal fade" id="viewWatchModal" tabindex="-1" aria-labelledby="viewWatchModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-primary">
                         <h1 class="modal-title fs-5 text-white" id="viewWatchModalLabel">Watch Details</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     @if ($watchDetails)
                         <div class="modal-body p-4">
@@ -784,15 +788,13 @@
                                                 @else
                                                     <div
                                                         class="bg-light d-flex align-items-center justify-content-center h-100">
-                                                        <i class="bi bi-watch text-muted"
-                                                            style="font-size: 5rem;"></i>
+                                                        <i class="bi bi-watch text-muted" style="font-size: 5rem;"></i>
                                                         <p class="text-muted">No image available</p>
                                                     </div>
                                                 @endif
 
                                                 <!-- Status badges in corner -->
-                                                <div
-                                                    class="position-absolute top-0 end-0 p-2 d-flex flex-column gap-2">
+                                                <div class="position-absolute top-0 end-0 p-2 d-flex flex-column gap-2">
                                                     <span
                                                         class="badge bg-{{ $watchDetails->status == 'active' ? 'success' : 'danger' }}">
                                                         {{ ucfirst($watchDetails->status) }}
@@ -817,7 +819,8 @@
                                             <div class="p-4">
                                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                                     <h3 class="fw-bold mb-0 text-primary">
-                                                        {{ $watchDetails->watch_name }}</h3>
+                                                        {{ $watchDetails->watch_name }}
+                                                    </h3>
                                                 </div>
 
                                                 <!-- Display code prominently -->
@@ -878,10 +881,8 @@
                                                         </div>
                                                         @if ($watchDetails->discount_price > 0)
                                                             <div class="position-relative">
-                                                                <div
-                                                                    class="position-absolute top-0 start-50 translate-middle">
-                                                                    <span
-                                                                        class="badge bg-danger p-2 rounded-pill">SPECIAL
+                                                                <div class="position-absolute top-0 start-50 translate-middle">
+                                                                    <span class="badge bg-danger p-2 rounded-pill">SPECIAL
                                                                         OFFER</span>
                                                                 </div>
                                                                 <div class="border border-success rounded-3 p-2 text-center mt-3"
@@ -922,32 +923,38 @@
                                                             <tr>
                                                                 <th class="text-muted" width="40%">Color</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->color }}</td>
+                                                                    {{ $watchDetails->color }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Made By</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->made_by }}</td>
+                                                                    {{ $watchDetails->made_by }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Movement</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->movement }}</td>
+                                                                    {{ $watchDetails->movement }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Type</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->type }}</td>
+                                                                    {{ $watchDetails->type }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Dial Color</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->dial_color }}</td>
+                                                                    {{ $watchDetails->dial_color }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Water Resistance</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->water_resistance }}</td>
+                                                                    {{ $watchDetails->water_resistance }}
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -960,32 +967,38 @@
                                                                 <th class="text-muted" width="40%">Case Diameter
                                                                 </th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->case_diameter_mm }} mm</td>
+                                                                    {{ $watchDetails->case_diameter_mm }} mm
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Case Thickness</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->case_thickness_mm }} mm</td>
+                                                                    {{ $watchDetails->case_thickness_mm }} mm
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Glass Type</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->glass_type }}</td>
+                                                                    {{ $watchDetails->glass_type }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Strap Material</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->strap_material }}</td>
+                                                                    {{ $watchDetails->strap_material }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Strap Color</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->strap_color }}</td>
+                                                                    {{ $watchDetails->strap_color }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Features</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->features }}</td>
+                                                                    {{ $watchDetails->features }}
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -998,9 +1011,9 @@
                                 <!-- Inventory Section -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#inventory-collapse"
-                                            aria-expanded="false" aria-controls="inventory-collapse">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#inventory-collapse" aria-expanded="false"
+                                            aria-controls="inventory-collapse">
                                             <i class="bi bi-box-seam me-2"></i> Inventory
                                         </button>
                                     </h2>
@@ -1014,7 +1027,8 @@
                                                             <div class="d-flex justify-content-between">
                                                                 <p class="card-text fw-bold">Shop Stock</p>
                                                                 <h4 class="card-title text-primary">
-                                                                    {{ $watchDetails->shop_stock }}</h4>
+                                                                    {{ $watchDetails->shop_stock }}
+                                                                </h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1025,7 +1039,8 @@
                                                             <div class="d-flex justify-content-between">
                                                                 <p class="card-text fw-bold">Store Stock</p>
                                                                 <h4 class="card-title text-primary">
-                                                                    {{ $watchDetails->store_stock }}</h4>
+                                                                    {{ $watchDetails->store_stock }}
+                                                                </h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1039,7 +1054,8 @@
                                                             <div class="d-flex justify-content-between">
                                                                 <p class="card-text fw-bold">Damage Stock</p>
                                                                 <h4 class="card-title text-danger">
-                                                                    {{ $watchDetails->damage_stock }}</h4>
+                                                                    {{ $watchDetails->damage_stock }}
+                                                                </h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1067,7 +1083,8 @@
                                                             <div class="d-flex justify-content-between">
                                                                 <p class="card-text fw-bold">Total Stock</p>
                                                                 <h4 class="card-title">
-                                                                    {{ $watchDetails->total_stock }}</h4>
+                                                                    {{ $watchDetails->total_stock }}
+                                                                </h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1078,7 +1095,8 @@
                                                             <div class="d-flex justify-content-between">
                                                                 <p class="card-text fw-bold">Store Location</p>
                                                                 <h5 class="card-title text-info">
-                                                                    {{ $watchDetails->location }}</h5>
+                                                                    {{ $watchDetails->location }}
+                                                                </h5>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1091,9 +1109,9 @@
                                 {{-- <!-- Supplier Section -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#supplier-collapse"
-                                            aria-expanded="false" aria-controls="supplier-collapse">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#supplier-collapse" aria-expanded="false"
+                                            aria-controls="supplier-collapse">
                                             <i class="bi bi-truck me-2"></i> Supplier Details
                                         </button>
                                     </h2>
@@ -1159,37 +1177,35 @@
                                                     </div>
 
                                                     @if ($watchDetails->discount_price > 0)
-                                                        <div class="card border-success bg-success bg-opacity-10">
-                                                            <div
-                                                                class="card-header bg-success bg-opacity-25 border-success">
-                                                                <h6 class="text-success mb-0 fw-bold">SPECIAL DISCOUNT
-                                                                </h6>
+                                                    <div class="card border-success bg-success bg-opacity-10">
+                                                        <div class="card-header bg-success bg-opacity-25 border-success">
+                                                            <h6 class="text-success mb-0 fw-bold">SPECIAL DISCOUNT
+                                                            </h6>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <p class="card-text fw-bold text-success">Discount
+                                                                    Amount</p>
+                                                                <h5 class="card-title text-success">
+                                                                    Rs.
+                                                                    {{ number_format($watchDetails->discount_price, 2) }}
+                                                                </h5>
                                                             </div>
-                                                            <div class="card-body">
-                                                                <div
-                                                                    class="d-flex justify-content-between align-items-center">
-                                                                    <p class="card-text fw-bold text-success">Discount
-                                                                        Amount</p>
-                                                                    <h5 class="card-title text-success">
-                                                                        Rs.
-                                                                        {{ number_format($watchDetails->discount_price, 2) }}
-                                                                    </h5>
-                                                                </div>
-                                                                <div class="progress mt-2" style="height: 10px;">
-                                                                    <div class="progress-bar bg-success"
-                                                                        role="progressbar"
-                                                                        style="width: {{ min(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 100) }}%"
-                                                                        aria-valuenow="{{ ($watchDetails->discount_price / $watchDetails->selling_price) * 100 }}"
-                                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                                <div class="d-flex justify-content-between mt-1">
-                                                                    <small class="text-muted">0%</small>
-                                                                    <small class="text-muted">Save
-                                                                        {{ number_format(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 0) }}%</small>
-                                                                    <small class="text-muted">100%</small>
-                                                                </div>
+                                                            <div class="progress mt-2" style="height: 10px;">
+                                                                <div class="progress-bar bg-success" role="progressbar"
+                                                                    style="width: {{ min(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 100) }}%"
+                                                                    aria-valuenow="{{ ($watchDetails->discount_price / $watchDetails->selling_price) * 100 }}"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between mt-1">
+                                                                <small class="text-muted">0%</small>
+                                                                <small class="text-muted">Save
+                                                                    {{ number_format(($watchDetails->discount_price /
+                                                                    $watchDetails->selling_price) * 100, 0) }}%</small>
+                                                                <small class="text-muted">100%</small>
                                                             </div>
                                                         </div>
+                                                    </div>
                                                     @endif
                                                 </div>
                                             </div>
@@ -1200,9 +1216,9 @@
                                 <!-- Product Details Section -->
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#product-details-collapse"
-                                            aria-expanded="false" aria-controls="product-details-collapse">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#product-details-collapse" aria-expanded="false"
+                                            aria-controls="product-details-collapse">
                                             <i class="bi bi-info-circle me-2"></i> Product Details
                                         </button>
                                     </h2>
@@ -1217,27 +1233,32 @@
                                                             <tr>
                                                                 <th class="text-muted" width="40%">Barcode</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->barcode }}</td>
+                                                                    {{ $watchDetails->barcode }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Warranty</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->warranty }}</td>
+                                                                    {{ $watchDetails->warranty }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Status</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ ucfirst($watchDetails->status) }}</td>
+                                                                    {{ ucfirst($watchDetails->status) }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Category</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->category }}</td>
+                                                                    {{ $watchDetails->category }}
+                                                                </td>
                                                             </tr>
                                                             <tr>
                                                                 <th class="text-muted">Location</th>
                                                                 <td class="text-primary fw-medium">
-                                                                    {{ $watchDetails->location }}</td>
+                                                                    {{ $watchDetails->location }}
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -1263,14 +1284,15 @@
                                                             </div>
                                                             <div class="card-body">
                                                                 <div class="d-flex justify-content-between align-items-center">
-                                                                    <p class="card-text fw-bold text-success">Discount Amount</p>
+                                                                    <p class="card-text fw-bold text-success">Discount Amount
+                                                                    </p>
                                                                     <h5 class="card-title text-success">
-                                                                        Rs. {{ number_format($watchDetails->discount_price, 2) }}
+                                                                        Rs.
+                                                                        {{ number_format($watchDetails->discount_price, 2) }}
                                                                     </h5>
                                                                 </div>
                                                                 <div class="progress mt-2" style="height: 10px;">
-                                                                    <div class="progress-bar bg-success"
-                                                                        role="progressbar"
+                                                                    <div class="progress-bar bg-success" role="progressbar"
                                                                         style="width: {{ min(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 100) }}%"
                                                                         aria-valuenow="{{ ($watchDetails->discount_price / $watchDetails->selling_price) * 100 }}"
                                                                         aria-valuemin="0" aria-valuemax="100"></div>
@@ -1302,8 +1324,8 @@
     </div>
 
     {{-- <!-- Edit Watch Modal --> --}}
-    <div wire:ignore.self wire:key="edit-modal-{{ $editId ?? 'new' }}" class="modal fade hidden"
-        id="editWatchModal" tabindex="-1" aria-labelledby="editWatchModalLabel" aria-hidden="true">
+    <div wire:ignore.self wire:key="edit-modal-{{ $editId ?? 'new' }}" class="modal fade hidden" id="editWatchModal"
+        tabindex="-1" aria-labelledby="editWatchModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
@@ -1322,8 +1344,8 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editCode" class="form-label fw-bold">Code:</label>
-                                        <input type="text" class="form-control" id="editCode"
-                                            wire:model="editCode" readonly>
+                                        <input type="text" class="form-control" id="editCode" wire:model="editCode"
+                                            readonly>
                                         @error('editCode')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1332,8 +1354,7 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editName" class="form-label fw-bold">Name:</label>
-                                        <input type="text" class="form-control" id="editName"
-                                            wire:model="editName">
+                                        <input type="text" class="form-control" id="editName" wire:model="editName">
                                         @error('editName')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1359,8 +1380,7 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editModel" class="form-label fw-bold">Model:</label>
-                                        <input type="text" class="form-control" id="editModel"
-                                            wire:model="editModel">
+                                        <input type="text" class="form-control" id="editModel" wire:model="editModel">
                                         @error('editModel')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1542,8 +1562,8 @@
                                     <div class="mb-3">
                                         <label for="editCaseDiameter" class="form-label fw-bold">Case Diameter
                                             (mm):</label>
-                                        <input type="number" step="0.1" class="form-control"
-                                            id="editCaseDiameter" wire:model="editCaseDiameter">
+                                        <input type="number" step="0.1" class="form-control" id="editCaseDiameter"
+                                            wire:model="editCaseDiameter">
                                         @error('editCaseDiameter')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1553,8 +1573,8 @@
                                     <div class="mb-3">
                                         <label for="editCaseThickness" class="form-label fw-bold">Case Thickness
                                             (mm):</label>
-                                        <input type="number" step="0.1" class="form-control"
-                                            id="editCaseThickness" wire:model="editCaseThickness">
+                                        <input type="number" step="0.1" class="form-control" id="editCaseThickness"
+                                            wire:model="editCaseThickness">
                                         @error('editCaseThickness')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1666,7 +1686,8 @@
                                 <div class="col-md-12">
                                     <div class="mb-3">
                                         <label for="editDescription" class="form-label fw-bold">Description:</label>
-                                        <textarea class="form-control" id="editDescription" rows="3" wire:model="editDescription"></textarea>
+                                        <textarea class="form-control" id="editDescription" rows="3"
+                                            wire:model="editDescription"></textarea>
                                         @error('editDescription')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1688,13 +1709,13 @@
                                         <label for="editSupplier" class="form-label fw-bold">Supplier:</label>
                                         <select class="form-select" id="editSupplier" wire:model="editSupplier">
                                             @foreach ($watchSuppliers as $supplier)
-                                                <option value="{{ $supplier->id }}">
-                                                    {{ $supplier->name }}
-                                                </option>
+                                            <option value="{{ $supplier->id }}">
+                                                {{ $supplier->name }}
+                                            </option>
                                             @endforeach
                                         </select>
                                         @error('editSupplier')
-                                            <span class="text-danger">{{ $message }}</span>
+                                        <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -1702,10 +1723,10 @@
                                     <div class="mb-3">
                                         <label for="editSupplierPrice" class="form-label fw-bold">Supplier
                                             Price:</label>
-                                        <input type="number" step="0.01" class="form-control"
-                                            id="editSupplierPrice" wire:model="editSupplierPrice">
+                                        <input type="number" step="0.01" class="form-control" id="editSupplierPrice"
+                                            wire:model="editSupplierPrice">
                                         @error('editSupplierPrice')
-                                            <span class="text-danger">{{ $message }}</span>
+                                        <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
@@ -1723,23 +1744,23 @@
                         </div>
                         <div class="card-body p-4">
                             <div class="row">
-                                 <div class="col-md-4">           
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editSupplierPrice" class="form-label fw-bold">Supplier
                                             Price:</label>
-                                        <input type="number" step="0.01" class="form-control"
-                                            id="editSupplierPrice" wire:model="editSupplierPrice">
+                                        <input type="number" step="0.01" class="form-control" id="editSupplierPrice"
+                                            wire:model="editSupplierPrice">
                                         @error('editSupplierPrice')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4">           
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editSellingPrice" class="form-label fw-bold">Selling
                                             Price:</label>
-                                        <input type="number" step="0.01" class="form-control"
-                                            id="editSellingPrice" wire:model="editSellingPrice">
+                                        <input type="number" step="0.01" class="form-control" id="editSellingPrice"
+                                            wire:model="editSellingPrice">
                                         @error('editSellingPrice')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1749,8 +1770,8 @@
                                     <div class="mb-3">
                                         <label for="editDiscountPrice" class="form-label fw-bold">Discount
                                             Price:</label>
-                                        <input type="number" step="0.01" class="form-control"
-                                            id="editDiscountPrice" wire:model="editDiscountPrice">
+                                        <input type="number" step="0.01" class="form-control" id="editDiscountPrice"
+                                            wire:model="editDiscountPrice">
                                         @error('editDiscountPrice')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -1763,7 +1784,7 @@
                                         <input type="number" class="form-control" id="editShopStock"
                                             wire:model="editShopStock">
                                         @error('editShopStock')
-                                            <span class="text-danger">{{ $message }}</span>
+                                        <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div> --}}
@@ -1826,8 +1847,8 @@
                     <button type="button" class="btn btn-success" wire:click="duplicateWatch">
                         <i class="bi bi-copy"></i> Duplicate Watch
                     </button>
-                    <button type="button" class="btn btn-primary"
-                        wire:click="updateWatch({{ $editId }})">Update Watch</button>
+                    <button type="button" class="btn btn-primary" wire:click="updateWatch({{ $editId }})">Update
+                        Watch</button>
                 </div>
 
             </div>
@@ -1836,11 +1857,11 @@
 </div>
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const tabs = document.querySelectorAll('.content-tab');
 
             tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
+                tab.addEventListener('click', function () {
                     // Remove active class from all tabs
                     tabs.forEach(t => t.classList.remove('active'));
 
@@ -1865,7 +1886,7 @@
             });
 
             // Clean up scanner when leaving page
-            window.addEventListener('beforeunload', function() {
+            window.addEventListener('beforeunload', function () {
                 if (typeof scannerActive !== 'undefined' && scannerActive) {
                     Quagga.stop();
                 }
@@ -1904,5 +1925,5 @@
             }, 500); // 500ms delay before showing the modal
         });
     </script>
-  
+
 @endpush
