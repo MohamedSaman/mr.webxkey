@@ -615,7 +615,7 @@
 
                             <!-- Hidden Supplier Fields -->
                             <input type="hidden" id="supplier" wire:model="supplier">
-                            <input type="hidden" id="supplierPrice" wire:model="supplierPrice" value="0">
+                            {{-- <input type="hidden" id="supplierPrice" wire:model="supplierPrice" value="0"> --}}
                             <!-- Pricing and Inventory Card -->
                             <div class="card mb-4 shadow border border-primary">
                                 <div class="card-header bg-primary bg-opacity-10">
@@ -624,7 +624,6 @@
                                 <div class="card-body p-4">
                                     <div class="row">
                                         <div class="col-md-4">
-                                             <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="supplierPrice" class="form-label fw-bold">Supplier
                                                     Price:</label>
@@ -635,6 +634,7 @@
                                                 @enderror
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="sellingPrice" class="form-label fw-bold">Selling
                                                     Price:</label>
@@ -652,16 +652,6 @@
                                                 <input type="number" step="0.01" class="form-control"
                                                     id="discountPrice" wire:model="discountPrice">
                                                 @error('discountPrice')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="mb-3">
-                                                <label for="shopStock" class="form-label fw-bold">Shop Stock:</label>
-                                                <input type="number" class="form-control" id="shopStock"
-                                                    wire:model="shopStock">
-                                                @error('shopStock')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
@@ -1733,7 +1723,18 @@
                         </div>
                         <div class="card-body p-4">
                             <div class="row">
-                                <div class="col-md-4">
+                                 <div class="col-md-4">           
+                                    <div class="mb-3">
+                                        <label for="editSupplierPrice" class="form-label fw-bold">Supplier
+                                            Price:</label>
+                                        <input type="number" step="0.01" class="form-control"
+                                            id="editSupplierPrice" wire:model="editSupplierPrice">
+                                        @error('editSupplierPrice')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-4">           
                                     <div class="mb-3">
                                         <label for="editSellingPrice" class="form-label fw-bold">Selling
                                             Price:</label>
@@ -1755,7 +1756,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editShopStock" class="form-label fw-bold">Shop
                                             Stock:</label>
@@ -1765,7 +1766,7 @@
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
