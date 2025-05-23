@@ -273,8 +273,13 @@
                             <div class="stat-label">Total Due</div>
                             <div class="stat-value text-danger">Rs.{{ number_format($totals->total_due ?? 0, 2) }}</div>
                             <div class="text-muted small">
-                                {{ round(($totals->total_due/$totals->total_sales)*100, 1) }}% of total sales
-                            </div>
+    @if($totals->total_sales != 0)
+        {{ round(($totals->total_due / $totals->total_sales) * 100, 1) }}% of total sales
+    @else
+        0% of total sales
+    @endif
+</div>
+
                         </div>
                         <div class="stat-icon bg-danger bg-opacity-10">
                             <i class="bi bi-cash-coin text-danger fs-4"></i>
@@ -290,8 +295,11 @@
                             <div class="stat-label">Customers</div>
                             <div class="stat-value text-success">{{ $totals->customer_count ?? 0 }}</div>
                             <div class="text-muted small">
-                                {{ round(($sales->total()/$totals->customer_count), 1) }} sales per customer
-                            </div>
+ @if($totals->customer_count != 0)
+        {{ round(($sales->total() / $totals->customer_count), 1) }} sales per customer
+    @else
+        0 sales per customer
+    @endif                            </div>
                         </div>
                         <div class="stat-icon bg-success bg-opacity-10">
                             <i class="bi bi-people text-success fs-4"></i>
