@@ -28,17 +28,17 @@
                                     <td>{{ $staff->contact }}</td>
                                     <td>
                                         <span class="badge bg-primary">
-                                            ₹{{ number_format($staff->total_amount, 2) }}</td>
+                                            Rs.{{ number_format($staff->total_amount, 2) }}</td>
                                         </span>
                                        
                                     <td>
                                         <span class="badge bg-success">
-                                            ₹{{ number_format($staff->collected_amount, 2) }}</td>
+                                            Rs.{{ number_format($staff->collected_amount, 2) }}</td>
                                         </span>
                                         
                                     <td>
                                         <span class="badge bg-{{ $staff->due_amount > 0 ? 'danger' : 'success' }}">
-                                            ₹{{ number_format($staff->due_amount, 2) }}
+                                            Rs.{{ number_format($staff->due_amount, 2) }}
                                         </span>
                                     </td>
                                     <td>
