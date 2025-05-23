@@ -64,6 +64,68 @@ class CustomerSaleDetails extends Component
         $this->dispatch('open-customer-sale-details-modal');
     }
     
+    // For print functionality (main table)
+    public function printData()
+    {
+        // Trigger JavaScript print function from the frontend
+        $this->dispatch('print-customer-table');
+    }
+
+    // For CSV export
+    public function exportToCSV()
+    {
+        $customerSales = DB::table('sales')
+            ->join('customers', 'sales.customer_id', '=', 'customers.id')
+            ->select(
+                'customers.id as customer_id',
+                'customers.name',
+                'customers.email',
+                'customers.business_name',
+                'customers.type',
+                DB::raw('COUNT(DISTINCT sales.invoice_number) as invoice_count'),
+                DB::raw('SUM(sales.total_amount) as total_sales'),
+                DB::raw('SUM(sales.due_amount) as total_due'),
+                DB::raw('SUM(sales.total_amount) - SUM(sales.due_amount) as total_paid')
+            )
+            ->groupBy('customers.id', 'customers.name', 'customers.email', 'customers.business_name', 'customers.type')
+            ->orderBy('total_sales', 'desc')
+            ->get();
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="customer_sales_' . date('Y-m-d') . '.csv"',
+        ];
+        
+        $callback = function() use ($customerSales) {
+            $file = fopen('php://output', 'w');
+            
+            // Add headers
+            fputcsv($file, ['#', 'Customer Name', 'Email', 'Business Name', 'Type', 'Invoices', 'Total Sales', 'Total Paid', 'Total Due', 'Collection %']);
+            
+            // Add data rows
+            foreach ($customerSales as $index => $customer) {
+                $percentage = $customer->total_sales > 0 ? round(($customer->total_paid / $customer->total_sales) * 100) : 100;
+                
+                fputcsv($file, [
+                    $index + 1,
+                    $customer->name,
+                    $customer->email,
+                    $customer->business_name ?? 'N/A',
+                    ucfirst($customer->type),
+                    $customer->invoice_count,
+                    'Rs.' . number_format($customer->total_sales, 2),
+                    'Rs.' . number_format($customer->total_paid, 2),
+                    'Rs.' . number_format($customer->total_due, 2),
+                    $percentage . '%'
+                ]);
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+    
     public function render()
     {
         $customerSales = DB::table('sales')
