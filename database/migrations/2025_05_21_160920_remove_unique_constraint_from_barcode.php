@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('watch_details', function (Blueprint $table) {
+       Schema::table('watch_details', function (Blueprint $table) {
             $table->dropUnique(['barcode']);
         });
     }

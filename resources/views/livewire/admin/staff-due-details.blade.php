@@ -42,12 +42,12 @@
                                     <td>{{ $staff->contact }}</td>
                                     <td>
                                         <span class="badge bg-primary">
-                                            Rs.{{ number_format($staff->total_amount, 2) }}
+                                            Rs.{{ number_format($staff->total_amount, 2) }}</td>
                                         </span>
                                     </td>
                                     <td>
                                         <span class="badge bg-success">
-                                            Rs.{{ number_format($staff->collected_amount, 2) }}
+                                            Rs.{{ number_format($staff->collected_amount, 2) }}</td>
                                         </span>
                                     </td>
                                     <td>

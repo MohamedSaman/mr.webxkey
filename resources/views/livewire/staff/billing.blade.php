@@ -30,7 +30,7 @@
                                                     <!-- Product Image - Full height -->
                                                     <div class="product-image me-3" style="min-width: 60px;">
                                                         @if ($result->image)
-                                                            <img src="{{ asset('storage/' . $result->image) }}"
+                                                            <img src="{{ asset('public/storage/' . $result->image) }}"
                                                                 alt="{{ $result->name }}" class="img-fluid rounded"
                                                                 style="width: 60px; height: 60px; object-fit: cover;">
                                                         @else
@@ -114,7 +114,7 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         @if ($item['image'])
-                                                            <img src="{{ asset('storage/' . $item['image']) }}"
+                                                            <img src="{{ asset('public/storage/' . $item['image']) }}"
                                                                 class="avatar avatar-sm me-3"
                                                                 alt="{{ $item['name'] }}">
                                                         @else
@@ -152,7 +152,7 @@
                                             </td>
                                             <td>
                                                 <div class="input-group input-group-sm" style="width: 100px;">
-                                                    <span class="input-group-text">$</span>
+                                                    <span class="input-group-text">Rs.</span>
                                                     <input type="number" class="form-control form-control-sm"
                                                         value="{{ $discounts[$id] ?? 0 }}" min="0"
                                                         max="{{ $item['price'] }}" step="0.01"
@@ -628,7 +628,7 @@
                                             <div class="col-md-4 border-end">
                                                 <div class="position-relative h-100">
                                                     @if ($watchDetails->image)
-                                                        <img src="{{ asset('storage/' . $watchDetails->image) }}"
+                                                        <img src="{{ asset('public/storage/' . $watchDetails->image) }}"
                                                             alt="{{ $watchDetails->name }}"
                                                             class="img-fluid rounded-start h-100 w-100 object-fit-cover">
                                                     @else
@@ -1261,9 +1261,9 @@
                                 <div class="receipt-container">
                                     <!-- Receipt Header -->
                                     <div class="text-center mb-4">
-                                        <h3 class="mb-0">WatchStore</h3>
-                                        <p class="mb-0 text-muted small">123 Main Street, City, Country</p>
-                                        <p class="mb-0 text-muted small">Phone: (123) 456-7890 | Email:
+                                        <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
+                                        <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
+                                        <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email:hakeem9053@gmail.com
                                             info@watchstore.com</p>
                                         <h4 class="mt-3 border-bottom border-2 pb-2">SALES RECEIPT</h4>
                                     </div>
