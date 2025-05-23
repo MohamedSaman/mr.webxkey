@@ -152,7 +152,7 @@
                                             </td>
                                             <td>
                                                 <div class="input-group input-group-sm" style="width: 100px;">
-                                                    <span class="input-group-text">$</span>
+                                                    <span class="input-group-text">Rs.</span>
                                                     <input type="number" class="form-control form-control-sm"
                                                         value="{{ $discounts[$id] ?? 0 }}" min="0"
                                                         max="{{ $item['price'] }}" step="0.01"
