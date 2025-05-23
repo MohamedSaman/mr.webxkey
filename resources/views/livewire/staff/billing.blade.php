@@ -1261,9 +1261,9 @@
                                 <div class="receipt-container">
                                     <!-- Receipt Header -->
                                     <div class="text-center mb-4">
-                                        <h3 class="mb-0">WatchStore</h3>
-                                        <p class="mb-0 text-muted small">123 Main Street, City, Country</p>
-                                        <p class="mb-0 text-muted small">Phone: (123) 456-7890 | Email:
+                                        <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
+                                        <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
+                                        <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email:hakeem9053@gmail.com
                                             info@watchstore.com</p>
                                         <h4 class="mt-3 border-bottom border-2 pb-2">SALES RECEIPT</h4>
                                     </div>

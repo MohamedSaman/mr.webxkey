@@ -582,7 +582,7 @@
                                 <div class="d-flex align-items-center mt-3">
                                     @if ($item->image)
                                         <div class="me-2" style="width: 40px; height: 40px;">
-                                            <img src="{{ asset('public/storage/' . $item->image) }}"
+                                            <img src="{{ asset('public/Bstorage/' . $item->image) }}"
                                                 alt="{{ $item->name }}" class="img-fluid rounded"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
