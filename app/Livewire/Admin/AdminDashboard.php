@@ -32,6 +32,7 @@ class AdminDashboard extends Component
     public $soldPercentage = 0;
     public $damagedStock = 0;
     public $damagedValue = 0;
+    public $totalInventoryValue = 0;
     public $totalStaffCount = 0;
     public $staffWithAssignmentsCount = 0;
     public $staffAssignmentPercentage = 0;
@@ -128,6 +129,14 @@ class AdminDashboard extends Component
             ->first();
 
         $this->damagedValue = $damagedValue->damaged_value ?? 0;
+
+        // Calculate total inventory value (all stocks)
+        $totalInventoryValue = DB::table('watch_stocks')
+            ->join('watch_prices', 'watch_stocks.watch_id', '=', 'watch_prices.watch_id')
+            ->select(DB::raw('SUM(watch_stocks.total_stock * watch_prices.selling_price) as total_value'))
+            ->first();
+            
+        $this->totalInventoryValue = $totalInventoryValue->total_value ?? 0;
 
         $this->totalStaffCount = DB::table('users')->where('role', 'staff')->count();
         $this->staffWithAssignmentsCount = DB::table('staff_sales')
