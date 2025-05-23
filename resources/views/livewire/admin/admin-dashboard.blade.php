@@ -1,6 +1,7 @@
 <div>
     @push('styles')
         <style>
+            /* Base styles */
             .stat-card {
                 background: white;
                 border-radius: 8px;
@@ -308,7 +309,6 @@
                 border-radius: 0.25rem;
                 overflow: hidden;
             }
-
             
             .btn-outline-primary, .btn-outline-secondary {
                 font-size: 0.8rem;
@@ -322,22 +322,183 @@
                 transform: translateY(-1px);
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
+            
+            /* MOBILE RESPONSIVE STYLES */
+            @media (max-width: 768px) {
+                .stat-card {
+                    padding: 12px;
+                    margin-bottom: 15px;
+                }
+                
+                .stat-value {
+                    font-size: 20px !important;
+                }
+                
+                .stat-info small, .stat-change-alert small {
+                    font-size: 11px !important;
+                    white-space: normal !important;
+                }
+                
+                .content-tab {
+                    padding: 8px 12px !important;
+                    white-space: nowrap;
+                }
+                
+                .chart-header {
+                    padding: 0.75rem !important;
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                }
+                
+                .chart-header .btn {
+                    margin-top: 0.5rem;
+                    font-size: 0.8rem;
+                }
+                
+                .chart-header h6 {
+                    font-size: 1rem;
+                }
+                
+                .chart-header p {
+                    font-size: 0.75rem;
+                }
+                
+                .widget-container {
+                    padding: 15px;
+                }
+                
+                .item-row {
+                    flex-wrap: wrap;
+                }
+                
+                .item-details {
+                    width: 100%;
+                    margin-bottom: 5px;
+                }
+                
+                .avatar {
+                    width: 32px;
+                    height: 32px;
+                    margin-right: 10px;
+                }
+                
+                .amount {
+                    font-size: 13px;
+                }
+                
+                .staff-card .d-flex {
+                    flex-wrap: wrap;
+                }
+                
+                .staff-card .d-flex .d-flex {
+                    margin-top: 5px;
+                    justify-content: space-between !important;
+                    width: 100%;
+                }
+                
+                .staff-card {
+                    padding: 10px !important;
+                }
+                
+                .staff-card h6 {
+                    font-size: 0.9rem;
+                }
+                
+                .progress {
+                    height: 5px !important;
+                }
+                
+                .recent-sales-card {
+                    height: auto;
+                    max-height: 380px;
+                }
+            }
+            
+            @media (max-width: 576px) {
+                .content-tabs {
+                    margin-bottom: 15px;
+                }
+                
+                .stat-card {
+                    padding: 10px;
+                }
+                
+                .stat-value {
+                    font-size: 18px !important;
+                }
+                
+                .status-badge {
+                    padding: 0.15rem 0.35rem;
+                    font-size: 0.7rem;
+                }
+                
+                .widget-header h6 {
+                    font-size: 1rem;
+                }
+                
+                .widget-header p {
+                    font-size: 0.75rem;
+                }
+                
+                .item-row {
+                    align-items: flex-start;
+                }
+                
+                .item-details h6 {
+                    font-size: 0.9rem;
+                }
+                
+                .d-flex-mobile-column {
+                    flex-direction: column !important;
+                }
+                
+                .justify-content-mobile-between {
+                    justify-content: space-between !important;
+                }
+                
+                .mb-mobile-2 {
+                    margin-bottom: 0.5rem !important;
+                }
+                
+                .w-mobile-100 {
+                    width: 100% !important;
+                }
+                
+                .text-truncate-mobile {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 100%;
+                }
+            }
+            
+            /* Fix for horizontal scrolling on mobile */
+            .container-fluid {
+                width: 100%;
+                padding-right: var(--bs-gutter-x, 0.75rem);
+                padding-left: var(--bs-gutter-x, 0.75rem);
+                margin-right: auto;
+                margin-left: auto;
+                overflow-x: hidden;
+            }
         </style>
     @endpush
 
     <!-- Navigation Tabs -->
-    <div class="content-tabs">
-        <div class="content-tab active" data-tab="overview">Overview</div>
-        <div class="content-tab" data-tab="analytics">Analytics</div>
-        <div class="content-tab" data-tab="reports">Reports</div>
-        <div class="content-tab" data-tab="notifications">Notifications</div>
+    <div class="content-tabs overflow-auto">
+        <div class="d-flex">
+            <div class="content-tab active" data-tab="overview">Overview</div>
+            <div class="content-tab" data-tab="analytics">Analytics</div>
+            <div class="content-tab" data-tab="reports">Reports</div>
+            <div class="content-tab" data-tab="notifications">Notifications</div>
+        </div>
     </div>
 
     <!-- Overview Content -->
     <div id="overview" class="tab-content active">
         <!-- Stats Cards Row -->
         <div class="row mb-4">
-            <div class="col-md-3 mb-3">
+            <div class="col-sm-6 col-lg-3 mb-3">
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="stat-label">Total Revenue</div>
@@ -356,27 +517,24 @@
                                  aria-valuenow="{{ $revenuePercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <small class="text-muted">Rs.{{ number_format($totalRevenue) }} received of Rs.{{ number_format($totalRevenue+$totalDueAmount) }} total sales value</small>
+                            <small class="text-muted text-truncate-mobile">Rs.{{ number_format($totalRevenue) }} of Rs.{{ number_format($totalRevenue+$totalDueAmount) }}</small>
                         </div>
                     </div>
                     
                     <!-- Added Fully Paid Invoices Information -->
                     <div class="stat-info mt-3 pt-2 border-top">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i> Fully Paid Invoices</small>
+                            <small class="text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i> Fully Paid</small>
                             <span class="badge bg-success">{{ $fullPaidCount }}</span>
                         </div>
                         <small class="d-block text-end text-success">Rs.{{ number_format($fullPaidAmount, 2) }}</small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-sm-6 col-lg-3 mb-3">
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="stat-label">Total Due Amount</div>
-                        {{-- <a href="" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-arrow-right"></i>
-                        </a> --}}
                     </div>
                     <div class="stat-value">Rs.{{ number_format($totalDueAmount, 2) }}</div>
                     <div class="stat-change-alert">
@@ -389,27 +547,24 @@
                                  aria-valuenow="{{ $duePercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <small class="text-muted">Rs.{{ number_format($totalDueAmount) }} due of Rs.{{ number_format($totalDueAmount+$totalRevenue) }} total sales value</small>
+                            <small class="text-muted text-truncate-mobile">Rs.{{ number_format($totalDueAmount) }} due of {{ number_format($totalDueAmount+$totalRevenue) }}</small>
                         </div>
                     </div>
                     
                     <!-- Partial Payment Info -->
                     <div class="stat-info mt-3 pt-2 border-top">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-clock-fill text-danger me-1"></i> Partially Paid Invoices</small>
+                            <small class="text-muted"><i class="bi bi-clock-fill text-danger me-1"></i> Partially Paid</small>
                             <span class="badge bg-danger">{{ $partialPaidCount }}</span>
                         </div>
                         <small class="d-block text-end text-danger">Rs.{{ number_format($totalDueAmount, 2) }}</small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-sm-6 col-lg-3 mb-3">
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="stat-label">Inventory Status</div>
-                        {{-- <a href="" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-arrow-right"></i>
-                        </a> --}}
                     </div>
                     <div class="stat-value">{{ number_format($totalStock) }} <span class="fs-6 text-muted">units</span></div>
                     
@@ -417,36 +572,33 @@
                     <div class="stat-info">
                         <div class="d-flex justify-content-between mb-1">
                             <small>Sold Stock</small>
-                            <small>{{ $soldPercentage }}% of assigned stock</small>
+                            <small>{{ $soldPercentage }}% of assigned</small>
                         </div>
                         <div class="progress">
-                            <div class="progress-bar bg-primry" role="progressbar" 
+                            <div class="progress-bar bg-primary" role="progressbar" 
                                  style="width: {{ $soldPercentage }}%;" 
                                  aria-valuenow="{{ $soldPercentage }}" 
                                  aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <small class="text-muted">{{ number_format($soldStock) }} sold of {{ number_format($assignedStock) }} assigned</small>
+                            <small class="text-muted text-truncate-mobile">{{ number_format($soldStock) }} sold of {{ number_format($assignedStock) }}</small>
                         </div>
                     </div>
                     
                     <!-- Damaged Stock Info -->
                     <div class="stat-info mt-3 pt-2 border-top">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-exclamation-triangle-fill text-primary me-1"></i> Total Inventory</small>
+                            <small class="text-muted"><i class="bi bi-exclamation-triangle-fill text-primary me-1"></i> Total</small>
                             <span class="badge bg-primary">{{ number_format($totalStock) }}</span>
                         </div>
                         <small class="d-block text-end text-primary">Rs.{{ number_format($totalInventoryValue, 2) }}</small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-sm-6 col-lg-3 mb-3">
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="stat-label">Staff Status</div>
-                        {{-- <a href="" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-arrow-right"></i>
-                        </a> --}}
                     </div>
                     <div class="stat-value">{{ $totalStaffCount }} <span class="fs-6 text-muted">members</span></div>
                     
@@ -454,7 +606,7 @@
                     <div class="stat-info mt-1">
                         <div class="d-flex justify-content-between mb-1">
                             <small>Staff with Products</small>
-                            <small>{{ $staffAssignmentPercentage }}% of total staff</small>
+                            <small>{{ $staffAssignmentPercentage }}% of total</small>
                         </div>
                         <div class="progress">
                             <div class="progress-bar bg-info" role="progressbar" 
@@ -463,14 +615,14 @@
                                 aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <small class="text-muted">{{ $staffWithAssignmentsCount }} staff with assignments</small>
+                            <small class="text-muted text-truncate-mobile">{{ $staffWithAssignmentsCount }} staff with assignments</small>
                         </div>
                     </div>
                     
                     <!-- Assigned Stock Info -->
                     <div class="stat-info mt-3 pt-2 border-top">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-person-check-fill text-info me-1"></i> Currently Assigned Stock</small>
+                            <small class="text-muted"><i class="bi bi-person-check-fill text-info me-1"></i> Assigned</small>
                             <span class="badge bg-info">{{ $assignedStock }}</span>
                         </div>
                         <small class="d-block text-end text-info">Rs.{{number_format($totalStaffSalesValue, 2)}}</small>
@@ -481,15 +633,15 @@
 
         <!-- Chart Section -->
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-lg-8 col-md-12 mb-4">
                 <div class="chart-card">
-                    <div class="chart-header d-flex justify-content-between align-items-center">
-                        <div>
+                    <div class="chart-header d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="mb-mobile-2">
                             <h6 class="mb-1">Sales Overview By Brands</h6>
                             <p class="text-muted mb-0 small">Compare sales performance Base Watch Brands</p>
                         </div>
                         <a href="" class="btn btn-sm btn-outline-primary">
-                            View Full Report <i class="bi bi-bar-chart-line"></i>
+                            View Report <i class="bi bi-bar-chart-line"></i>
                         </a>
                     </div>
                     <!-- Add scrollable wrapper for the chart -->
@@ -502,13 +654,13 @@
             </div>
 
             <!-- Recent Sales Section -->
-            <div class="col-md-4">
+            <div class="col-lg-4 col-md-12 mb-4">
                 <div class="recent-sales-card">
                     <div class="card-body">
-                        <div class="p-2 d-flex justify-content-between align-items-start">
-                            <div>
+                        <div class="p-2 d-flex justify-content-between align-items-start flex-wrap">
+                            <div class="mb-2 mb-md-0">
                                 <h6 class="card-title">Recent Sales</h6>
-                                <p class="card-subtitle text-muted small mb-0">Latest transactions processed in the system</p>
+                                <p class="card-subtitle text-muted small mb-0">Latest transactions</p>
                             </div>
                             <a href="" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-list-ul"></i>
@@ -521,8 +673,8 @@
                                         {{ strtoupper(substr($sale->name, 0, 1)) }}{{ strtoupper(substr(strpos($sale->name, ' ') !== false ? substr($sale->name, strpos($sale->name, ' ') + 1, 1) : '', 0, 1)) }}
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1">{{ $sale->name }}</h6>
-                                        <p class="text-muted small mb-0">{{ $sale->email }}</p>
+                                        <h6 class="mb-1 text-truncate-mobile">{{ $sale->name }}</h6>
+                                        <p class="text-muted small mb-0 text-truncate-mobile">{{ $sale->email }}</p>
                                     </div>
                                     <div class="amount">
                                         +Rs.{{ number_format($sale->total_amount, 2) }}
@@ -546,12 +698,12 @@
         <!-- Inventory and staff section -->
         <div class="container-fluid mt-4 p-0">
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-lg-5 col-md-12 mb-4">
                     <div class="widget-container">
-                        <div class="widget-header d-flex justify-content-between align-items-start">
-                            <div>
+                        <div class="widget-header d-flex justify-content-between align-items-start flex-wrap">
+                            <div class="mb-2 mb-md-0">
                                 <h6>Inventory Status</h6>
-                                <p class="text-muted small mb-0">Current watch stock levels and alerts</p>
+                                <p class="text-muted small mb-0">Current stock levels and alerts</p>
                             </div>
                             <a href="{{ route('admin.watch-stock-details') }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-box-seam"></i>
@@ -584,11 +736,13 @@
 
                                 <div class="item-row @if(!$loop->first) mt-3 @endif">
                                     <div class="item-details">
-                                        <h6>{{ $watch->name }} {{ $watch->model }}</h6>
-                                        <p class="text-muted small">SKU: {{ $watch->code }}</p>
+                                        <h6 class="text-truncate-mobile">{{ $watch->name }} {{ $watch->model }}</h6>
+                                        <p class="text-muted small text-truncate-mobile">SKU: {{ $watch->code }}</p>
                                     </div>
-                                    <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
-                                    <div class="ms-2 text-muted small">{{ $watch->available_stock }}/{{ $watch->total_stock }}</div>
+                                    <div class="d-flex align-items-center flex-wrap mt-1 mt-md-0">
+                                        <span class="status-badge {{ $statusClass }}">{{ $statusText }}</span>
+                                        <div class="ms-2 text-muted small">{{ $watch->available_stock }}/{{ $watch->total_stock }}</div>
+                                    </div>
                                 </div>
                                 <div class="progress">
                                     <div class="progress-bar {{ $progressClass }}" style="width: {{ $stockPercentage }}%;"></div>
@@ -601,10 +755,10 @@
                 </div>
                 
                 <!-- Staff Sales Section -->
-                <div class="col-md-7">
+                <div class="col-lg-7 col-md-12 mb-4">
                     <div class="widget-container p-3">
-                        <div class="widget-header mb-3 d-flex justify-content-between align-items-start">
-                            <div>
+                        <div class="widget-header mb-3 d-flex justify-content-between align-items-start flex-wrap">
+                            <div class="mb-2 mb-md-0">
                                 <h6 class="fw-bold">Staff Sales</h6>
                                 <p class="text-muted small mb-0">Sales performance and collection status</p>
                             </div>
@@ -624,15 +778,15 @@
                                             </span>
                                         </div>
                                         <div class="flex-grow-1">
-                                            <h6 class="fw-bold mb-0">{{ $staff->name }}</h6>
+                                            <h6 class="fw-bold mb-0 text-truncate-mobile">{{ $staff->name }}</h6>
                                         </div>
                                     </div>
                                     
                                     <!-- Sales Progress Section -->
                                     <div class="sales-progress mb-2">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap">
                                             <small class="text-muted">Sales Progress</small>
-                                            <div class="d-flex align-items-center">
+                                            <div class="d-flex align-items-center flex-wrap">
                                                 <small class="me-2 text-success fw-bold">Rs.{{ number_format($staff->sold_value, 2) }}</small>
                                                 <small class="text-muted">/ Rs.{{ number_format($staff->assigned_value, 2) }}</small>
                                                 <span class="badge bg-success ms-2">{{ $staff->sales_percentage }}%</span>
@@ -645,9 +799,9 @@
                                     
                                     <!-- Payment Progress Section -->
                                     <div class="payment-progress">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap">
                                             <small class="text-muted">Payment Collection</small>
-                                            <div class="d-flex align-items-center">
+                                            <div class="d-flex align-items-center flex-wrap">
                                                 <small class="me-2 text-success fw-bold">Rs.{{ number_format($staff->collected_amount, 2) }}</small>
                                                 <small class="text-danger fw-bold">- Rs.{{ number_format($staff->total_due, 2) }} due</small>
                                                 <span class="badge {{ $staff->payment_percentage >= 80 ? 'bg-success' : 'bg-danger' }} ms-2">{{ $staff->payment_percentage }}%</span>
@@ -690,7 +844,6 @@
         </div>
     </div>
 </div>
-{{-- @push('scripts') --}}
 
 <script>
     // Prepare brand sales data from PHP
@@ -722,7 +875,7 @@
 
         // Chart Initialization for Brand Sales
         const ctx = document.getElementById('salesChart').getContext('2d');
-        new Chart(ctx, {
+        let chartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: brandLabels,
@@ -739,19 +892,49 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: true }
+                    tooltip: { 
+                        enabled: true,
+                        displayColors: false,
+                        bodyFont: {
+                            size: window.innerWidth < 768 ? 12 : 14
+                        },
+                        titleFont: {
+                            size: window.innerWidth < 768 ? 12 : 14
+                        }
+                    }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#dee2e6' }
+                        grid: { color: '#dee2e6' },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: { display: false },
+                        ticks: {
+                            font: {
+                                size: window.innerWidth < 768 ? 10 : 12
+                            }
+                        }
                     }
                 }
             }
         });
+        
+        // Handle window resize for better chart responsiveness
+        window.addEventListener('resize', function() {
+            if (chartInstance) {
+                // Update font sizes based on screen width
+                chartInstance.options.plugins.tooltip.bodyFont.size = window.innerWidth < 768 ? 12 : 14;
+                chartInstance.options.plugins.tooltip.titleFont.size = window.innerWidth < 768 ? 12 : 14;
+                chartInstance.options.scales.y.ticks.font.size = window.innerWidth < 768 ? 10 : 12;
+                chartInstance.options.scales.x.ticks.font.size = window.innerWidth < 768 ? 10 : 12;
+                chartInstance.update();
+            }
+        });
     });
 </script>
-{{-- @endpush --}}
