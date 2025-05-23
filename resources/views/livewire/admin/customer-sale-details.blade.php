@@ -31,15 +31,15 @@
                                     </span>
                                 </td>
                                 <td>{{ $customer->invoice_count }}</td>
-                                <td>₹{{ number_format($customer->total_sales, 2) }}</td>
+                                <td>Rs.{{ number_format($customer->total_sales, 2) }}</td>
                                 <td>
                                     <span class="badge bg-{{ $customer->total_sales-$customer->total_due > 0 ? 'success' : 'danger' }} px-2 py-1">
-                                        ₹{{ number_format($customer->total_sales-$customer->total_due, 2) }}
+                                        Rs.{{ number_format($customer->total_sales-$customer->total_due, 2) }}
                                     </span>
                                 </td>
                                 <td>
                                     <span class="badge bg-{{ $customer->total_due > 0 ? 'danger' : 'success' }} px-2 py-1">
-                                        ₹{{ number_format($customer->total_due, 2) }}
+                                        Rs.{{ number_format($customer->total_due, 2) }}
                                     </span>
                                 </td>
                                 <td>
@@ -104,7 +104,7 @@
                                 <div class="card border-0 shadow-sm h-100">
                                     <div class="card-body text-center">
                                         <h6 class="text-primary mb-2">Total Sales Amount</h6>
-                                        <h3 class="fw-bold">₹{{ number_format($modalData['salesSummary']->total_amount, 2) }}</h3>
+                                        <h3 class="fw-bold">Rs.{{ number_format($modalData['salesSummary']->total_amount, 2) }}</h3>
                                         <p class="text-muted mb-0">Across {{ count($modalData['invoices']) }} invoices</p>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                                 <div class="card border-0 shadow-sm h-100">
                                     <div class="card-body text-center">
                                         <h6 class="text-success mb-2">Amount Paid</h6>
-                                        <h3 class="fw-bold text-success">₹{{ number_format($modalData['salesSummary']->total_paid, 2) }}</h3>
+                                        <h3 class="fw-bold text-success">Rs.{{ number_format($modalData['salesSummary']->total_paid, 2) }}</h3>
                                         <p class="text-muted mb-0">
                                             {{ round(($modalData['salesSummary']->total_paid / $modalData['salesSummary']->total_amount) * 100) }}% of total
                                         </p>
@@ -124,7 +124,7 @@
                                 <div class="card border-0 shadow-sm h-100">
                                     <div class="card-body text-center">
                                         <h6 class="text-danger mb-2">Amount Due</h6>
-                                        <h3 class="fw-bold text-danger">₹{{ number_format($modalData['salesSummary']->total_due, 2) }}</h3>
+                                        <h3 class="fw-bold text-danger">Rs.{{ number_format($modalData['salesSummary']->total_due, 2) }}</h3>
                                         <p class="text-muted mb-0">
                                             {{ round(($modalData['salesSummary']->total_due / $modalData['salesSummary']->total_amount) * 100) }}% outstanding
                                         </p>
@@ -185,7 +185,7 @@
                                                         <div class="d-flex align-items-center">
                                                             @if($item->watch_image)
                                                                 <div class="me-3" style="width: 50px; height: 50px;">
-                                                                    <img src="{{ asset('storage/' . $item->watch_image) }}" 
+                                                                    <img src="{{ asset('public/storage/' . $item->watch_image) }}" 
                                                                          class="img-fluid rounded" 
                                                                          alt="{{ $item->watch_name }}" 
                                                                          style="width: 100%; height: 100%; object-fit: cover;">
@@ -205,9 +205,9 @@
                                                     <td>{{ $item->invoice_number }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($item->sale_date)->format('d M Y') }}</td>
                                                     <td class="text-center">{{ $item->quantity }}</td>
-                                                    <td class="text-end">₹{{ number_format($item->unit_price, 2) }}</td>
-                                                    <td class="text-end">₹{{ number_format($item->discount, 2) }}</td>
-                                                    <td class="text-end fw-bold">₹{{ number_format($item->total, 2) }}</td>
+                                                    <td class="text-end">Rs.{{ number_format($item->unit_price, 2) }}</td>
+                                                    <td class="text-end">Rs.{{ number_format($item->discount, 2) }}</td>
+                                                    <td class="text-end fw-bold">Rs.{{ number_format($item->total, 2) }}</td>
                                                 </tr>
                                             @empty
                                                 <tr>
