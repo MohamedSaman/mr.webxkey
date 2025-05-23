@@ -37,6 +37,27 @@
             position: fixed;
             transition: all 0.3s ease;
             z-index: 1040;
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Hide horizontal overflow */
+        }
+
+        /* Add custom scrollbar styling for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f8f9fa;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 6px;
+        }
+
+        /* Add padding to the bottom of sidebar to ensure last items are visible */
+        .sidebar .nav {
+            padding-bottom: 50px;
         }
 
         .sidebar.collapsed {
@@ -445,10 +466,16 @@
             .sidebar {
                 transform: translateX(-100%);
                 width: 250px;
+                /* Ensure sidebar takes full height but allows scrolling on mobile */
+                height: 100%;
+                bottom: 0;
+                top: 0;
+                overflow-y: auto;
             }
 
             .sidebar.show {
                 transform: translateX(0);
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
             }
 
             .sidebar.collapsed.show {
@@ -880,6 +907,30 @@
             activateParentMenuIfSubmenuActive('a[href="#inventorySubmenu"]', '#inventorySubmenu');
             activateParentMenuIfSubmenuActive('a[href="#salesSubmenu"]', '#salesSubmenu');
             activateParentMenuIfSubmenuActive('a[href="#stockSubmenu"]', '#stockSubmenu');
+
+            // Function to handle sidebar height and scrolling
+            function adjustSidebarHeight() {
+                const sidebar = document.querySelector('.sidebar');
+                const windowHeight = window.innerHeight;
+                
+                if (sidebar) {
+                    // Ensure the sidebar takes the full viewport height
+                    sidebar.style.height = windowHeight + 'px';
+                    
+                    // Check if content is taller than viewport
+                    const sidebarContent = sidebar.querySelector('.nav.flex-column');
+                    if (sidebarContent && sidebarContent.scrollHeight > windowHeight) {
+                        // Add a class to indicate scrollable content
+                        sidebar.classList.add('scrollable');
+                    } else {
+                        sidebar.classList.remove('scrollable');
+                    }
+                }
+            }
+            
+            // Run on load and resize
+            adjustSidebarHeight();
+            window.addEventListener('resize', adjustSidebarHeight);
         });
     </script>
     @stack('scripts')
