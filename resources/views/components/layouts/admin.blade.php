@@ -97,12 +97,12 @@
 
         /* Navigation styles */
         .nav-item {
-            margin: 5px 0;
+            margin: 2px 0; /* Reduced from 5px to 2px */
         }
 
         .nav-link {
             color: #495057;
-            padding: 10px 20px;
+            padding: 8px 20px; /* Reduced top/bottom padding from 10px to 8px */
             border-radius: 6px;
             transition: all 0.2s;
         }
@@ -133,15 +133,28 @@
             margin-top: 8px;
         }
 
-        #inventorySubmenu .nav-link {
-            padding-left: 15px;
+        #inventorySubmenu .nav-link,
+        #hrSubmenu .nav-link,
+        #salesSubmenu .nav-link,
+        #stockSubmenu .nav-link {
+            padding: 5px 15px; /* Reduced padding for all submenu links */
             font-size: 0.9rem;
         }
 
-        #inventorySubmenu .nav-link i {
-            font-size: 1rem;
+        /* Add these styles to further improve submenu spacing */
+        .collapse .nav-item {
+            margin: 1px 0; /* Even more compact spacing for submenu items */
         }
-
+        
+        .collapse .nav.flex-column {
+            padding-bottom: 0; /* Remove extra bottom padding from nested menus */
+            padding-top: 2px; /* Add small top padding to separate from parent */
+        }
+        
+        .collapse .nav-item:last-child {
+            margin-bottom: 3px; /* Add small space after last submenu item */
+        }
+        
         /* Top bar styles */
         .top-bar {
             height: 60px;
@@ -505,7 +518,7 @@
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('admin.dashboard') }}">
+                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
                         <i class="bi bi-bar-chart-line"></i> <span>Overview</span>
                     </a>
                 </li>
@@ -907,6 +920,82 @@
             activateParentMenuIfSubmenuActive('a[href="#inventorySubmenu"]', '#inventorySubmenu');
             activateParentMenuIfSubmenuActive('a[href="#salesSubmenu"]', '#salesSubmenu');
             activateParentMenuIfSubmenuActive('a[href="#stockSubmenu"]', '#stockSubmenu');
+
+            // Replace the existing submenu activation logic with this comprehensive function
+            function setActiveMenuItem() {
+                // Get current path
+                const currentPath = window.location.pathname;
+                
+                // First clear all active states
+                document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Reset all expanded states for dropdowns
+                document.querySelectorAll('.collapse').forEach(submenu => {
+                    submenu.classList.remove('show');
+                });
+                document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+                
+                // Check for exact match first (highest priority)
+                let activeFound = false;
+                
+                // First try to find exact matches
+                document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href !== '#' && !href.startsWith('#')) {
+                        const hrefPath = href.replace(/^(https?:\/\/[^\/]+)/, '').split('?')[0];
+                        
+                        // Exact match gets priority
+                        if (currentPath === hrefPath) {
+                            link.classList.add('active');
+                            activeFound = true;
+                            
+                            // If this is a submenu link, expand its parent
+                            const submenu = link.closest('.collapse');
+                            if (submenu) {
+                                submenu.classList.add('show');
+                                const parentToggle = document.querySelector(`[href="#${submenu.id}"]`);
+                                if (parentToggle) {
+                                    parentToggle.classList.add('active');
+                                    parentToggle.setAttribute('aria-expanded', 'true');
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // If no exact match was found, try partial matches
+                if (!activeFound) {
+                    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                        const href = link.getAttribute('href');
+                        if (href && href !== '#' && !href.startsWith('#')) {
+                            const hrefPath = href.replace(/^(https?:\/\/[^\/]+)/, '').split('?')[0];
+                            
+                            // Skip root path to avoid false positives
+                            if (hrefPath !== '/' && currentPath.includes(hrefPath)) {
+                                link.classList.add('active');
+                                
+                                // If this is a submenu link, expand its parent
+                                const submenu = link.closest('.collapse');
+                                if (submenu) {
+                                    submenu.classList.add('show');
+                                    const parentToggle = document.querySelector(`[href="#${submenu.id}"]`);
+                                    if (parentToggle) {
+                                        parentToggle.classList.add('active');
+                                        parentToggle.setAttribute('aria-expanded', 'true');
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Add this at the end of your document.addEventListener('DOMContentLoaded') function
+            setActiveMenuItem();
 
             // Function to handle sidebar height and scrolling
             function adjustSidebarHeight() {
