@@ -35,6 +35,10 @@
             position: fixed;
             transition: all 0.3s ease;
             z-index: 1040;
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Hide horizontal overflow */
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar.collapsed {
@@ -76,7 +80,7 @@
         }
 
         .nav-item {
-            margin: 5px 0;
+            margin: 2px 0; /* Reduced from 5px to tighten up vertical spacing */
         }
 
         .nav-link {
@@ -112,9 +116,10 @@
             margin-top: 8px;
         }
 
-        #inventorySubmenu .nav-link {
-            padding-left: 15px;
-            font-size: 0.9rem;
+        #inventorySubmenu .nav-link,
+        #salesSubmenu .nav-link {
+            padding-top: 6px; /* Reduced vertical padding */
+            padding-bottom: 6px;
         }
 
         #inventorySubmenu .nav-link i {
@@ -225,18 +230,27 @@
             padding: 20px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: none;
+            padding: 1.25rem;
         }
 
         .stat-value {
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 5px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
         .stat-label {
             color: #6c757d;
             font-size: 14px;
             margin-bottom: 5px;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
         .stat-change {
@@ -286,6 +300,8 @@
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
             border-radius: 0.5rem;
             margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .chart-header {
@@ -294,11 +310,14 @@
             border-bottom: 1px solid #dee2e6;
             border-top-left-radius: 0.5rem;
             border-top-right-radius: 0.5rem;
+            background-color: #ffffff;
+            padding: 1.25rem;
         }
 
         .chart-container {
             position: relative;
             height: 300px;
+            padding: 1.5rem;
             padding: 1.5rem;
         }
 
@@ -338,6 +357,9 @@
 
             height: 100%;
             width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 1.25rem;
         }
 
         .widget-header {
@@ -349,6 +371,8 @@
             margin-bottom: 5px;
             font-weight: 500;
             color: #212529;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
 
         .widget-header p {
@@ -386,6 +410,9 @@
             font-size: 0.8rem;
             font-weight: bold;
             white-space: nowrap;
+            font-weight: 500;
+            border-radius: 6px;
+            padding: 0.35rem 0.65rem;
         }
 
         .in-stock {
@@ -491,16 +518,41 @@
             .sidebar {
                 transform: translateX(-100%);
                 width: 250px;
-                /* Keep full width on mobile */
+                height: 100vh; /* Full height */
+                top: 0;
+                bottom: 0;
+                box-shadow: none;
+                z-index: 1050; /* Higher than topbar */
+                position: fixed;
+                overflow-y: auto;
             }
 
             .sidebar.show {
                 transform: translateX(0);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             }
 
+            /* Ensure collapsed styles don't affect mobile visibility */
             .sidebar.collapsed.show {
                 width: 250px;
-                /* Ensure sidebar is fully visible when shown on mobile */
+            }
+            
+            .sidebar.collapsed .nav-link span {
+                display: inline; /* Override desktop collapsed styles on mobile */
+            }
+            
+            .sidebar.collapsed .sidebar-title {
+                display: block; /* Override desktop collapsed styles on mobile */
+            }
+            
+            .sidebar.collapsed .nav-link i {
+                margin-right: 10px; /* Restore margin on mobile */
+                font-size: 1.1rem; /* Restore size on mobile */
+            }
+            
+            .sidebar.collapsed .nav-link {
+                text-align: left; /* Restore text alignment on mobile */
+                padding: 10px 20px; /* Restore padding on mobile */
             }
 
             .top-bar {
@@ -642,6 +694,74 @@
             font-weight: 600;
             letter-spacing: -0.03em;
         }
+
+        /* Add padding to bottom of nav to ensure last items are visible */
+        .sidebar .nav.flex-column {
+            padding-bottom: 80px; /* Extra space at bottom to ensure visibility of last items */
+        }
+
+        /* Improve scrollbar styling */
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f8f9fa;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 6px;
+        }
+
+        /* For Firefox */
+        .sidebar {
+            scrollbar-width: thin;
+            scrollbar-color: #dee2e6 #f8f9fa;
+        }
+
+        /* Fix for iOS momentum scrolling */
+        @supports (-webkit-overflow-scrolling: touch) {
+            .sidebar {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Add these styles for scroll indicator */
+        .sidebar.scrollable::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to top, rgba(255,255,255,0.9), rgba(255,255,255,0));
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .sidebar.collapsed.scrollable::after {
+            width: 70px;
+        }
+        
+        /* Fix navigation spacing issues */
+        .nav-item {
+            margin: 2px 0; /* Reduced from 5px to tighten up vertical spacing */
+        }
+        
+        #inventorySubmenu .nav-link,
+        #salesSubmenu .nav-link {
+            padding-top: 6px; /* Reduced vertical padding */
+            padding-bottom: 6px;
+        }
+        
+        .collapse .nav.flex-column {
+            padding-bottom: 0; /* Remove extra bottom padding from nested menus */
+        }
+        
+        .collapse .nav-item:last-child {
+            margin-bottom: 3px; /* Add small space after last submenu item */
+        }
     </style>
     @stack('styles')
     @livewireStyles
@@ -654,48 +774,50 @@
             <div class="sidebar-header">
                 <div class="sidebar-title">WatchStore</div>
             </div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('staff.dashboard') }}">
-                        <i class="bi bi-bar-chart-line"></i> <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" href="#inventorySubmenu" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="inventorySubmenu">
-                        <i class="bi bi-box-seam"></i> <span>Inventory</span>
-                    </a>
-                    <div class="collapse" id="inventorySubmenu">
-                        <ul class="nav flex-column ms-3">
-                            <li class="nav-item">
-                                <a class="nav-link py-2" href="">
-                                    <i class="bi bi-watch"></i> <span>Watch Details</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" href="#salesSubmenu" data-bs-toggle="collapse"
-                        role="button" aria-expanded="false" aria-controls="salesSubmenu">
-                        <i class="bi bi-box-seam"></i> <span>Sales</span>
-                    </a>
-                    <div class="collapse" id="salesSubmenu">
-                        <ul class="nav flex-column ms-3">
-                            <li class="nav-item">
-                                <a class="nav-link py-2" href="{{ route('staff.customer-sale-management') }}">
-                                    <i class="bi bi-watch"></i> <span>Customer Sales</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('staff.billing') }}">
-                        <i class="bi bi-cash"></i> <span>Billing</span>
-                    </a>
-                </li>
-            </ul>
+            <div class="sidebar-content">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('staff.dashboard') }}">
+                            <i class="bi bi-bar-chart-line"></i> <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle" href="#inventorySubmenu" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="inventorySubmenu">
+                            <i class="bi bi-box-seam"></i> <span>Inventory</span>
+                        </a>
+                        <div class="collapse" id="inventorySubmenu">
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item">
+                                    <a class="nav-link py-2" href="">
+                                        <i class="bi bi-watch"></i> <span>Watch Details</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle" href="#salesSubmenu" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="salesSubmenu">
+                            <i class="bi bi-box-seam"></i> <span>Sales</span>
+                        </a>
+                        <div class="collapse" id="salesSubmenu">
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item">
+                                    <a class="nav-link py-2" href="{{ route('staff.customer-sale-management') }}">
+                                        <i class="bi bi-watch"></i> <span>Customer Sales</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('staff.billing') }}">
+                            <i class="bi bi-cash"></i> <span>Billing</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <!-- Top Navigation Bar -->
@@ -752,11 +874,14 @@
     <!-- In your main layout file -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-
-    @livewireScripts
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Define all elements once
+            const sidebarToggler = document.getElementById('sidebarToggler');
+            const sidebar = document.querySelector('.sidebar');
+            const topBar = document.querySelector('.top-bar');
+            const mainContent = document.querySelector('.main-content');
+
             // Tab Switching Functionality
             const tabs = document.querySelectorAll('.content-tab');
             if (tabs.length > 0) {
@@ -780,150 +905,189 @@
                 });
             }
 
-            // General submenu activation logic
-            function activateParentMenuIfSubmenuActive(parentToggleSelector, submenuSelector) {
-                const parentToggle = document.querySelector(parentToggleSelector);
-                const submenu = document.querySelector(submenuSelector);
-                const submenuLinks = submenu ? submenu.querySelectorAll('.nav-link') : [];
-
-                let active = false;
+            // Improved menu activation logic
+            function setActiveMenu() {
                 const currentPath = window.location.pathname;
-
-                submenuLinks.forEach(link => {
+                let activeSubmenuFound = false;
+                
+                // First, check all menu links in the sidebar
+                document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                    // Reset all links to inactive state first
+                    link.classList.remove('active');
+                    
+                    // Get the link's href attribute
                     const href = link.getAttribute('href');
-                    if (href && href !== '#') {
+                    if (href && href !== '#' && !href.startsWith('#')) {
+                        // Extract just the path portion of the href
                         const hrefPath = href.replace(/^(https?:\/\/[^\/]+)/, '').split('?')[0];
-                        const linkIsActive = currentPath === hrefPath ||
-                            currentPath.endsWith(hrefPath) ||
-                            currentPath.includes(hrefPath);
-
-                        if (linkIsActive) {
+                        
+                        // Use more precise path matching logic
+                        const isActive = currentPath === hrefPath || 
+                                        (currentPath.startsWith(hrefPath + '/') && hrefPath !== '/') ||
+                                        (currentPath === hrefPath + '.php');
+                                        
+                        if (isActive) {
+                            // This link is active
                             link.classList.add('active');
-                            active = true;
+                            
+                            // If this is a submenu link, expand and highlight the parent menu
+                            const submenu = link.closest('.collapse');
+                            if (submenu) {
+                                activeSubmenuFound = true;
+                                
+                                // Add 'show' class to submenu to keep it expanded
+                                submenu.classList.add('show');
+                                
+                                // Find and activate the parent dropdown toggle
+                                const parentToggle = document.querySelector(`[data-bs-toggle="collapse"][href="#${submenu.id}"]`);
+                                if (parentToggle) {
+                                    parentToggle.classList.add('active');
+                                    parentToggle.setAttribute('aria-expanded', 'true');
+                                }
+                            }
                         }
                     }
                 });
-
-                if (active && parentToggle && submenu) {
-                    // Remove active from all main nav links
-                    document.querySelectorAll('.sidebar > .nav > .nav-item > .nav-link:not(.dropdown-toggle)').forEach(link => {
-                        link.classList.remove('active');
-                    });
-                    parentToggle.classList.add('active');
-                    parentToggle.setAttribute('aria-expanded', 'true');
-                    submenu.classList.add('show');
+                
+                // If no submenu item is active, check if we need to activate a main nav item
+                if (!activeSubmenuFound) {
+                    // Get the route base path segments (e.g., /staff/billing → ["staff", "billing"])
+                    const pathSegments = currentPath.split('/').filter(Boolean);
+                    
+                    // Only check main items if we have path segments
+                    if (pathSegments.length > 0) {
+                        document.querySelectorAll('.sidebar > .sidebar-content > .nav > .nav-item > .nav-link:not(.dropdown-toggle)').forEach(link => {
+                            const href = link.getAttribute('href');
+                            if (href && href !== '#') {
+                                const hrefPath = href.replace(/^(https?:\/\/[^\/]+)/, '').split('?')[0];
+                                const hrefSegments = hrefPath.split('/').filter(Boolean);
+                                
+                                // Only match exact routes or next level child routes
+                                const isActive = hrefPath === currentPath || 
+                                                (hrefSegments.length > 0 && 
+                                                 pathSegments.length > 0 &&
+                                                 hrefSegments[hrefSegments.length-1] === pathSegments[pathSegments.length-1]);
+                                    
+                                if (isActive) {
+                                    link.classList.add('active');
+                                }
+                            }
+                        });
+                    }
                 }
             }
 
-            // Initialize both HR and Inventory submenus
-            activateParentMenuIfSubmenuActive('a[href="#hrSubmenu"]', '#hrSubmenu');
-            activateParentMenuIfSubmenuActive('a[href="#inventorySubmenu"]', '#inventorySubmenu');
-            activateParentMenuIfSubmenuActive('a[href="#salesSubmenu"]', '#salesSubmenu');
+            // Call the improved function instead of the old ones
+            setActiveMenu();
 
-            // Add sidebar toggle functionality
-            const sidebarToggler = document.getElementById('sidebarToggler');
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-
-            if (sidebarToggler && sidebar) {
-                sidebarToggler.addEventListener('click', function() {
-                    sidebar.classList.toggle('show');
-                });
-
-                // Close sidebar when clicking outside on mobile
-                document.addEventListener('click', function(event) {
-                    const isMobile = window.innerWidth < 768;
-                    const isClickInsideSidebar = sidebar.contains(event.target);
-                    const isClickOnToggler = sidebarToggler.contains(event.target);
-
-                    if (isMobile && sidebar.classList.contains('show') && !isClickInsideSidebar && !
-                        isClickOnToggler) {
-                        sidebar.classList.remove('show');
-                    }
-                });
-
-                // Handle window resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth >= 768) {
-                        sidebar.classList.remove('show');
-                    }
-                });
-            }
-
-            // Enhanced sidebar toggle functionality
-            const topBar = document.querySelector('.top-bar');
-
-            // Check if sidebar state is saved in localStorage
-            const sidebarCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-
-            // Initialize sidebar state
+            // Initialize sidebar state based on screen size
             function initializeSidebar() {
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    topBar.classList.add('collapsed');
-                    mainContent.classList.add('collapsed');
-                }
+                // Existing code...
+            }
 
-                // On mobile, always start with sidebar hidden
-                if (window.innerWidth < 768) {
-                    sidebar.classList.remove('show');
+            // Toggle sidebar function - unified for mobile and desktop
+            function toggleSidebar(event) {
+                if (event) {
+                    event.stopPropagation();
+                }
+                
+                const isMobile = window.innerWidth < 768;
+                
+                if (isMobile) {
+                    // Mobile behavior - toggle show class
+                    sidebar.classList.toggle('show');
+                    
+                    // Ensure no collapsed classes are present on mobile
+                    sidebar.classList.remove('collapsed');
                     topBar.classList.remove('collapsed');
                     mainContent.classList.remove('collapsed');
-                }
-            }
-
-            // Toggle sidebar function
-            function toggleSidebar() {
-                if (window.innerWidth < 768) {
-                    // Mobile behavior
-                    sidebar.classList.toggle('show');
                 } else {
-                    // Desktop behavior
+                    // Desktop behavior - toggle collapsed classes
                     sidebar.classList.toggle('collapsed');
                     topBar.classList.toggle('collapsed');
                     mainContent.classList.toggle('collapsed');
-
+                    
                     // Save state to localStorage
                     localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
                 }
             }
 
-            // Initialize
-            if (sidebarToggler && sidebar) {
-                initializeSidebar();
+            // Adjust sidebar height
+            function adjustSidebarHeight() {
+                if (sidebar) {
+                    // Ensure sidebar takes full viewport height
+                    sidebar.style.height = `${window.innerHeight}px`;
+                    
+                    // Check if content is taller than viewport
+                    const sidebarNav = sidebar.querySelector('.nav.flex-column');
+                    if (sidebarNav) {
+                        const needsScroll = sidebarNav.scrollHeight > window.innerHeight;
+                        if (needsScroll) {
+                            sidebar.classList.add('scrollable');
+                        } else {
+                            sidebar.classList.remove('scrollable');
+                        }
+                    }
+                }
+            }
 
-                // Toggle button click handler
-                sidebarToggler.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                    toggleSidebar();
-                });
+            // Initialize sidebar
+            if (sidebar) {
+                initializeSidebar();
+                
+                // Attach toggle event listener (single source of truth)
+                if (sidebarToggler) {
+                    sidebarToggler.addEventListener('click', toggleSidebar);
+                }
 
                 // Close sidebar when clicking outside on mobile
                 document.addEventListener('click', function(event) {
-                    if (window.innerWidth < 768 &&
-                        sidebar.classList.contains('show') &&
-                        !sidebar.contains(event.target) &&
-                        !sidebarToggler.contains(event.target)) {
+                    const isMobile = window.innerWidth < 768;
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnToggler = sidebarToggler && sidebarToggler.contains(event.target);
+
+                    if (isMobile && 
+                        sidebar.classList.contains('show') && 
+                        !isClickInsideSidebar && 
+                        !isClickOnToggler) {
                         sidebar.classList.remove('show');
                     }
                 });
 
-                // Handle window resize
+                // Handle window resize - switch between mobile and desktop modes
                 window.addEventListener('resize', function() {
-                    if (window.innerWidth >= 768) {
-                        sidebar.classList.remove('show');
-
-                        // Restore collapsed state on desktop
-                        if (sidebarCollapsed) {
-                            sidebar.classList.add('collapsed');
-                            topBar.classList.add('collapsed');
-                            mainContent.classList.add('collapsed');
-                        }
-                    } else {
-                        // On mobile, remove collapsed styles
-                        topBar.classList.remove('collapsed');
-                        mainContent.classList.remove('collapsed');
+                    const wasMobile = mainContent.style.marginLeft === '0px' || mainContent.style.marginLeft === '';
+                    const isMobile = window.innerWidth < 768;
+                    
+                    // Only run when crossing the mobile/desktop threshold
+                    if (wasMobile !== isMobile) {
+                        initializeSidebar();
                     }
+                });
+
+                // Adjust sidebar height initially and on resize
+                adjustSidebarHeight();
+                window.addEventListener('resize', adjustSidebarHeight);
+
+                // Fix submenu scroll visibility
+                const dropdownToggles = document.querySelectorAll('.nav-link.dropdown-toggle');
+                dropdownToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function(event) {
+                        // Wait for submenu to fully appear
+                        setTimeout(() => {
+                            const submenu = this.nextElementSibling;
+                            if (submenu && submenu.classList.contains('show')) {
+                                // Check if submenu bottom is out of view
+                                const submenuRect = submenu.getBoundingClientRect();
+                                const sidebarRect = sidebar.getBoundingClientRect();
+                                
+                                if (submenuRect.bottom > sidebarRect.bottom) {
+                                    // Scroll to make submenu visible
+                                    submenu.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                                }
+                            }
+                        }, 300);
+                    });
                 });
             }
         });
