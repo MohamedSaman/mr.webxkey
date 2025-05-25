@@ -21,6 +21,7 @@ class Payment extends Model
         'due_date',
         'due_payment_method',
         'due_payment_attachment',
+        'status',
     ];
 
     protected $casts = [
@@ -32,5 +33,15 @@ class Payment extends Model
     public function sale()
     {
         return $this->belongsTo(Sale::class);
+    }
+
+    public function getStatusBadgeAttribute()
+    {
+        return match($this->status) {
+            'pending' => '<span class="badge bg-warning">Pending</span>',
+            'approved' => '<span class="badge bg-success">Approved</span>',
+            'rejected' => '<span class="badge bg-danger">Rejected</span>',
+            default => '<span class="badge bg-secondary">Unknown</span>',
+        };
     }
 }
