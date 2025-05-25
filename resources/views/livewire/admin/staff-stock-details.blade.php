@@ -1,26 +1,26 @@
 <div>
     <div class="container-fluid">
         <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light">
-                <h4 class="card-title mb-2 mb-md-0">Watch Stock Details</h4>
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light p-2 p-md-3">
+                <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Watch Stock Details</h4>
                 <div class="card-tools">
                     <button wire:click="exportToCSV" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-download me-1"></i> Export
                     </button>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body p-2 p-md-3">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover table-sm table-md-lg">
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">#</th>
                                 <th>Staff Name</th>
-                                <th>Email</th>
-                                <th>Contact</th>
+                                <th class="d-none d-md-table-cell">Email</th>
+                                <th class="d-none d-sm-table-cell">Contact</th>
                                 <th class="text-center">Total Qty</th>
                                 <th class="text-center">Sold Qty</th>
-                                <th class="text-center">Available Qty</th>
+                                <th class="text-center">Available</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -28,21 +28,29 @@
                             @if ($staffStocks->count() > 0)
                                 @foreach ($staffStocks as $staffStock)
                                     <tr>
-                                        <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td>{{ $staffStock->name ?? 'Unknown' }}</td>
-                                        <td>{{ $staffStock->email ?? '-' }}</td>
-                                        <td>{{ $staffStock->contact ?? '-' }}</td>
-                                        <td class="text-center">{{ $staffStock->total_quantity }}</td>
-                                        <td class="text-center">{{ $staffStock->sold_quantity }}</td>
-                                        <td class="text-center">
+                                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                        <td class="align-middle">
+                                            {{ $staffStock->name ?? 'Unknown' }}
+                                            <div class="d-block d-sm-none small text-muted">
+                                                {{ $staffStock->contact ?? '-' }}
+                                            </div>
+                                            <div class="d-block d-md-none small text-muted">
+                                                {{ $staffStock->email ?? '-' }}
+                                            </div>
+                                        </td>
+                                        <td class="d-none d-md-table-cell align-middle">{{ $staffStock->email ?? '-' }}</td>
+                                        <td class="d-none d-sm-table-cell align-middle">{{ $staffStock->contact ?? '-' }}</td>
+                                        <td class="text-center align-middle">{{ $staffStock->total_quantity }}</td>
+                                        <td class="text-center align-middle">{{ $staffStock->sold_quantity }}</td>
+                                        <td class="text-center align-middle">
                                             <span
                                                 class="badge {{ $staffStock->available_quantity > 0 ? 'bg-success' : 'bg-danger' }}">
                                                 {{ $staffStock->available_quantity }}
                                             </span>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center align-middle">
                                             <button wire:click="viewStockDetails({{ $staffStock->user_id }})"
-                                                class="btn btn-sm btn-outline-primary me-2">
+                                                class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-eye"></i>
                                             </button>
                                         </td>
@@ -84,7 +92,7 @@
                         <!-- Summary Stats -->
                         <div class="px-3 px-md-4 py-3 bg-light border-bottom">
                             <div class="row g-2 g-md-3 text-center">
-                                <div class="col-md-4">
+                                <div class="col-4">
                                     <div class="p-2 p-md-3 rounded-3 bg-white shadow-sm">
                                         <div class="text-primary fs-5 fs-md-4 fw-bold">
                                             {{ $stockDetails->sum('quantity') }}
@@ -92,26 +100,26 @@
                                         <div class="text-muted small">Total Assigned</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-4">
                                     <div class="p-2 p-md-3 rounded-3 bg-white shadow-sm">
                                         <div class="text-success fs-5 fs-md-4 fw-bold">
                                             {{ $stockDetails->sum('sold_quantity') }}</div>
                                         <div class="text-muted small">Total Sold</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-4">
                                     <div class="p-2 p-md-3 rounded-3 bg-white shadow-sm">
                                         <div class="text-danger fs-5 fs-md-4 fw-bold">
                                             {{ $stockDetails->sum('quantity') - $stockDetails->sum('sold_quantity') }}
                                         </div>
-                                        <div class="text-muted small">Total Available</div>
+                                        <div class="text-muted small">Available</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Item Grid -->
-                        <div class="p-3 p-md-4">
+                        <div class="p-2 p-md-4">
                             <div class="mb-3">
                                 <input type="text" class="form-control form-control-sm"
                                     placeholder="Search watches..." id="watchSearchInput">
@@ -123,21 +131,21 @@
                                             <div class="row g-0">
                                                 <div class="col-4">
                                                     <div
-                                                        class="p-3 h-100 d-flex align-items-center justify-content-center bg-light rounded-start">
+                                                        class="p-2 p-md-3 h-100 d-flex align-items-center justify-content-center bg-light rounded-start">
                                                         @if ($item->watch_image)
                                                             <img src="{{ asset('public/storage/' . $item->watch_image) }}"
                                                                 alt="{{ $item->watch_name }}" class="img-fluid"
-                                                                style="max-height: 100px; object-fit: contain;">
+                                                                style="max-height: 80px; max-height: 100px; object-fit: contain;">
                                                         @else
                                                             <div class="text-center text-muted">
-                                                                <i class="bi bi-watch fs-1"></i>
+                                                                <i class="bi bi-watch fs-3 fs-md-1"></i>
                                                             </div>
                                                         @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-8">
-                                                    <div class="card-body p-3">
-                                                        <h6 class="card-title mb-1 fw-bold watch-brand">
+                                                    <div class="card-body p-2 p-md-3">
+                                                        <h6 class="card-title mb-1 fw-bold watch-brand fs-6 fs-md-5">
                                                             {{ $item->watch_brand }}</h6>
                                                         <p class="card-text small mb-0 watch-name">
                                                             {{ $item->watch_name }} {{ $item->watch_model }}
@@ -148,7 +156,7 @@
 
                                                         <!-- Stock Status -->
                                                         <div
-                                                            class="d-flex align-items-center justify-content-between mt-auto">
+                                                            class="d-flex align-items-center justify-content-between mt-auto flex-wrap gap-1">
                                                             <div class="small">
                                                                 <span class="text-muted">Status:</span>
                                                                 @php
@@ -290,6 +298,7 @@
                         .watch-item { page-break-inside: avoid; }
                         @media (max-width: 768px) {
                             body { padding: 10px; }
+                            .container-fluid { padding: 0; }
                         }
                     </style>
                 </head>
