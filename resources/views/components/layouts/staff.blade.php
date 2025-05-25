@@ -789,8 +789,8 @@
                         <div class="collapse" id="inventorySubmenu">
                             <ul class="nav flex-column ms-3">
                                 <li class="nav-item">
-                                    <a class="nav-link py-2" href="">
-                                        <i class="bi bi-watch"></i> <span>Watch Details</span>
+                                    <a class="nav-link py-2" href="{{ route('staff.staff-stock-overview') }}">
+                                        <i class="bi bi-watch"></i> <span>Stock Details</span>
                                     </a>
                                 </li>
                             </ul>
