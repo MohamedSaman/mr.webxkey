@@ -1,31 +1,31 @@
 <div>
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="card-title">Staff Sales Details</h4>
-            <div>
-                <button onclick="printStaffSales()" class="btn btn-primary me-2">
-                    <i class="bi bi-printer me-1"></i> Print
+    <div class="card shadow-sm">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 p-2 p-md-3">
+            <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Staff Sales Details</h4>
+            <div class="btn-group btn-group-sm">
+                <button onclick="printStaffSales()" class="btn btn-primary">
+                    <i class="bi bi-printer me-1"></i> <span class="d-none d-sm-inline">Print</span>
                 </button>
                 <button wire:click="exportToCsv" class="btn btn-success">
-                    <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+                    <i class="bi bi-file-earmark-excel me-1"></i> <span class="d-none d-sm-inline">Export</span> CSV
                 </button>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0 p-md-3">
             <div class="table-responsive">
-                <table class="table  table-striped">
+                <table class="table table-striped table-sm table-hover">
                     <thead>
                         <tr class="text-center">
                             <th>#</th>
-                            <th>Staff Name</th>
-                            <th>Email</th>
-                            <th>Contact</th>
-                            <th>Assigned Qty</th>
-                            <th>Assigned Value</th>
-                            <th>Sold Qty</th>
-                            <th>Sold Value</th>
-                            <th>Available Qty</th>
-                            <th>Available Value</th>
+                            <th>Staff</th>
+                            <th class="d-none d-md-table-cell">Email</th>
+                            <th class="d-none d-sm-table-cell">Contact</th>
+                            <th>Qty</th>
+                            <th class="d-none d-lg-table-cell">Value</th>
+                            <th>Sold</th>
+                            <th class="d-none d-lg-table-cell">Sold Value</th>
+                            <th>Avail</th>
+                            <th class="d-none d-lg-table-cell">Avail Value</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -33,19 +33,27 @@
                         @forelse($staffSales as $sale)
                             <tr class="text-center">
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $sale->name ?? 'N/A' }}</td>
-                                <td>{{ $sale->email ?? 'N/A' }}</td>
-                                <td>{{ $sale->contact ?? 'N/A' }}</td>
+                                <td class="text-start">
+                                    {{ $sale->name ?? 'N/A' }}
+                                    <div class="d-sm-none small text-muted">
+                                        {{ $sale->contact ?? 'N/A' }}
+                                    </div>
+                                    <div class="d-md-none small text-muted">
+                                        {{ $sale->email ?? 'N/A' }}
+                                    </div>
+                                </td>
+                                <td class="d-none d-md-table-cell">{{ $sale->email ?? 'N/A' }}</td>
+                                <td class="d-none d-sm-table-cell">{{ $sale->contact ?? 'N/A' }}</td>
                                 <td>{{ $sale->total_quantity }}</td>
-                                <td>{{ number_format($sale->total_value, 2) }}</td>
+                                <td class="d-none d-lg-table-cell">{{ number_format($sale->total_value, 2) }}</td>
                                 <td>{{ $sale->sold_quantity }}</td>
-                                <td>{{ number_format($sale->sold_value, 2) }}</td>
+                                <td class="d-none d-lg-table-cell">{{ number_format($sale->sold_value, 2) }}</td>
                                 <td>
                                     <span class="badge bg-{{ $sale->available_quantity > 0 ? 'primary' : 'danger' }}">
                                         {{ $sale->available_quantity }}
                                     </span>
                                 </td>
-                                <td>{{ number_format($sale->total_value - $sale->sold_value, 2) }}</td>
+                                <td class="d-none d-lg-table-cell">{{ number_format($sale->total_value - $sale->sold_value, 2) }}</td>
                                 <td>
                                     <button wire:click="viewSaleDetails({{ $sale->user_id }})"
                                         class="btn btn-sm btn-info">
@@ -70,7 +78,7 @@
 
     <div wire:ignore.self wire:key="edit-modal-{{ $staffId ?? 'new' }}" class="modal fade" id="salesDetails"
         tabindex="-1" aria-labelledby="salesDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-dialog modal-fullscreen-md-down modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h1 class="modal-title fs-5" id="salesDetailsModalLabel">
@@ -79,7 +87,7 @@
                     </h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-2 p-md-3">
                     @if ($productDetails)
                         <!-- Staff Information -->
                         <div class="card mb-3">
@@ -87,54 +95,53 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="card-title text-primary fw-bold">Staff Information</h5>
                                 </div>
-                                <div class="row">
+                                <div class="row g-2">
                                     <div class="col-md-4">
-                                        <p><strong>Name:</strong> {{ $staffDetails->name ?? 'N/A' }}</p>
+                                        <p class="mb-1"><strong>Name:</strong> {{ $staffDetails->name ?? 'N/A' }}</p>
                                     </div>
                                     <div class="col-md-4">
-                                        <p><strong>Email:</strong> {{ $staffDetails->email ?? 'N/A' }}</p>
+                                        <p class="mb-1"><strong>Email:</strong> {{ $staffDetails->email ?? 'N/A' }}</p>
                                     </div>
                                     <div class="col-md-4">
-                                        <p><strong>Contact:</strong> {{ $staffDetails->contact ?? 'N/A' }}</p>
+                                        <p class="mb-1"><strong>Contact:</strong> {{ $staffDetails->contact ?? 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         @php
-                           $summaryStats  =  $this->getSummaryStats($staffId);
-                        //    dd($summaryStats);
+                           $summaryStats = $this->getSummaryStats($staffId);
                         @endphp
                         <!-- Summary Stats Cards -->
-                        <div class="row mb-4">
+                        <div class="row g-3 mb-4">
                             <!-- Quantity Stats -->
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-header bg-primary text-white">
+                            <div class="col-12 col-md-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-primary text-white py-2">
                                         <h6 class="mb-0">Inventory Quantity Summary</h6>
                                     </div>
                                     <div class="card-body">
-                                        <div class="row text-center">
+                                        <div class="row text-center g-2">
                                             <div class="col-4">
-                                                <div class="border-end">
-                                                    <h5 class="fw-bold">
+                                                <div class="border-end h-100">
+                                                    <h5 class="fw-bold fs-6 fs-md-5">
                                                         {{ data_get($summaryStats, 'total_quantity', 0) }}</h5>
-                                                    <p class="text-muted small">Total Qty</p>
+                                                    <p class="text-muted small mb-0">Total Qty</p>
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <div class="border-end">
-                                                    <h5 class="fw-bold">{{ data_get($summaryStats, 'sold_quantity', 0) }}
+                                                <div class="border-end h-100">
+                                                    <h5 class="fw-bold fs-6 fs-md-5">
+                                                        {{ data_get($summaryStats, 'sold_quantity', 0) }}
                                                     </h5>
-                                                    <p class="text-muted small">Sold Qty</p>
+                                                    <p class="text-muted small mb-0">Sold Qty</p>
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <div>
-                                                    <h5
-                                                        class="fw-bold text-{{ data_get($summaryStats, 'available_quantity', 0) > 0 ? 'success' : 'danger' }}">
+                                                <div class="h-100">
+                                                    <h5 class="fw-bold fs-6 fs-md-5 text-{{ data_get($summaryStats, 'available_quantity', 0) > 0 ? 'success' : 'danger' }}">
                                                         {{ data_get($summaryStats, 'available_quantity', 0) }}
                                                     </h5>
-                                                    <p class="text-muted small">Available Qty</p>
+                                                    <p class="text-muted small mb-0">Available</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -143,39 +150,35 @@
                             </div>
 
                             <!-- Value Stats -->
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-header bg-success text-white">
+                            <div class="col-12 col-md-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-success text-white py-2">
                                         <h6 class="mb-0">Inventory Value Summary</h6>
                                     </div>
                                     <div class="card-body">
-                                        <div class="row text-center">
+                                        <div class="row text-center g-2">
                                             <div class="col-4">
-                                                <div class="border-end">
-                                                    <h5 class="fw-bold">
-                                                        Rs.{{ number_format(data_get($summaryStats, 'total_value', 0), 2) }}
+                                                <div class="border-end h-100">
+                                                    <h5 class="fw-bold fs-6 fs-md-5">
+                                                        ₹{{ number_format(data_get($summaryStats, 'total_value', 0), 0) }}
                                                     </h5>
-                                                    <p class="text-muted small">Total Value</p>
+                                                    <p class="text-muted small mb-0">Total Value</p>
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <div class="border-end">
-                                                    <h5 class="fw-bold">
-                                                        Rs.{{ number_format(data_get($summaryStats, 'sold_value', 0), 2) }}
+                                                <div class="border-end h-100">
+                                                    <h5 class="fw-bold fs-6 fs-md-5">
+                                                        ₹{{ number_format(data_get($summaryStats, 'sold_value', 0), 0) }}
                                                     </h5>
-                                                    <p class="text-muted small">Sold Value</p>
+                                                    <p class="text-muted small mb-0">Sold Value</p>
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <div>
-                                                   
-                                                    <h5
-                                                        class="fw-bold 
-                                                        text-{{ data_get($summaryStats, 'available_value', 0) > 0 ? 'success' : 'danger' }}
-                                                        ">
-                                                        Rs.{{ number_format(data_get($summaryStats, 'available_value', 0) ?? 0, 2) }}
+                                                <div class="h-100">
+                                                    <h5 class="fw-bold fs-6 fs-md-5 text-{{ data_get($summaryStats, 'available_value', 0) > 0 ? 'success' : 'danger' }}">
+                                                        ₹{{ number_format(data_get($summaryStats, 'available_value', 0) ?? 0, 0) }}
                                                     </h5>
-                                                    <p class="text-muted small">Available Value</p>
+                                                    <p class="text-muted small mb-0">Available</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -186,7 +189,7 @@
 
                         <!-- Product Details Table -->
                         <div class="card">
-                            <div class="card-header bg-secondary text-white">
+                            <div class="card-header bg-secondary text-white py-2">
                                 <h6 class="mb-0">Product-wise Sales Details</h6>
                             </div>
                             <div class="card-body p-0">
@@ -196,12 +199,12 @@
                                             <tr>
                                                 <th>#</th>
                                                 <th>Product</th>
-                                                <th class="text-center">Unit Price</th>
-                                                <th class="text-center">Assigned Qty</th>
-                                                <th class="text-center">Sold Qty</th>
-                                                <th class="text-center">Available Qty</th>
-                                                <th class="text-center">Total Value</th>
-                                                <th class="text-center">Sold Value</th>
+                                                <th class="text-center d-none d-md-table-cell">Unit Price</th>
+                                                <th class="text-center">Qty</th>
+                                                <th class="text-center">Sold</th>
+                                                <th class="text-center">Avail</th>
+                                                <th class="text-center d-none d-lg-table-cell">Total</th>
+                                                <th class="text-center d-none d-lg-table-cell">Sold Value</th>
                                                 <th class="text-center">Status</th>
                                             </tr>
                                         </thead>
@@ -220,51 +223,53 @@
                                                                 </div>
                                                             @endif
                                                             <div>
-                                                                <h6 class="mb-0">{{ $product->watch_name }}</h6>
+                                                                <h6 class="mb-0 fs-6">{{ $product->watch_name }}</h6>
                                                                 <small class="text-muted">
                                                                     {{ $product->watch_brand }} |
                                                                     {{ $product->watch_model }}
                                                                 </small>
-                                                                <br>
-                                                                <small class="badge bg-light text-dark">
-                                                                    {{ $product->watch_code }}
-                                                                </small>
+                                                                <div class="d-md-none small mt-1">
+                                                                    <span class="badge bg-light text-dark">
+                                                                        ₹{{ number_format($product->unit_price, 0) }}
+                                                                    </span>
+                                                                </div>
+                                                                <div class="mt-1">
+                                                                    <small class="badge bg-light text-dark">
+                                                                        {{ $product->watch_code }}
+                                                                    </small>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="text-center">
-                                                        Rs.{{ number_format($product->unit_price, 2) }}
+                                                    <td class="text-center d-none d-md-table-cell">
+                                                        ₹{{ number_format($product->unit_price, 0) }}
                                                     </td>
-                                                    <td class="text-center">{{ $product->quantity }}</td>
-                                                    <td class="text-center">{{ $product->sold_quantity }}</td>
-                                                    <td class="text-center">
-                                                        <span
-                                                            class="badge bg-{{ $product->quantity - $product->sold_quantity > 0 ? 'success' : 'danger' }}">
+                                                    <td class="text-center align-middle">{{ $product->quantity }}</td>
+                                                    <td class="text-center align-middle">{{ $product->sold_quantity }}</td>
+                                                    <td class="text-center align-middle">
+                                                        <span class="badge bg-{{ $product->quantity - $product->sold_quantity > 0 ? 'success' : 'danger' }}">
                                                             {{ $product->quantity - $product->sold_quantity }}
                                                         </span>
                                                     </td>
-                                                    <td class="text-center">
-                                                        Rs.{{ number_format($product->total_value, 2) }}
+                                                    <td class="text-center d-none d-lg-table-cell">
+                                                        ₹{{ number_format($product->total_value, 0) }}
                                                     </td>
-                                                    <td class="text-center">
-                                                        Rs.{{ number_format($product->sold_value, 2) }}
+                                                    <td class="text-center d-none d-lg-table-cell">
+                                                        ₹{{ number_format($product->sold_value, 0) }}
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="text-center align-middle">
                                                         @if ($product->status == 'completed')
                                                             <span class="badge bg-success">Completed</span>
                                                         @elseif($product->status == 'partial')
                                                             <span class="badge bg-warning text-dark">Partial</span>
                                                         @else
-                                                            <span
-                                                                class="badge bg-info">{{ ucfirst($product->status) }}</span>
+                                                            <span class="badge bg-info">{{ ucfirst($product->status) }}</span>
                                                         @endif
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="9" class="text-center py-3">No product details
-                                                        found
-                                                    </td>
+                                                    <td colspan="9" class="text-center py-3">No product details found</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -274,7 +279,7 @@
                         </div>
                     @endif
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer flex-wrap gap-2">
                     <button type="button" onclick="printStaffDetails()" class="btn btn-primary">
                         <i class="bi bi-printer me-1"></i> Print Details
                     </button>
@@ -293,7 +298,7 @@
             }, 500);
         });
 
-        // Improved print function with better isolation
+        // Improved print functions remain unchanged
         function printStaffSales() {
             // Store a reference to the original window styles
             const originalStyles = document.head.innerHTML;
@@ -350,19 +355,16 @@
             // Wait for content to load before focusing
             printWindow.onload = function() {
                 printWindow.focus();
-                // Let user initiate print from the new window
-                // This avoids the auto-print dialog that can cause style issues when canceled
             };
         }
         
-        // Improved staff details print function
         function printStaffDetails() {
             // Create a new window for printing with complete isolation
             const printWindow = window.open('', '_blank', 'width=800,height=600');
             
             // Get staff info and product details
             const staffInfo = document.querySelector('.modal-body .card-body').innerHTML;
-            const summaryStats = document.querySelectorAll('.modal-body .row.mb-4 .card');
+            const summaryStats = document.querySelectorAll('.modal-body .row.g-3.mb-4 .card');
             const productsTable = document.querySelector('.modal-body .table-responsive').innerHTML;
             const staffName = document.querySelector('#salesDetailsModalLabel').textContent.trim();
             
@@ -452,7 +454,6 @@
             // Wait for images to load
             printWindow.onload = function() {
                 printWindow.focus();
-                // Let the user manually print using the button
             };
         }
     </script>
