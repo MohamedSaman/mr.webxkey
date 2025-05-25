@@ -9,6 +9,9 @@ class StaffProduct extends Model
 {
     use HasFactory;
     
+    // Fix the table name to match your database
+    protected $table = 'staff_products';
+    
     protected $fillable = [
         'staff_sale_id',
         'watch_id',
