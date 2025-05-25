@@ -103,6 +103,90 @@
             .action-btn:hover.qr {
                 background-color: rgba(108, 117, 125, 0.2);
             }
+
+            /* Update the tab navigation styles for better mobile experience */
+            @media (max-width: 576px) {
+                .content-tabs {
+                    flex-direction: column;
+                    border-bottom: none;
+                }
+
+                .content-tab {
+                    text-align: center;
+                    border: 1px solid #dee2e6;
+                    border-radius: 4px;
+                    margin-bottom: 8px;
+                    padding: 12px 15px;
+                }
+
+                .content-tab.active {
+                    background-color: #0d6efd;
+                    color: white;
+                    border-color: #0d6efd;
+                }
+
+                .pagination {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+
+                .page-item {
+                    margin-bottom: 0.25rem;
+                }
+
+                h2, .h2 {
+                    font-size: 1.5rem;
+                }
+                
+                h5, .h5 {
+                    font-size: 1.1rem;
+                }
+                
+                .fs-5 {
+                    font-size: 1rem !important;
+                }
+                
+                /* Improve card title spacing */
+                .card-title {
+                    margin-bottom: 0.5rem;
+                }
+                
+                /* Better select boxes on mobile */
+                .form-select, .form-control {
+                    font-size: 0.95rem;
+                    padding: 0.375rem 0.5rem;
+                }
+                
+                /* Better badge size on mobile */
+                .badge {
+                    font-size: 0.75rem;
+                }
+            }
+
+            @media (max-width: 767.98px) {
+                /* Make image take full width on mobile */
+                .modal-body .row .col-md-4.border-end {
+                    border-right: none !important;
+                    border-bottom: 1px solid #dee2e6;
+                    padding-bottom: 1rem;
+                    margin-bottom: 1rem;
+                }
+                
+                /* Better spacing for accordion on mobile */
+                .accordion-button {
+                    padding: 0.75rem;
+                }
+                
+                .accordion-body {
+                    padding: 0.75rem;
+                }
+                
+                /* Fix table column widths */
+                .table-borderless th {
+                    width: auto !important;
+                    min-width: 120px;
+                }
+            }
         </style>
     @endpush
     <div class="container-fluid p-3">
@@ -116,24 +200,22 @@
         <!-- Products Content -->
         <div id="products" class="tab-content active">
             <div class="inventory-header">
-                <h2>Product Inventory</h2>
-                <div class="d-flex gap-3">
-
-                    <div class="search-bar">
+                <h2 class="mb-3">Product Inventory</h2>
+                <div class="d-flex flex-column flex-md-row gap-3">
+                    <div class="search-bar w-100">
                         <div class="input-group">
                             <input type="text" class="form-control" id="product-search" wire:model.live="search"
                                 placeholder="Search products...">
-                            {{-- <button class="btn btn-outline-secondary" type="button" id="search-btn">
-                                <i class="bi bi-search"></i>
-                            </button> --}}
                         </div>
                     </div>
-                    <button class="btn btn-primary add-product-btn" id="add-product-btn" wire:click="createWatch">
-                        <i class="bi bi-plus-lg"></i> Add Product
-                    </button>
-                    <button wire:click="exportToCsv" class="btn btn-success">
-                        <i class="fas fa-file-csv"></i> Export to CSV
-                    </button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary add-product-btn" id="add-product-btn" wire:click="createWatch">
+                            <i class="bi bi-plus-lg"></i> <span class="d-none d-sm-inline">Add Product</span>
+                        </button>
+                        <button wire:click="exportToCsv" class="btn btn-success">
+                            <i class="bi bi-filetype-csv"></i> <span class="d-none d-sm-inline">Export</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1824,9 +1906,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editLocation" class="form-label fw-bold">Store
                                             Location:</label>
