@@ -25,6 +25,7 @@ use App\Livewire\Admin\WatchStockDetails;
 use App\Livewire\Admin\WatchDialColorlist;
 use App\Livewire\Admin\WatchGlassTypeList;
 use App\Livewire\Admin\WatchStrapMaterial;
+use App\Livewire\Staff\StaffStockOverview;
 use App\Http\Controllers\ReceiptController;
 use App\Livewire\Admin\CustomerSaleDetails;
 use App\Livewire\Admin\WatchStrapColorlist;
@@ -57,7 +58,7 @@ Route::post('/logout', function (Request $request) {
 // Routes that require authentication
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 
-    // Admin routes
+    // !! Admin routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', AdminDashboard::class)->name('dashboard');
         Route::get('/watch-list', Watches::class)->name('watches');
@@ -83,6 +84,19 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
        
     });
 
+   
+    //!! Staff routes
+    Route::middleware('role:staff')->prefix('staff')->name('staff.')->group(function () {
+        Route::get('/dashboard', StaffDashboard::class)->name('dashboard');
+        Route::get('/billing', Billing::class)->name('billing');
+        Route::get('/customer-sale-management', CustomerSaleManagement::class)->name('customer-sale-management');
+        Route::get('/staff-stock-overview', StaffStockOverview::class)->name('staff-stock-overview');
+
+    });
+
+
+    // !! Export routes (accessible to authenticated users)
+
     Route::get('/watches/export', [WatchesExportController::class, 'export'])->name('watches.export')->middleware(['auth']);
     Route::get('/staff-sales/export', [StaffSaleExportController::class, 'export'])
     ->name('staff-sales.export')->middleware(['auth']);
@@ -90,13 +104,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/receipts/{id}/download', [App\Http\Controllers\ReceiptController::class, 'download'])
         ->name('receipts.download')
         ->middleware(['auth']);
-
-    // Staff routes
-    Route::middleware('role:staff')->prefix('staff')->name('staff.')->group(function () {
-        Route::get('/dashboard', StaffDashboard::class)->name('dashboard');
-        Route::get('/billing', Billing::class)->name('billing');
-        Route::get('/customer-sale-management', CustomerSaleManagement::class)->name('customer-sale-management');
-    });
 
     // Export staff stock details
     Route::get('/export/staff-stock', function() {
