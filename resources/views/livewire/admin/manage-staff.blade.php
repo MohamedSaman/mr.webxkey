@@ -1,63 +1,68 @@
 <div>
     <div class="container-fluid">
         <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light">
-                <h4 class="card-title mb-2 mb-md-0">Staff List</h4>
-                <div class="card-tools">
-                    <button class="btn btn-primary" wire:click="createStaff">
-                        <i class="bi bi-plus-circle me-1"></i> Create Staff
-                    </button>
+            <div class="card-header bg-light">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                    <h4 class="card-title mb-2 mb-sm-0">Staff List</h4>
+                    <div class="card-tools">
+                        <button class="btn btn-primary w-100 w-sm-auto" wire:click="createStaff">
+                            <i class="bi bi-plus-circle me-1"></i> Create Staff
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
-                <table class="table table-bordered table-hover table-responsive">
-                    <thead>
-                        <tr>
-                            <th class="text-center">#</th>
-                            <th class="text-center">Staff Name</th>
-                            <th class="text-center">Contact Number</th>
-                            <th class="text-center">Email</th>
-                            <th class="text-center">Role</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($staffs->count() > 0)
-                            @foreach ($staffs as $staff)
+                <div class="table-responsive"> <!-- Wrap table in div with table-responsive class -->
+                    <table class="table table-bordered table-hover"> <!-- Remove table-responsive from table -->
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th class="text-center">Staff Name</th>
+                                <th class="text-center">Contact Number</th>
+                                <th class="text-center">Email</th>
+                                <th class="text-center">Role</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($staffs->count() > 0)
+                                @foreach ($staffs as $staff)
+                                    <tr>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td class="text-center">{{ $staff->name ?? '-' }}</td>
+                                        <td class="text-center">{{ $staff->contact ?? '-' }}</td>
+                                        <td class="text-center">{{ $staff->email ?? '-' }}</td>
+                                        <td class="text-center">{{ $staff->role ?? '-' }}</td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                                <button class="btn btn-sm btn-primary"
+                                                    wire:click="editStaff({{ $staff->id }})" wire:loading.attr="disabled">
+                                                    <i class="bi bi-pencil" wire:loading.class="d-none"
+                                                        wire:target="editStaff({{ $staff->id }})"></i>
+                                                    <span wire:loading wire:target="editStaff({{ $staff->id }})">
+                                                        <i class="spinner-border spinner-border-sm"></i>
+                                                    </span>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger"
+                                                    wire:click="confirmDelete({{ $staff->id }})">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td class="text-center">{{ $staff->name ?? '-' }}</td>
-                                    <td class="text-center">{{ $staff->contact ?? '-' }}</td>
-                                    <td class="text-center">{{ $staff->email ?? '-' }}</td>
-                                    <td class="text-center">{{ $staff->role ?? '-' }}</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-primary me-2"
-                                            wire:click="editStaff({{ $staff->id }})" wire:loading.attr="disabled">
-                                            <i class="bi bi-pencil" wire:loading.class="d-none"
-                                                wire:target="editWatch({{ $staff->id }})"></i>
-                                            <span wire:loading wire:target="editStaff({{ $staff->id }})">
-                                                <i class="spinner-border spinner-border-sm"></i>
-                                            </span>
-
-                                        </button>
-                                        <button class="btn btn-sm btn-danger"
-                                            wire:click="confirmDelete({{ $staff->id }})">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                    <td colspan="6" class="text-center">
+                                        <div class="alert alert-primary bg-opacity-10 my-2">
+                                            <i class="bi bi-info-circle me-2"></i> No staffs found.
+                                        </div>
                                     </td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <div class="alert alert-primary bg-opacity-10 my-2">
-                                        <i class="bi bi-info-circle me-2"></i> No staffs found.
-                                    </div>
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
                 {{-- <div class="d-flex justify-content-center">
                     {{ $staffs->links('livewire.custom-pagination') }}
                 </div> --}}
@@ -73,8 +78,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="row g-3"> <!-- Switch to g-3 for better spacing -->
+                            <div class="col-12 col-md-6"> <!-- Full width on mobile -->
                                 <label for="staffName" class="form-label">Staff Name</label>
                                 <input type="text" class="form-control" id="staffName" wire:model="name"
                                     placeholder="Enter staff name">
@@ -82,17 +87,18 @@
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6"> <!-- Full width on mobile -->
                                 <label for="contactNumber" class="form-label">Contact Number</label>
-                                <input type="text" class="form-control" id="contactNumber" wire:model="contactNumber"
-                                    placeholder="Enter contact number">
+                                <input type="text" class="form-control" id="contactNumber"
+                                    wire:model="contactNumber" placeholder="Enter contact number">
                                 @error('contactNumber')
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        
+                        <div class="row g-3 mt-1"> <!-- Add some margin top -->
+                            <div class="col-12 col-md-6">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" wire:model="email"
                                     placeholder="Enter email">
@@ -100,7 +106,7 @@
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6">
                                 <label for="Password" class="form-label">Password</label>
                                 <div class="input-group">
                                     <input type="password" class="form-control" id="Password" wire:model="password"
@@ -115,8 +121,9 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        
+                        <div class="row g-3 mt-1">
+                            <div class="col-12 col-md-6">
                                 <label for="ConfirmPassword" class="form-label">Confirm Password</label>
                                 <div class="input-group">
                                     <input type="password" class="form-control" id="ConfirmPassword"
@@ -132,9 +139,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" wire:click="saveStaff">Add Staff</button>
+                    <div class="modal-footer flex-column flex-sm-row">
+                        <button type="button" class="btn btn-secondary w-100 w-sm-auto mb-2 mb-sm-0"
+                            data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary w-100 w-sm-auto" wire:click="saveStaff">Add Staff
+                        </button>
                     </div>
                 </div>
             </div>
@@ -265,4 +274,62 @@
             }
         }
     </script>
+@endpush
+@push('styles')
+<style>
+    /* Make modals more mobile-friendly */
+    @media (max-width: 575.98px) {
+        .modal-dialog {
+            margin: 0.5rem;
+            max-width: calc(100% - 1rem);
+        }
+        
+        .modal-header {
+            padding: 0.75rem 1rem;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+        }
+        
+        .modal-footer {
+            padding: 0.75rem 1rem;
+        }
+        
+        .btn {
+            padding: 0.375rem 0.5rem;
+        }
+    }
+    
+    /* Improve table display on smaller screens */
+    @media (max-width: 767.98px) {
+        .table {
+            font-size: 0.85rem;
+        }
+        
+        .table td, .table th {
+            padding: 0.5rem 0.25rem;
+        }
+        
+        .btn-sm {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.75rem;
+        }
+    }
+    
+    /* Focus on most important content for very small screens */
+    @media (max-width: 400px) {
+        /* Option to hide less important columns if needed */
+        .table td:nth-child(4), .table th:nth-child(4) {
+            display: none; /* Hides email column on very small screens */
+        }
+    }
+    
+    /* Ensure password toggle button is properly sized */
+    .input-group .btn-outline-secondary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
 @endpush
