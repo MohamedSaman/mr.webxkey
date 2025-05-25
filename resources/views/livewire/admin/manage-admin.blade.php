@@ -1,66 +1,68 @@
 <div>
     <div class="container-fluid">
         <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light">
-                <h4 class="card-title mb-2 mb-md-0">Admin List</h4>
-                <div class="card-tools">
-                    <button class="btn btn-primary" wire:click="createAdmin">
-                        <i class="bi bi-plus-circle me-1"></i> Create Admin
-                    </button>
+            <div class="card-header bg-light">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                    <h4 class="card-title mb-0">Admin List</h4>
+                    <div class="card-tools">
+                        <button class="btn btn-primary w-100 w-sm-auto" wire:click="createAdmin">
+                            <i class="bi bi-plus-circle me-1"></i> Create Admin
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
-                <table class="table table-bordered table-hover table-responsive">
-                    <thead>
-                        <tr>
-                            <th class="text-center">#</th>
-                            <th class="text-center">Admin Name</th>
-                            <th class="text-center">Contact Number</th>
-                            <th class="text-center">Email</th>
-                            <th class="text-center">Role</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($admins->count() > 0)
-                            @foreach ($admins as $admin)
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th class="text-center">Admin Name</th>
+                                <th class="text-center">Contact Number</th>
+                                <th class="text-center">Email</th>
+                                <th class="text-center">Role</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($admins->count() > 0)
+                                @foreach ($admins as $admin)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                        <td class="text-center align-middle">{{ $admin->name ?? '-' }}</td>
+                                        <td class="text-center align-middle">{{ $admin->contact ?? '-' }}</td>
+                                        <td class="text-center align-middle">{{ $admin->email ?? '-' }}</td>
+                                        <td class="text-center align-middle">{{ $admin->role ?? '-' }}</td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button class="btn btn-primary"
+                                                    wire:click="editAdmin({{ $admin->id }})" wire:loading.attr="disabled">
+                                                    <i class="bi bi-pencil" wire:loading.class="d-none"
+                                                        wire:target="editAdmin({{ $admin->id }})"></i>
+                                                    <span wire:loading wire:target="editAdmin({{ $admin->id }})">
+                                                        <i class="spinner-border spinner-border-sm"></i>
+                                                    </span>
+                                                </button>
+                                                <button class="btn btn-danger"
+                                                    wire:click="confirmDelete({{ $admin->id }})">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td class="text-center">{{ $admin->name ?? '-' }}</td>
-                                    <td class="text-center">{{ $admin->contact ?? '-' }}</td>
-                                    <td class="text-center">{{ $admin->email ?? '-' }}</td>
-                                    <td class="text-center">{{ $admin->role ?? '-' }}</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-primary me-2"
-                                            wire:click="editAdmin({{ $admin->id }})" wire:loading.attr="disabled">
-                                            <i class="bi bi-pencil" wire:loading.class="d-none"
-                                                wire:target="editWatch({{ $admin->id }})"></i>
-                                            <span wire:loading wire:target="editAdmin({{ $admin->id }})">
-                                                <i class="spinner-border spinner-border-sm"></i>
-                                            </span>
-
-                                        </button>
-                                        <button class="btn btn-sm btn-danger"
-                                            wire:click="confirmDelete({{ $admin->id }})">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                    <td colspan="6" class="text-center">
+                                        <div class="alert alert-primary bg-opacity-10 my-2">
+                                            <i class="bi bi-info-circle me-2"></i> No admins found.
+                                        </div>
                                     </td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <div class="alert alert-primary bg-opacity-10 my-2">
-                                        <i class="bi bi-info-circle me-2"></i> No admins found.
-                                    </div>
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-                {{-- <div class="d-flex justify-content-center">
-                    {{ $admins->links('livewire.custom-pagination') }}
-                </div> --}}
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         {{-- Create Suplier Modal --}}
@@ -73,8 +75,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
                                 <label for="adminName" class="form-label">Admin Name</label>
                                 <input type="text" class="form-control" id="adminName" wire:model="name"
                                     placeholder="Enter admin name">
@@ -82,7 +84,7 @@
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6">
                                 <label for="contactNumber" class="form-label">Contact Number</label>
                                 <input type="text" class="form-control" id="contactNumber"
                                     wire:model="contactNumber" placeholder="Enter contact number">
@@ -91,8 +93,8 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="row g-3 mt-1">
+                            <div class="col-12 col-md-6">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" wire:model="email"
                                     placeholder="Enter email">  
@@ -100,7 +102,7 @@
                                     <span class="text-danger">* {{ $message }}</span>
                                 @enderror  
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6">
                                 <label for="Password" class="form-label">Password</label>
                                 <div class="input-group">
                                     <input type="password" class="form-control" id="Password" wire:model="password"
@@ -114,8 +116,8 @@
                                 @enderror
                             </div>  
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="row g-3 mt-1">
+                            <div class="col-12 col-md-6">
                                 <label for="ConfirmPassword" class="form-label">Confirm Password</label>
                                 <div class="input-group">
                                     <input type="password" class="form-control" id="ConfirmPassword"
@@ -130,9 +132,9 @@
                             </div>   
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" wire:click="saveAdmin">Add Admin</button>
+                    <div class="modal-footer flex-column flex-sm-row">
+                        <button type="button" class="btn btn-secondary w-100 w-sm-auto mb-2 mb-sm-0" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary w-100 w-sm-auto" wire:click="saveAdmin">Add Admin</button>
                     </div>
                 </div>
             </div>
@@ -148,40 +150,40 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editName" class="form-label">Admin Name</label>
-                            <input type="text" class="form-control" id="editName"
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label for="adminName" class="form-label">Admin Name</label>
+                            <input type="text" class="form-control" id="adminName"
                                 wire:model="editName" >
                             @error('editName')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="editContactNumber" class="form-label">Contact Number</label>
-                            <input type="text" class="form-control" id="editContactNumber"
+                        <div class="col-12 col-md-6">
+                            <label for="contactNumber" class="form-label">Contact Number</label>
+                            <input type="text" class="form-control" id="contactNumber"
                                 wire:model="editContactNumber" >
                             @error('editContactNumber')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror
                         </div>
                     </div>   
-                    <div class="row">   
-                        <div class="col-md-6 mb-3">
-                            <label for="editEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="editEmail"
+                    <div class="row g-3 mt-1">   
+                        <div class="col-12 col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email"
                                 wire:model="editEmail" >  
                             @error('editEmail')
                                 <span class="text-danger">* {{ $message }}</span>
                             @enderror  
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="editPassword" class="form-label">Password (leave blank to keep current)</label>
+                        <div class="col-12 col-md-6">
+                            <label for="Password" class="form-label">Password (leave blank to keep current)</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="editPassword"
+                                <input type="password" class="form-control" id="Password"
                                     wire:model="editPassword">
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('editPassword')">
-                                    <i class="bi bi-eye" id="editPasswordToggleIcon"></i>
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('Password')">
+                                    <i class="bi bi-eye" id="PasswordToggleIcon"></i>
                                 </button>
                             </div>
                             @error('editPassword')
@@ -189,14 +191,14 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editConfirmPassword" class="form-label">Confirm Password</label>
+                    <div class="row g-3 mt-1">
+                        <div class="col-12 col-md-6">
+                            <label for="ConfirmPassword" class="form-label">Confirm Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="editConfirmPassword"
+                                <input type="password" class="form-control" id="ConfirmPassword"
                                     wire:model="editConfirmPassword">
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('editConfirmPassword')">
-                                    <i class="bi bi-eye" id="editConfirmPasswordToggleIcon"></i>
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('ConfirmPassword')">
+                                    <i class="bi bi-eye" id="ConfirmPasswordToggleIcon"></i>
                                 </button>
                             </div>
                             @error('editConfirmPassword')
@@ -261,4 +263,36 @@
         }
     }
 </script>
+@endpush
+@push('styles')
+<style>
+    /* Make sure modal content doesn't overflow on small screens */
+    .modal-content {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Improve table readability on small screens */
+    @media (max-width: 767.98px) {
+        .table {
+            font-size: 0.875rem;
+        }
+        
+        .btn-group-sm > .btn, .btn-sm {
+            padding: 0.25rem 0.4rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.25rem;
+        }
+    }
+    
+    /* Ensure modal footer buttons stack properly on mobile */
+    @media (max-width: 575.98px) {
+        .modal-footer {
+            justify-content: center;
+        }
+    }
+</style>
 @endpush
