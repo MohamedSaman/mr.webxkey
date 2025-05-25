@@ -19,6 +19,8 @@ class Payment extends Model
         'is_completed',
         'payment_date',
         'due_date',
+        'due_payment_method',
+        'due_payment_attachment',
     ];
 
     protected $casts = [
