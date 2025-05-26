@@ -133,7 +133,7 @@ class AdminDashboard extends Component
         // Calculate total inventory value (all stocks)
         $totalInventoryValue = DB::table('watch_stocks')
             ->join('watch_prices', 'watch_stocks.watch_id', '=', 'watch_prices.watch_id')
-            ->select(DB::raw('SUM(watch_stocks.total_stock * watch_prices.selling_price) as total_value'))
+            ->select(DB::raw('SUM(watch_stocks.available_stock * watch_prices.supplier_price) as total_value'))
             ->first();
             
         $this->totalInventoryValue = $totalInventoryValue->total_value ?? 0;
