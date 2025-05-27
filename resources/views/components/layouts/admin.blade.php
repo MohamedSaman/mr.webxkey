@@ -634,6 +634,17 @@
                                     <i class="bi bi-people"></i> <span>Customer Sales</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.payment-approvals') ? 'active' : '' }}" href="{{ route('admin.payment-approvals') }}">
+                                        <i class="bi bi-shield-check "></i><span class="nav-link-text ms-1">Payment Approvals</span>
+                                    @php
+                                        $pendingCount = \App\Models\Payment::where('status', 'pending')->where('is_completed', 0)->count();
+                                    @endphp
+                                    @if($pendingCount > 0)
+                                        <span class="badge bg-danger ms-auto">{{ $pendingCount }}</span>
+                                    @endif
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
