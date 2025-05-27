@@ -115,7 +115,7 @@ class Billing extends Component
                 })
                 // Keep the having clause as a double-check
                 ->having('available_stock', '>', 0)
-                ->take(10)
+                ->take(50)
                 ->get();
         } else {
             $this->searchResults = [];
