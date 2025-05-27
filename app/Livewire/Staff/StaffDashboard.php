@@ -35,9 +35,17 @@ class StaffDashboard extends Component
     public $productInventory = [];
     public $brandSales = [];
     public $customerPaymentStats = [];
+
+    public $availableStockValue = 0;
     
     public function mount()
     {
+        // Calculate available stock value for this staff
+        $userId = Auth::id();
+        $availableStockValue = StaffProduct::where('staff_id', $userId)
+            ->select(DB::raw('SUM((quantity - sold_quantity) * unit_price) as available_value'))
+            ->value('available_value');
+        $this->availableStockValue = $availableStockValue ?? 0;
         $userId = Auth::id();
         
         // Get sales statistics for this staff member

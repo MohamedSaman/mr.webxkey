@@ -659,7 +659,7 @@
                             <span class="badge bg-primary">{{ $totalInventory - $soldInventory }}</span>
                         </div>
                         <small class="d-block text-end text-primary">
-                            Rs.{{ number_format(($totalInventory - $soldInventory), 0) }}
+                            Rs.{{ number_format(($availableStockValue), 0) }}
                         </small>
                     </div>
                 </div>
