@@ -62,6 +62,9 @@ class Watches extends Component
     public $location;
     public $search = '';
 
+    public $imagePreview = null;
+    public $editImagePreview = null;
+
     private function getDefaultSupplier()
     {
         // Cache the supplier ID to avoid repeated database queries
@@ -349,6 +352,7 @@ class Watches extends Component
     public $isLoading = false;
     public function editWatch($id)
     {
+        $this->resetEditImage();
         // Find the watch with its related data
         $watch = WatchDetail::join('watch_suppliers', 'watch_details.supplier_id', '=', 'watch_suppliers.id')
             ->join('watch_prices', 'watch_details.id', '=', 'watch_prices.watch_id')
@@ -507,6 +511,7 @@ class Watches extends Component
             ]);
 
             DB::commit();
+            $this->resetEditImage();
 
             // Close the modal
             $this->js("$('#editWatchModal').modal('hide')");
@@ -588,6 +593,7 @@ class Watches extends Component
             ]);
 
             DB::commit();
+            $this->resetEditImage();
 
             // Close the modal and show success message
             $this->js('$("#editWatchModal").modal("hide")');
@@ -782,5 +788,66 @@ class Watches extends Component
         // Reset validation errors
         $this->resetValidation();
         $this->resetErrorBag();
+    }
+
+    /**
+     * Get file preview information with fallbacks for invalid temporary URLs
+     * 
+     * @param mixed $file The uploaded file object
+     * @return array File information including type, preview URL, and icon
+     */
+    private function getFilePreview($file)
+    {
+        if (!$file || !is_object($file)) {
+            return [
+                'type' => null,
+                'url' => null,
+                'icon' => null
+            ];
+        }
+        
+        $extension = strtolower($file->getClientOriginalExtension());
+        $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif']);
+        $isPdf = $extension === 'pdf';
+        
+        $result = [
+            'type' => $isImage ? 'image' : ($isPdf ? 'pdf' : 'other'),
+            'name' => $file->getClientOriginalName(),
+            'url' => null,
+            'icon' => $isImage ? 'bi-file-image' : ($isPdf ? 'bi-file-earmark-pdf' : 'bi-file'),
+            'icon_color' => $isImage ? 'text-primary' : ($isPdf ? 'text-danger' : 'text-secondary')
+        ];
+        
+        // Only try to get temporary URL for images
+        if ($isImage) {
+            try {
+                $result['url'] = $file->temporaryUrl();
+            } catch (\Exception $e) {
+                // Temporary URL failed, we'll use the icon instead
+                $result['url'] = null;
+            }
+        }
+        
+        return $result;
+    }
+
+    public function updatedImage()
+    {
+        if ($this->image) {
+            $this->imagePreview = $this->getFilePreview($this->image);
+        }
+    }
+
+    public function updatedEditImage()
+    {
+        if ($this->editImage) {
+            $this->editImagePreview = $this->getFilePreview($this->editImage);
+        }
+    }
+
+    public function resetEditImage()
+    {
+        $this->editImage = null;
+        $this->editImagePreview = null;
     }
 }
