@@ -106,13 +106,16 @@ class BillingPage extends Component
             $this->searchResults = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
                 ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
                 ->select('watch_details.*', 'watch_prices.selling_price', 'watch_prices.discount_price', 'watch_stocks.available_stock')
-                ->where('status', '=', 'active')
-                ->where('code', 'like', '%' . $this->search . '%')
-                ->orWhere('model', 'like', '%' . $this->search . '%')
-                ->orWhere('barcode', 'like', '%' . $this->search . '%')
-                ->orWhere('brand', 'like', '%' . $this->search . '%')
-                ->orWhere('name', 'like', '%' . $this->search . '%')
-                ->take(10)
+                ->where('watch_details.status', '=', 'active')
+                ->where('watch_stocks.available_stock', '>', 0) // Only show products with stock > 0
+                ->where(function($query) {
+                    $query->where('watch_details.code', 'like', '%' . $this->search . '%')
+                        ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
+                        ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
+                        ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
+                        ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
+                })
+                ->take(50)
                 ->get();
         } else {
             $this->searchResults = [];
@@ -124,16 +127,23 @@ class BillingPage extends Component
         $watch = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
             ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
             ->where('watch_details.id', $watchId)
-            ->select('watch_details.*', 'watch_prices.selling_price', 'watch_prices.discount_price', 'watch_stocks.available_stock')
+            ->select('watch_details.*', 'watch_prices.selling_price', 'watch_prices.discount_price', 
+                     'watch_stocks.available_stock')
             ->first();
 
-        if (!$watch) {
+        if (!$watch || $watch->available_stock <= 0) {
+            $this->js('swal.fire("Error", "This product is out of stock.", "error")');
             return;
         }
 
         $existingItem = collect($this->cart)->firstWhere('id', $watchId);
 
         if ($existingItem) {
+            // Check if adding one more would exceed stock
+            if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
+                $this->js('swal.fire("Warning", "Maximum available quantity reached.", "warning")');
+                return;
+            }
             $this->quantities[$watchId]++;
         } else {
             $discountPrice = $watch->selling_price - $watch->discount_price ?? 0;
@@ -160,7 +170,21 @@ class BillingPage extends Component
 
     public function updateQuantity($watchId, $quantity)
     {
-        $quantity = max(1, min($quantity, $this->cart[$watchId]['inStock']));
+        if (!isset($this->cart[$watchId])) {
+            return;
+        }
+
+        $maxAvailable = $this->cart[$watchId]['inStock'];
+        
+        // Ensure quantity is valid
+        $quantity = (int)$quantity;
+        if ($quantity < 1) {
+            $quantity = 1;
+        } elseif ($quantity > $maxAvailable) {
+            $quantity = $maxAvailable;
+            $this->js('swal.fire("Warning", "Quantity limited to maximum available (' . $maxAvailable . ')", "warning")');
+        }
+        
         $this->quantities[$watchId] = $quantity;
         $this->updateTotals();
     }
@@ -219,6 +243,32 @@ class BillingPage extends Component
     {
         if (empty($this->cart)) {
             $this->js('swal.fire("Error", "Please add items to the cart.", "error")');
+            return;
+        }
+        
+        // Add stock validation
+        $invalidItems = [];
+        foreach ($this->cart as $id => $item) {
+            // Get the latest stock directly from database
+            $currentStock = WatchStock::where('watch_id', $id)->value('available_stock');
+            
+            if ($currentStock < $this->quantities[$id]) {
+                $invalidItems[] = $item['name'] . " (Requested: {$this->quantities[$id]}, Available: {$currentStock})";
+            }
+        }
+        
+        if (!empty($invalidItems)) {
+            $errorMessage = "Cannot complete sale due to insufficient stock:<br><ul>";
+            foreach ($invalidItems as $item) {
+                $errorMessage .= "<li>{$item}</li>";
+            }
+            $errorMessage .= "</ul>";
+            
+            $this->js('swal.fire({
+                title: "Stock Error",
+                html: "' . $errorMessage . '",
+                icon: "error"
+            })');
             return;
         }
         

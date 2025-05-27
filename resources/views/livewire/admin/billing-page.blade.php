@@ -140,15 +140,27 @@
                                             <td>
                                                 <div class="input-group input-group-sm" style="width: 100px;">
                                                     <button class="btn btn-outline-primary btn-sm"
-                                                        wire:click="updateQuantity({{ $id }}, {{ $quantities[$id] - 1 }})">-</button>
+                                                        wire:click="updateQuantity({{ $id }}, {{ $quantities[$id] - 1 }})"
+                                                        {{ $quantities[$id] <= 1 ? 'disabled' : '' }}>-</button>
                                                     <input type="number"
-                                                        class="form-control form-control-sm text-center"
+                                                        class="form-control form-control-sm text-center quantity-input"
+                                                        data-watch-id="{{ $id }}"
+                                                        data-max="{{ $item['inStock'] }}"
                                                         value="{{ $quantities[$id] }}" min="1"
                                                         max="{{ $item['inStock'] }}"
                                                         wire:change="updateQuantity({{ $id }}, $event.target.value)">
                                                     <button class="btn btn-outline-primary btn-sm"
                                                         wire:click="updateQuantity({{ $id }}, {{ $quantities[$id] + 1 }})"
                                                         {{ $quantities[$id] >= $item['inStock'] ? 'disabled' : '' }}>+</button>
+                                                </div>
+                                                @php
+                                                // $qty = $quantities[$id] ?? 1;
+                                                // $stock = $item['inStock'] ?? 0;
+                                                // $maxQuantity = $item['inStock'] - $quantities[$id];
+                                                // dump($maxQuantity, $qty, $stock);
+                                                @endphp
+                                                <div class="invalid-feedback quantity-error">
+                                                    Maximum available quantity is {{ $item['inStock'] }}
                                                 </div>
                                             </td>
                                             <td>
@@ -791,5 +803,50 @@
             }
         </style>
     @endpush
-   
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            // Quantity validation
+            function setupQuantityValidation() {
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.addEventListener('input', function() {
+                        const max = parseInt(this.getAttribute('max'));
+                        const value = parseInt(this.value) || 0;
+                        
+                        if (value > max) {
+                            this.classList.add('is-invalid');
+                            this.nextElementSibling?.classList.add('d-block');
+                        } else {
+                            this.classList.remove('is-invalid');
+                            this.nextElementSibling?.classList.remove('d-block');
+                        }
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        const max = parseInt(this.getAttribute('max'));
+                        const min = parseInt(this.getAttribute('min') || 1);
+                        let value = parseInt(this.value) || 0;
+                        
+                        if (value > max) {
+                            this.value = max;
+                            Livewire.dispatch('quantity-corrected', {
+                                watchId: this.dataset.watchId, 
+                                quantity: max
+                            });
+                        } else if (value < min) {
+                            this.value = min;
+                            Livewire.dispatch('quantity-corrected', {
+                                watchId: this.dataset.watchId, 
+                                quantity: min
+                            });
+                        }
+                    });
+                });
+            }
+            
+            setupQuantityValidation();
+            document.addEventListener('livewire:update', setupQuantityValidation);
+        });
+    </script>
+    @endpush
 </div>
