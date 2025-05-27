@@ -291,7 +291,7 @@
                                                                 wire:model="paymentReceiptImage" accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                         </div>
                                                       
-                                                        @if ($paymentReceiptImagePreview)
+                                                        @if ($paymentReceiptImage)
                                                             <div class="mt-2">
                                                                 @if ($paymentReceiptImagePreview === 'pdf')
                                                                     <div class="d-flex align-items-center p-2 border rounded bg-light">
@@ -301,8 +301,16 @@
                                                                             <p class="text-muted small mb-0">{{ $paymentReceiptImage->getClientOriginalName() }}</p>
                                                                         </div>
                                                                     </div>
-                                                                @else
+                                                                @elseif ($paymentReceiptImagePreview && $paymentReceiptImagePreview !== 'image')
                                                                     <img src="{{ $paymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                @else
+                                                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                        <i class="bi bi-file-earmark-image text-primary me-2" style="font-size: 2rem;"></i>
+                                                                        <div>
+                                                                            <p class="fw-bold mb-0">Image File</p>
+                                                                            <p class="text-muted small mb-0">{{ $paymentReceiptImage->getClientOriginalName() }}</p>
+                                                                        </div>
+                                                                    </div>
                                                                 @endif
                                                             </div>
                                                         @endif
@@ -319,7 +327,7 @@
                                                                 wire:model="paymentReceiptImage" accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                         </div>
                                                        
-                                                        @if ($paymentReceiptImagePreview)
+                                                        @if ($paymentReceiptImage)
                                                             <div class="mt-2">
                                                                 @if ($paymentReceiptImagePreview === 'pdf')
                                                                     <div class="d-flex align-items-center p-2 border rounded bg-light">
@@ -423,7 +431,7 @@
                                                                         accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                                 </div>
                                                                 
-                                                                @if ($initialPaymentReceiptImagePreview)
+                                                                @if ($initialPaymentReceiptImage)
                                                                     <div class="mt-2">
                                                                         @if ($initialPaymentReceiptImagePreview === 'pdf')
                                                                             <div class="d-flex align-items-center p-2 border rounded bg-light">
@@ -453,7 +461,7 @@
                                                                         accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                                 </div>
                                                                 
-                                                                @if ($initialPaymentReceiptImagePreview)
+                                                                @if ($initialPaymentReceiptImage)
                                                                     <div class="mt-2">
                                                                         @if ($initialPaymentReceiptImagePreview === 'pdf')
                                                                             <div class="d-flex align-items-center p-2 border rounded bg-light">

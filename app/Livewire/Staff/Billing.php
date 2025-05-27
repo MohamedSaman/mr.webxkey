@@ -309,12 +309,16 @@ class Billing extends Component
         ]);
 
         if ($this->paymentReceiptImage) {
-            $extension = $this->paymentReceiptImage->getClientOriginalExtension();
-            if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
-                $this->paymentReceiptImagePreview = $this->paymentReceiptImage->temporaryUrl();
-            } else {
-                // For PDF we'll just set a flag that it's a PDF
-                $this->paymentReceiptImagePreview = 'pdf';
+            try {
+                $extension = strtolower($this->paymentReceiptImage->getClientOriginalExtension());
+                if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                    $this->paymentReceiptImagePreview = $this->paymentReceiptImage->temporaryUrl();
+                } else {
+                    $this->paymentReceiptImagePreview = 'pdf';
+                }
+            } catch (Exception $e) {
+                // If temporary URL generation fails, mark the file type but don't set URL
+                $this->paymentReceiptImagePreview = $extension == 'pdf' ? 'pdf' : 'image';
             }
         }
     }
@@ -705,6 +709,49 @@ class Billing extends Component
         return redirect()->route('receipts.download', $this->lastSaleId);
     }
 
+    /**
+     * Get file type icon or preview based on file object and preview URL
+     *
+     * @param mixed $file The uploaded file object
+     * @param string|null $previewUrl The temporary preview URL
+     * @return array File information with type, icon, and URL
+     */
+    public function getFilePreviewInfo($file, $previewUrl = null)
+    {
+        if (!$file) {
+            return null;
+        }
+        
+        $fileInfo = [
+            'name' => $file->getClientOriginalName(),
+            'type' => 'unknown',
+            'icon' => 'bi-file',
+            'url' => null
+        ];
+        
+        // Determine file type
+        $extension = strtolower($file->getClientOriginalExtension());
+        
+        // Handle images
+        if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+            $fileInfo['type'] = 'image';
+            $fileInfo['icon'] = 'bi-file-image';
+            
+            // Only set URL if we have a valid preview
+            try {
+                $fileInfo['url'] = $previewUrl && $previewUrl !== 'pdf' ? $previewUrl : null;
+            } catch (\Exception $e) {
+                $fileInfo['url'] = null;
+            }
+        }
+        // Handle PDFs
+        elseif ($extension === 'pdf') {
+            $fileInfo['type'] = 'pdf';
+            $fileInfo['icon'] = 'bi-file-earmark-pdf';
+        }
+        
+        return $fileInfo;
+    }
 
     public function render()
     {
