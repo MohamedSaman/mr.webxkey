@@ -9,6 +9,7 @@ use App\Livewire\Admin\WatchTypes;
 use App\Livewire\Admin\BillingPage;
 use App\Livewire\Admin\ManageAdmin;
 use App\Livewire\Admin\ManageStaff;
+use App\Livewire\Staff\DuePayments;
 use App\Livewire\Admin\SupplierList;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Admin\AddWatchColor;
@@ -18,6 +19,7 @@ use App\Livewire\Admin\ManageCustomer;
 use App\Livewire\Admin\WatchBrandlist;
 use App\Livewire\Staff\StaffDashboard;
 use App\Livewire\Admin\StaffDueDetails;
+use App\Livewire\Admin\PaymentApprovals;
 use App\Livewire\Admin\StaffSaleDetails;
 use App\Livewire\Admin\StaffStockDetails;
 use App\Livewire\Admin\WatchCategorylist;
@@ -81,7 +83,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/staff-sale-details', StaffSaleDetails::class)->name('staff-sale-details');
         Route::get('/staff-due-details', StaffDueDetails::class)->name('staff-due-details');
         Route::get('/customer-sale-details', CustomerSaleDetails::class)->name('customer-sale-details');
-       
+        Route::get('/payment-approvals', PaymentApprovals::class)->name('payment-approvals');
     });
 
    
@@ -91,7 +93,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/billing', Billing::class)->name('billing');
         Route::get('/customer-sale-management', CustomerSaleManagement::class)->name('customer-sale-management');
         Route::get('/staff-stock-overview', StaffStockOverview::class)->name('staff-stock-overview');
-
+        Route::get('/due-payments', DuePayments::class)->name('due-payments');
     });
 
 
