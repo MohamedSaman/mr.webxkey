@@ -810,6 +810,15 @@
                                 </li>
                             </ul>
                         </div>
+                        <div class="collapse" id="salesSubmenu">
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item">
+                                    <a class="nav-link py-2" href="{{ route('staff.due-payments') }}">
+                                        <i class="bi bi-watch"></i> <span>Customer Due</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('staff.billing') }}">
