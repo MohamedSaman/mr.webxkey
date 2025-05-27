@@ -659,7 +659,7 @@
                             <span class="badge bg-primary">{{ $totalInventory - $soldInventory }}</span>
                         </div>
                         <small class="d-block text-end text-primary">
-                            Rs.{{ number_format(($totalInventory - $soldInventory) * 15000, 0) }}
+                            Rs.{{ number_format(($totalInventory - $soldInventory), 0) }}
                         </small>
                     </div>
                 </div>
@@ -809,7 +809,7 @@
                                 <div class="d-flex align-items-center flex-wrap flex-md-nowrap mt-3">
                                     @if ($item->image)
                                         <div class="me-2" style="width: 35px; height: 35px;">
-                                            <img src="{{ asset('public/Bstorage/' . $item->image) }}"
+                                            <img src="{{ asset('public/storage/' . $item->image) }}"
                                                 alt="{{ $item->name }}" class="img-fluid rounded"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>

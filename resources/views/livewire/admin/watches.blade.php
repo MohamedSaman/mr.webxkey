@@ -1571,10 +1571,19 @@
                                     <div class="mb-3">
                                         <label for="editMovement" class="form-label fw-bold">Movement:</label>
                                         <select wire:model="editMovement" id="editMovement" class="form-select">
-                                            <option value="">Select Movement</option>
-                                            <option value="Mechanical">Mechanical</option>
-                                            <option value="Quartz">Quartz</option>
-                                            <option value="Automatic">Automatic</option>
+                                                    <option value="">Select Movement</option>
+                                                    <option value="Mechanical">Mechanical</option>
+                                                    <option value="Quartz">Quartz</option>
+                                                    <option value="Automatic">Automatic</option>
+                                                    <option value="PC">PC</option>
+                                                    <option value="SL68">SL68</option>
+                                                    <option value="2035 japan">2035 japan</option>
+                                                    <option value="2030 japan">2030 japan</option>
+                                                    <option value="VGA quartz">VGA quartz</option>
+                                                    <option value="SL68 DATE">SL68 DATE</option>
+                                                    <option value="SL68 DAY & DATE">SL68 DAY & DATE</option>
+                                                    <option value="2035 DATE">2035 DATE</option>
+                                                    <option value="2035 DAY & DATE">2035 DAY & DATE</option>
                                         </select>
                                         @error('editMovement')
                                             <span class="text-danger">{{ $message }}</span>

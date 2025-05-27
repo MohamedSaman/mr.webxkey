@@ -153,7 +153,7 @@
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     @if($watchData['watch']->image)
-                                                        <img src="{{ asset('storage/' . $watchData['watch']->image) }}" 
+                                                        <img src="{{ asset('public/storage/' . $watchData['watch']->image) }}" 
                                                             class="rounded me-3" 
                                                             height="50" width="50" 
                                                             alt="{{ $watchData['watch']->name }}">
@@ -332,7 +332,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         @if($product->watch && $product->watch->image)
-                                                            <img src="{{ asset('storage/' . $product->watch->image) }}" 
+                                                            <img src="{{ asset('public/storage/' . $product->watch->image) }}" 
                                                                 class="rounded me-3" 
                                                                 height="40" width="40" 
                                                                 alt="{{ $product->watch->name }}">
