@@ -570,7 +570,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="product-image-container me-3">
                                                             @if($item->image)
-                                                                <img src="{{ asset('storage/' . $item->image) }}" 
+                                                                <img src="{{ asset('public/storage/' . $item->image) }}" 
                                                                     alt="{{ $item->watch_name }}"
                                                                     class="img-fluid" 
                                                                     style="width: 100%; height: 100%; object-fit: cover;">
