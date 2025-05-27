@@ -52,7 +52,8 @@
                                                             <div>
                                                                 <span
                                                                     class="badge bg-success">Rs.{{ $result->selling_price ?? '-' }}</span>
-                                                                <span class="badge bg-info">Available: {{ $result->available_stock ?? 0 }}</span>
+                                                                <span class="badge bg-info">Available:
+                                                                    {{ $result->available_stock ?? 0 }}</span>
                                                             </div>
                                                         </div>
                                                         <div class="text-muted small mt-1">
@@ -137,17 +138,31 @@
                                                 </p>
                                             </td>
                                             <td>
+                                                <!-- Replace the current quantity input with this improved version -->
                                                 <div class="input-group input-group-sm" style="width: 100px;">
                                                     <button class="btn btn-outline-primary btn-sm"
-                                                        wire:click="updateQuantity({{ $id }}, {{ $quantities[$id] - 1 }})">-</button>
+                                                        wire:click.prevent="updateQuantity({{ $id }}, {{ max(1, $quantities[$id] - 1) }})"
+                                                        {{ $quantities[$id] <= 1 ? 'disabled' : '' }}>-</button>
                                                     <input type="number"
-                                                        class="form-control form-control-sm text-center"
-                                                        value="{{ $quantities[$id] }}" min="1"
+                                                        class="form-control form-control-sm text-center quantity-input"
+                                                        data-watch-id="{{ $id }}"
+                                                        {{-- data-max="{{ $item['inStock'] }}" --}}
+                                                        value="{{ $quantities[$id] }}" 
+                                                        min="1"
                                                         max="{{ $item['inStock'] }}"
-                                                        wire:change="updateQuantity({{ $id }}, $event.target.value)">
+                                                        wire:change="validateQuantity({{ $id }})"
+                                                        wire:model.blur="quantities.{{ $id }}">
                                                     <button class="btn btn-outline-primary btn-sm"
-                                                        wire:click="updateQuantity({{ $id }}, {{ $quantities[$id] + 1 }})"
+                                                        wire:click.prevent="updateQuantity({{ $id }}, {{ min($item['inStock'], $quantities[$id] + 1) }})"
                                                         {{ $quantities[$id] >= $item['inStock'] ? 'disabled' : '' }}>+</button>
+                                                </div>
+                                                {{-- @php
+                                                    $maxQuantity = $item['inStock'];
+                                                    $currentQuantity = $quantities[$id] ?? 1;
+                                                    dump($maxQuantity, $currentQuantity);
+                                                @endphp --}}
+                                                <div class="invalid-feedback quantity-error">
+                                                    Maximum available quantity is {{ $item['inStock'] }}
                                                 </div>
                                             </td>
                                             <td>
@@ -288,27 +303,38 @@
                                                             </span>
                                                             <input type="file"
                                                                 class="form-control @error('paymentReceiptImage') is-invalid @enderror"
-                                                                wire:model="paymentReceiptImage" accept=".jpg,.jpeg,.png,.gif,.pdf">
+                                                                wire:model="paymentReceiptImage"
+                                                                accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                         </div>
-                                                      
+
                                                         @if ($paymentReceiptImage)
                                                             <div class="mt-2">
                                                                 @if ($paymentReceiptImagePreview === 'pdf')
-                                                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                                                        <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                    <div
+                                                                        class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                        <i class="bi bi-file-earmark-pdf text-danger me-2"
+                                                                            style="font-size: 2rem;"></i>
                                                                         <div>
                                                                             <p class="fw-bold mb-0">PDF Document</p>
-                                                                            <p class="text-muted small mb-0">{{ $paymentReceiptImage->getClientOriginalName() }}</p>
+                                                                            <p class="text-muted small mb-0">
+                                                                                {{ $paymentReceiptImage->getClientOriginalName() }}
+                                                                            </p>
                                                                         </div>
                                                                     </div>
                                                                 @elseif ($paymentReceiptImagePreview && $paymentReceiptImagePreview !== 'image')
-                                                                    <img src="{{ $paymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                    <img src="{{ $paymentReceiptImagePreview }}"
+                                                                        class="img-thumbnail"
+                                                                        style="max-height: 100px">
                                                                 @else
-                                                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                                                        <i class="bi bi-file-earmark-image text-primary me-2" style="font-size: 2rem;"></i>
+                                                                    <div
+                                                                        class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                        <i class="bi bi-file-earmark-image text-primary me-2"
+                                                                            style="font-size: 2rem;"></i>
                                                                         <div>
                                                                             <p class="fw-bold mb-0">Image File</p>
-                                                                            <p class="text-muted small mb-0">{{ $paymentReceiptImage->getClientOriginalName() }}</p>
+                                                                            <p class="text-muted small mb-0">
+                                                                                {{ $paymentReceiptImage->getClientOriginalName() }}
+                                                                            </p>
                                                                         </div>
                                                                     </div>
                                                                 @endif
@@ -324,21 +350,28 @@
                                                             </span>
                                                             <input type="file"
                                                                 class="form-control @error('paymentReceiptImage') is-invalid @enderror"
-                                                                wire:model="paymentReceiptImage" accept=".jpg,.jpeg,.png,.gif,.pdf">
+                                                                wire:model="paymentReceiptImage"
+                                                                accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                         </div>
-                                                       
+
                                                         @if ($paymentReceiptImage)
                                                             <div class="mt-2">
                                                                 @if ($paymentReceiptImagePreview === 'pdf')
-                                                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                                                        <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                    <div
+                                                                        class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                        <i class="bi bi-file-earmark-pdf text-danger me-2"
+                                                                            style="font-size: 2rem;"></i>
                                                                         <div>
                                                                             <p class="fw-bold mb-0">PDF Document</p>
-                                                                            <p class="text-muted small mb-0">{{ $paymentReceiptImage->getClientOriginalName() }}</p>
+                                                                            <p class="text-muted small mb-0">
+                                                                                {{ $paymentReceiptImage->getClientOriginalName() }}
+                                                                            </p>
                                                                         </div>
                                                                     </div>
                                                                 @else
-                                                                    <img src="{{ $paymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                    <img src="{{ $paymentReceiptImagePreview }}"
+                                                                        class="img-thumbnail"
+                                                                        style="max-height: 100px">
                                                                 @endif
                                                             </div>
                                                         @endif
@@ -349,7 +382,7 @@
                                                             <input type="text"
                                                                 class="form-control form-control-sm @error('bankName') is-invalid @enderror"
                                                                 placeholder="Enter bank name" wire:model="bankName">
-                                                            
+
                                                         </div>
                                                     </div>
                                                 @endif
@@ -430,19 +463,26 @@
                                                                         wire:model="initialPaymentReceiptImage"
                                                                         accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                                 </div>
-                                                                
+
                                                                 @if ($initialPaymentReceiptImage)
                                                                     <div class="mt-2">
                                                                         @if ($initialPaymentReceiptImagePreview === 'pdf')
-                                                                            <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                                                                <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                            <div
+                                                                                class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                                <i class="bi bi-file-earmark-pdf text-danger me-2"
+                                                                                    style="font-size: 2rem;"></i>
                                                                                 <div>
-                                                                                    <p class="fw-bold mb-0">PDF Document</p>
-                                                                                    <p class="text-muted small mb-0">{{ $initialPaymentReceiptImage->getClientOriginalName() }}</p>
+                                                                                    <p class="fw-bold mb-0">PDF
+                                                                                        Document</p>
+                                                                                    <p class="text-muted small mb-0">
+                                                                                        {{ $initialPaymentReceiptImage->getClientOriginalName() }}
+                                                                                    </p>
                                                                                 </div>
                                                                             </div>
                                                                         @else
-                                                                            <img src="{{ $initialPaymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                            <img src="{{ $initialPaymentReceiptImagePreview }}"
+                                                                                class="img-thumbnail"
+                                                                                style="max-height: 100px">
                                                                         @endif
                                                                     </div>
                                                                 @endif
@@ -460,19 +500,26 @@
                                                                         wire:model="initialPaymentReceiptImage"
                                                                         accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                                 </div>
-                                                                
+
                                                                 @if ($initialPaymentReceiptImage)
                                                                     <div class="mt-2">
                                                                         @if ($initialPaymentReceiptImagePreview === 'pdf')
-                                                                            <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                                                                <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                            <div
+                                                                                class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                                <i class="bi bi-file-earmark-pdf text-danger me-2"
+                                                                                    style="font-size: 2rem;"></i>
                                                                                 <div>
-                                                                                    <p class="fw-bold mb-0">PDF Document</p>
-                                                                                    <p class="text-muted small mb-0">{{ $initialPaymentReceiptImage->getClientOriginalName() }}</p>
+                                                                                    <p class="fw-bold mb-0">PDF
+                                                                                        Document</p>
+                                                                                    <p class="text-muted small mb-0">
+                                                                                        {{ $initialPaymentReceiptImage->getClientOriginalName() }}
+                                                                                    </p>
                                                                                 </div>
                                                                             </div>
                                                                         @else
-                                                                            <img src="{{ $initialPaymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                            <img src="{{ $initialPaymentReceiptImagePreview }}"
+                                                                                class="img-thumbnail"
+                                                                                style="max-height: 100px">
                                                                         @endif
                                                                     </div>
                                                                 @endif
@@ -485,7 +532,7 @@
                                                                         class="form-control form-control-sm @error('initialBankName') is-invalid @enderror"
                                                                         placeholder="Enter bank name"
                                                                         wire:model="initialBankName">
-                                                                    
+
                                                                 </div>
                                                             </div>
                                                         @endif
@@ -543,16 +590,20 @@
 
                                                         <!-- Due Payment Method Selection -->
                                                         <div class="mb-3">
-                                                            <label class="form-label small fw-bold">Expected Payment Method for Balance</label>
+                                                            <label class="form-label small fw-bold">Expected Payment
+                                                                Method for Balance</label>
                                                             <div class="input-group">
                                                                 <span class="input-group-text">
                                                                     <i class="bi bi-wallet2"></i>
                                                                 </span>
-                                                                <select class="form-select" wire:model.live="duePaymentMethod">
-                                                                    <option value="">-- Select expected payment method --</option>
+                                                                <select class="form-select"
+                                                                    wire:model.live="duePaymentMethod">
+                                                                    <option value="">-- Select expected payment
+                                                                        method --</option>
                                                                     <option value="cash">Cash</option>
                                                                     <option value="cheque">Cheque</option>
-                                                                    <option value="bank_transfer">Bank Transfer</option>
+                                                                    <option value="bank_transfer">Bank Transfer
+                                                                    </option>
                                                                     <option value="credit_card">Credit Card</option>
                                                                 </select>
                                                             </div>
@@ -560,27 +611,38 @@
 
                                                         <!-- Due Payment Attachment (e.g., post-dated cheque image) -->
                                                         <div class="mb-3">
-                                                            <label class="form-label small fw-bold">Due Payment Document (if available)</label>
+                                                            <label class="form-label small fw-bold">Due Payment
+                                                                Document (if available)</label>
                                                             <div class="input-group">
                                                                 <span class="input-group-text">
                                                                     <i class="bi bi-file-earmark-image"></i>
                                                                 </span>
-                                                                <input type="file" class="form-control" wire:model="duePaymentAttachment" accept=".jpg,.jpeg,.png,.gif,.pdf">
+                                                                <input type="file" class="form-control"
+                                                                    wire:model="duePaymentAttachment"
+                                                                    accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                             </div>
-                                                            <small class="form-text text-muted">Upload post-dated cheque or payment agreement document</small>
-                                                            
+                                                            <small class="form-text text-muted">Upload post-dated
+                                                                cheque or payment agreement document</small>
+
                                                             @if ($duePaymentAttachmentPreview)
                                                                 <div class="mt-2">
                                                                     @if ($duePaymentAttachmentPreview === 'pdf')
-                                                                        <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                                                            <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                        <div
+                                                                            class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                            <i class="bi bi-file-earmark-pdf text-danger me-2"
+                                                                                style="font-size: 2rem;"></i>
                                                                             <div>
-                                                                                <p class="fw-bold mb-0">PDF Document</p>
-                                                                                <p class="text-muted small mb-0">{{ $duePaymentAttachment->getClientOriginalName() }}</p>
+                                                                                <p class="fw-bold mb-0">PDF Document
+                                                                                </p>
+                                                                                <p class="text-muted small mb-0">
+                                                                                    {{ $duePaymentAttachment->getClientOriginalName() }}
+                                                                                </p>
                                                                             </div>
                                                                         </div>
                                                                     @else
-                                                                        <img src="{{ $duePaymentAttachmentPreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                        <img src="{{ $duePaymentAttachmentPreview }}"
+                                                                            class="img-thumbnail"
+                                                                            style="max-height: 100px">
                                                                     @endif
                                                                 </div>
                                                             @endif
@@ -1290,7 +1352,8 @@
                                     <div class="text-center mb-4">
                                         <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
                                         <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
-                                        <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email:hakeem9053@gmail.com</p>
+                                        <p class="mb-0 text-muted small">Phone: (033) 228 7437 |
+                                            Email:hakeem9053@gmail.com</p>
                                         <h4 class="mt-3 border-bottom border-2 pb-2">SALES RECEIPT</h4>
                                     </div>
 
@@ -1301,7 +1364,8 @@
                                             <p class="mb-1"><strong>Invoice Number:</strong>
                                                 {{ $receipt->invoice_number }}</p>
                                             <p class="mb-1"><strong>Date:</strong>
-                                              {{ $receipt->created_at->setTimezone('Asia/Colombo')->format('d/m/Y h:i A') }}</p>
+                                                {{ $receipt->created_at->setTimezone('Asia/Colombo')->format('d/m/Y h:i A') }}
+                                            </p>
                                             <p class="mb-1"><strong>Payment Status:</strong>
                                                 <span
                                                     class="badge bg-{{ $receipt->payment_status == 'paid' ? 'success' : ($receipt->payment_status == 'partial' ? 'warning' : 'danger') }}">
@@ -1447,6 +1511,41 @@
                 background-color: #f8f9fa;
                 cursor: pointer;
             }
+
+            /* Add to your existing styles */
+            input[type="number"].is-invalid {
+                border-color: #dc3545;
+                padding-right: calc(1.5em + 0.75rem);
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right calc(0.375em + 0.1875rem) center;
+                background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+            }
+
+            .input-group .invalid-feedback {
+                display: none;
+            }
+
+            .input-group .is-invalid~.invalid-feedback {
+                display: block;
+            }
+             /* Add to your existing styles */
+            input[type="number"].is-invalid {
+                border-color: #dc3545;
+                padding-right: calc(1.5em + 0.75rem);
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right calc(0.375em + 0.1875rem) center;
+                background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+            }
+            
+            .input-group .invalid-feedback {
+                display: none;
+            }
+            
+            .input-group .is-invalid ~ .invalid-feedback {
+                display: block;
+            }
         </style>
     @endpush
     @push('scripts')
@@ -1541,7 +1640,108 @@
                 const toastInstance = new bootstrap.Toast(document.getElementById('toast-container').lastChild, {
                     delay: 3000
                 });
-                toastInstance.show()  
+                toastInstance.show()
+            });
+
+            document.addEventListener('livewire:initialized', () => {
+                // Handle quantity input validation
+                function setupQuantityValidation() {
+                    document.querySelectorAll('.quantity-input').forEach(input => {
+                        // Add validation on input
+                        input.addEventListener('input', function(e) {
+                            const max = parseInt(this.getAttribute('max')) || 1;
+                            const min = parseInt(this.getAttribute('min')) || 1;
+                            const value = parseInt(this.value) || 0;
+                            
+                            // Show visual warning if exceeds max
+                            if (value > max) {
+                                this.classList.add('is-invalid');
+                                const errorElement = this.closest('.input-group').nextElementSibling;
+                                if (errorElement?.classList.contains('invalid-feedback')) {
+                                    errorElement.classList.add('d-block');
+                                }
+                            } else {
+                                this.classList.remove('is-invalid');
+                                const errorElement = this.closest('.input-group').nextElementSibling;
+                                if (errorElement?.classList.contains('invalid-feedback')) {
+                                    errorElement.classList.remove('d-block');
+                                }
+                            }
+                        });
+                        
+                        // Force correction on blur
+                        input.addEventListener('blur', function() {
+                            const max = parseInt(this.getAttribute('max')) || 1;
+                            const min = parseInt(this.getAttribute('min')) || 1;
+                            let value = parseInt(this.value) || 0;
+                            
+                            // Cap the value between min and max
+                            if (value > max) {
+                                this.value = max;
+                                value = max;
+                                
+                                // Show toast notification
+                                window.dispatchEvent(new CustomEvent('show-toast', {
+                                    detail: {
+                                        type: 'warning',
+                                        message: `Quantity limited to maximum available (${max})`
+                                    }
+                                }));
+                            } else if (value < min) {
+                                this.value = min;
+                                value = min;
+                            }
+                            
+                            // Update Livewire model
+                            const watchId = this.dataset.watchId;
+                            if (watchId) {
+                                @this.set(`quantities.${watchId}`, value);
+                                @this.call('validateQuantity', watchId);
+                            }
+                            
+                            // Remove visual warning after correction
+                            this.classList.remove('is-invalid');
+                            const errorElement = this.closest('.input-group').nextElementSibling;
+                            if (errorElement?.classList.contains('invalid-feedback')) {
+                                errorElement.classList.remove('d-block');
+                            }
+                        });
+                        
+                        // Check initial state
+                        const value = parseInt(input.value) || 0;
+                        const max = parseInt(input.getAttribute('max'));
+                        if (value > max) {
+                            input.classList.add('is-invalid');
+                            const errorElement = input.closest('.input-group').nextElementSibling;
+                            if (errorElement?.classList.contains('invalid-feedback')) {
+                                errorElement.classList.add('d-block');
+                            }
+                        }
+                    });
+                }
+                
+                // Initial setup
+                setupQuantityValidation();
+                
+                // Update validation after any Livewire updates
+                document.addEventListener('livewire:update', setupQuantityValidation);
+                
+                // Listen for custom toast events
+                window.addEventListener('show-toast', (e) => {
+                    const type = e.detail.type;
+                    const message = e.detail.message;
+                    
+                    // Show toast notification using SweetAlert or your preferred method
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: type,
+                        title: message,
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                });
             });
         </script>
     @endpush

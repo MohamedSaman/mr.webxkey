@@ -92,7 +92,7 @@ class Billing extends Component
     public function updatedSearch()
     {
         if (strlen($this->search) >= 2) {
-            // Get only products assigned to this staff member
+            // Get only products assigned to this staff member with available stock
             $this->searchResults = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
                 ->join('staff_sales', 'staff_sales.id', '=', 'staff_products.staff_sale_id')
                 ->select(
@@ -104,6 +104,8 @@ class Billing extends Component
                 )
                 ->where('staff_products.staff_id', auth()->id())
                 ->where('staff_products.status', '!=', 'completed')
+                // Add this line to ensure quantity > sold_quantity
+                ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
                 ->where(function($query) {
                     $query->where('watch_details.code', 'like', '%' . $this->search . '%')
                         ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
@@ -111,6 +113,7 @@ class Billing extends Component
                         ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
                         ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
                 })
+                // Keep the having clause as a double-check
                 ->having('available_stock', '>', 0)
                 ->take(10)
                 ->get();
@@ -143,12 +146,14 @@ class Billing extends Component
         $existingItem = collect($this->cart)->firstWhere('id', $watchId);
 
         if ($existingItem) {
-            if ($this->quantities[$watchId] >= $watch->available_stock) {
-                $this->dispatch('showToast', ['type' => 'warning', 'message' => 'Maximum available quantity reached.']);
+            // Check if adding one more would exceed stock
+            if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
+                $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$watch->available_stock}) reached."]);
                 return;
             }
             $this->quantities[$watchId]++;
         } else {
+            // Add new item to cart
             $discountPrice = $watch->discount_price ?? 0;
             $this->cart[$watchId] = [
                 'id' => $watch->id,
@@ -172,9 +177,65 @@ class Billing extends Component
         $this->updateTotals();
     }
 
+    /**
+     * Validate and restrict quantity input
+     *
+     * @param int $watchId Watch ID
+     */
+    public function validateQuantity($watchId)
+    {
+        if (!isset($this->cart[$watchId]) || !isset($this->quantities[$watchId])) {
+            return;
+        }
+        
+        $maxAvailable = $this->cart[$watchId]['inStock'];
+        $currentQuantity = (int)$this->quantities[$watchId];
+        
+        // Enforce the minimum and maximum limits
+        if ($currentQuantity <= 0) {
+            $this->quantities[$watchId] = 1;
+            $this->dispatch('showToast', [
+                'type' => 'warning',
+                'message' => 'Minimum quantity is 1'
+            ]);
+        } elseif ($currentQuantity > $maxAvailable) {
+            // Cap the quantity to available stock
+            $this->quantities[$watchId] = $maxAvailable;
+            $this->dispatch('showToast', [
+                'type' => 'warning',
+                'message' => "Maximum available quantity is {$maxAvailable}"
+            ]);
+        }
+        
+        $this->updateTotals();
+    }
+
+    /**
+     * Update quantity with validation
+     *
+     * @param int $watchId Watch ID
+     * @param int $quantity Requested quantity
+     */
     public function updateQuantity($watchId, $quantity)
     {
-        $quantity = max(1, min($quantity, $this->cart[$watchId]['inStock']));
+        if (!isset($this->cart[$watchId])) {
+            return;
+        }
+        
+        $maxAvailable = $this->cart[$watchId]['inStock'];
+        
+        // Apply limits and validation
+        if ($quantity <= 0) {
+            $quantity = 1;
+        } elseif ($quantity > $maxAvailable) {
+            $quantity = $maxAvailable;
+            $this->dispatch('showToast', [
+                'type' => 'warning',
+                'message' => "Maximum available quantity is {$maxAvailable}"
+            ]);
+        }
+        
+        // Update the quantity with the validated value
         $this->quantities[$watchId] = $quantity;
         $this->updateTotals();
     }
@@ -399,7 +460,7 @@ class Billing extends Component
             'customerId' => 'required',
             'paymentType' => 'required|in:full,partial',
         ]);
-
+        
         if ($this->paymentType == 'full') {
             if (empty($this->paymentMethod)) {
                 $this->js('swal.fire("Error", "Please select a payment method.", "error")');
