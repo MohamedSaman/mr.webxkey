@@ -37,10 +37,15 @@ class Payment extends Model
 
     public function getStatusBadgeAttribute()
     {
+        if ($this->status === null) {
+            return '<span class="badge bg-secondary">Pending Payment</span>';
+        }
+
         return match($this->status) {
-            'pending' => '<span class="badge bg-warning">Pending</span>',
+            'pending' => '<span class="badge bg-warning">Pending Approval</span>',
             'approved' => '<span class="badge bg-success">Approved</span>',
             'rejected' => '<span class="badge bg-danger">Rejected</span>',
+            'paid' => '<span class="badge bg-success">Paid</span>',
             default => '<span class="badge bg-secondary">Unknown</span>',
         };
     }
