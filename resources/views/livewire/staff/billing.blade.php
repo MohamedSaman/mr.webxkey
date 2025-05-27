@@ -1482,9 +1482,7 @@
 
                                     <!-- Footer -->
                                     <div class="text-center mt-4 pt-3 border-top">
-                                        <p class="mb-0 text-muted small">Thank you for your purchase!</p>
-                                        <p class="mb-0 text-muted small">For questions or returns, please contact us
-                                            within 7 days</p>
+                                        <p class="mb-0 text-muted small">Thank you for your purchase!</p>               
                                     </div>
                                 </div>
                             @else
