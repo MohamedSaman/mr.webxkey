@@ -50,13 +50,8 @@ class DuePayments extends Component
         ]);
 
         if ($this->duePaymentAttachment) {
-            $extension = $this->duePaymentAttachment->getClientOriginalExtension();
-            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                $this->duePaymentAttachmentPreview = $this->duePaymentAttachment->temporaryUrl();
-            } else {
-                // For PDF we'll just set a flag that it's a PDF
-                $this->duePaymentAttachmentPreview = 'pdf';
-            }
+            $previewInfo = $this->getFilePreviewInfo($this->duePaymentAttachment);
+            $this->duePaymentAttachmentPreview = $previewInfo;
         }
     }
 
@@ -181,10 +176,45 @@ class DuePayments extends Component
         }
     }
 
-    private function isPdf($filename)
+    /**
+     * Get file info with appropriate preview or icon
+     * 
+     * @param mixed $file Uploaded file object
+     * @return array File information with type, name, and preview
+     */
+    private function getFilePreviewInfo($file)
     {
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
-        return strtolower($extension) === 'pdf';
+        if (!$file) {
+            return null;
+        }
+        
+        $result = [
+            'name' => $file->getClientOriginalName(),
+            'type' => 'unknown',
+            'icon' => 'bi-file-earmark',
+            'color' => 'text-secondary',
+            'preview' => null
+        ];
+        
+        $extension = strtolower($file->getClientOriginalExtension());
+        
+        if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+            $result['type'] = 'image';
+            $result['icon'] = 'bi-file-earmark-image';
+            $result['color'] = 'text-primary';
+            
+            try {
+                $result['preview'] = $file->temporaryUrl();
+            } catch (\Exception $e) {
+                $result['preview'] = null;
+            }
+        } elseif ($extension === 'pdf') {
+            $result['type'] = 'pdf';
+            $result['icon'] = 'bi-file-earmark-pdf';
+            $result['color'] = 'text-danger';
+        }
+        
+        return $result;
     }
 
     public function render()

@@ -510,24 +510,39 @@
                                                     </div>
                                                 </div>
                                                 <div class="card-body p-0 text-center">
-                                                    @if ($duePaymentAttachmentPreview)
+                                                    @if ($duePaymentAttachment)
                                                         <div class="position-relative">
                                                             @if($duePaymentAttachmentPreview === 'pdf')
+                                                                <!-- PDF Icon Display -->
                                                                 <div class="d-flex flex-column align-items-center p-4">
                                                                     <i class="bi bi-file-earmark-pdf text-danger fs-1 mb-2"></i>
-                                                                    <span class="text-muted">PDF document preview</span>
+                                                                    <span class="text-muted">PDF document</span>
+                                                                    <span class="text-muted small">{{ $duePaymentAttachment->getClientOriginalName() }}</span>
                                                                 </div>
+                                                            @elseif($duePaymentAttachmentPreview === 'image-fallback')
+                                                                <!-- Image Icon Display (when temporary URL fails) -->
+                                                                <div class="d-flex flex-column align-items-center p-4">
+                                                                    <i class="bi bi-file-earmark-image text-primary fs-1 mb-2"></i>
+                                                                    <span class="text-muted">Image file</span>
+                                                                    <span class="text-muted small">{{ $duePaymentAttachment->getClientOriginalName() }}</span>
+                                                                </div>
+                                                            @elseif($duePaymentAttachmentPreview)
+                                                                <!-- Show image preview when temporary URL is available -->
+                                                                <img src="{{ $duePaymentAttachmentPreview }}" class="img-fluid" style="max-height: 200px">
                                                             @else
-                                                                <img src="{{ $duePaymentAttachmentPreview }}"
-                                                                    class="img-fluid" style="max-height: 200px">
+                                                                <!-- Generic file icon fallback -->
+                                                                <div class="d-flex flex-column align-items-center p-4">
+                                                                    <i class="bi bi-file-earmark text-secondary fs-1 mb-2"></i>
+                                                                    <span class="text-muted">File attached</span>
+                                                                    <span class="text-muted small">{{ $duePaymentAttachment->getClientOriginalName() }}</span>
+                                                                </div>
                                                             @endif
-                                                            <div
-                                                                class="position-absolute bottom-0 start-0 end-0 py-2 px-3 bg-dark bg-opacity-50 text-white text-start small">
+                                                            <div class="position-absolute bottom-0 start-0 end-0 py-2 px-3 bg-dark bg-opacity-50 text-white text-start small">
                                                                 <i class="bi bi-check-circle-fill text-success me-1"></i>
                                                                 New attachment preview
                                                             </div>
                                                         </div>
-                                                    @elseif($paymentDetail->due_payment_attachment)
+                                                    @elseif($paymentDetail && $paymentDetail->due_payment_attachment)
                                                         <div class="position-relative">
                                                             @if(pathinfo($paymentDetail->due_payment_attachment, PATHINFO_EXTENSION) === 'pdf')
                                                                 <div class="d-flex flex-column align-items-center p-4">
@@ -539,7 +554,8 @@
                                                                 </div>
                                                             @else
                                                                 <img src="{{ asset('storage/' . $paymentDetail->due_payment_attachment) }}"
-                                                                    class="img-fluid" style="max-height: 200px">
+                                                                    class="img-fluid" style="max-height: 200px"
+                                                                    onerror="this.onerror=null; this.src=''; this.parentNode.innerHTML='<div class=\'d-flex flex-column align-items-center p-4\'><i class=\'bi bi-file-earmark-image text-primary fs-1 mb-2\'></i><span class=\'text-muted\'>Image (cannot display preview)</span></div>';">
                                                             @endif
                                                             <div
                                                                 class="position-absolute bottom-0 start-0 end-0 py-2 px-3 bg-dark bg-opacity-50 text-white text-start small">
@@ -549,13 +565,11 @@
                                                         </div>
                                                     @else
                                                         <div class="p-5 d-flex flex-column align-items-center">
-                                                            <div
-                                                                class="icon-shape icon-md bg-light rounded-circle mb-3">
+                                                            <div class="icon-shape icon-md bg-light rounded-circle mb-3">
                                                                 <i class="bi bi-file-earmark-plus fs-4 text-muted"></i>
                                                             </div>
                                                             <p class="text-muted mb-0">No document attached</p>
-                                                            <p class="text-xs text-muted">Upload receipt or payment
-                                                                proof</p>
+                                                            <p class="text-xs text-muted">Upload receipt or payment proof</p>
                                                         </div>
                                                     @endif
                                                 </div>
