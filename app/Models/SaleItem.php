@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\WatchDetail;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SaleItem extends Model
 {
@@ -29,4 +30,5 @@ class SaleItem extends Model
     {
         return $this->belongsTo(WatchDetail::class, 'watch_id');
     }
+
 }
