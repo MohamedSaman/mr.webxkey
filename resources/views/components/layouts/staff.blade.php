@@ -799,22 +799,18 @@
                     <li class="nav-item">
                         <a class="nav-link dropdown-toggle" href="#salesSubmenu" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="salesSubmenu">
-                            <i class="bi bi-box-seam"></i> <span>Sales</span>
+                            <i class="bi bi-cart"></i> <span>Sales</span>
                         </a>
                         <div class="collapse" id="salesSubmenu">
                             <ul class="nav flex-column ms-3">
                                 <li class="nav-item">
                                     <a class="nav-link py-2" href="{{ route('staff.customer-sale-management') }}">
-                                        <i class="bi bi-watch"></i> <span>Customer Sales</span>
+                                        <i class="bi bi-people"></i> <span>Customer Sales</span>
                                     </a>
                                 </li>
-                            </ul>
-                        </div>
-                        <div class="collapse" id="salesSubmenu">
-                            <ul class="nav flex-column ms-3">
                                 <li class="nav-item">
                                     <a class="nav-link py-2" href="{{ route('staff.due-payments') }}">
-                                        <i class="bi bi-watch"></i> <span>Customer Due</span>
+                                        <i class="bi bi-cash-coin"></i> <span>Customer Due</span>
                                     </a>
                                 </li>
                             </ul>
