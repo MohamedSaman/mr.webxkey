@@ -288,13 +288,22 @@
                                                             </span>
                                                             <input type="file"
                                                                 class="form-control @error('paymentReceiptImage') is-invalid @enderror"
-                                                                wire:model="paymentReceiptImage" accept="image/*">
+                                                                wire:model="paymentReceiptImage" accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                         </div>
                                                       
                                                         @if ($paymentReceiptImagePreview)
                                                             <div class="mt-2">
-                                                                <img src="{{ $paymentReceiptImagePreview }}"
-                                                                    class="img-thumbnail" style="max-height: 100px">
+                                                                @if ($paymentReceiptImagePreview === 'pdf')
+                                                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                        <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                        <div>
+                                                                            <p class="fw-bold mb-0">PDF Document</p>
+                                                                            <p class="text-muted small mb-0">{{ $paymentReceiptImage->getClientOriginalName() }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                @else
+                                                                    <img src="{{ $paymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                @endif
                                                             </div>
                                                         @endif
                                                     </div>
@@ -307,13 +316,22 @@
                                                             </span>
                                                             <input type="file"
                                                                 class="form-control @error('paymentReceiptImage') is-invalid @enderror"
-                                                                wire:model="paymentReceiptImage" accept="image/*">
+                                                                wire:model="paymentReceiptImage" accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                         </div>
                                                        
                                                         @if ($paymentReceiptImagePreview)
                                                             <div class="mt-2">
-                                                                <img src="{{ $paymentReceiptImagePreview }}"
-                                                                    class="img-thumbnail" style="max-height: 100px">
+                                                                @if ($paymentReceiptImagePreview === 'pdf')
+                                                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                        <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                        <div>
+                                                                            <p class="fw-bold mb-0">PDF Document</p>
+                                                                            <p class="text-muted small mb-0">{{ $paymentReceiptImage->getClientOriginalName() }}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                @else
+                                                                    <img src="{{ $paymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                @endif
                                                             </div>
                                                         @endif
 
@@ -402,14 +420,22 @@
                                                                     <input type="file"
                                                                         class="form-control @error('initialPaymentReceiptImage') is-invalid @enderror"
                                                                         wire:model="initialPaymentReceiptImage"
-                                                                        accept="image/*">
+                                                                        accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                                 </div>
                                                                 
                                                                 @if ($initialPaymentReceiptImagePreview)
                                                                     <div class="mt-2">
-                                                                        <img src="{{ $initialPaymentReceiptImagePreview }}"
-                                                                            class="img-thumbnail"
-                                                                            style="max-height: 100px">
+                                                                        @if ($initialPaymentReceiptImagePreview === 'pdf')
+                                                                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                                <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                                <div>
+                                                                                    <p class="fw-bold mb-0">PDF Document</p>
+                                                                                    <p class="text-muted small mb-0">{{ $initialPaymentReceiptImage->getClientOriginalName() }}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        @else
+                                                                            <img src="{{ $initialPaymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                        @endif
                                                                     </div>
                                                                 @endif
                                                             </div>
@@ -424,14 +450,22 @@
                                                                     <input type="file"
                                                                         class="form-control @error('initialPaymentReceiptImage') is-invalid @enderror"
                                                                         wire:model="initialPaymentReceiptImage"
-                                                                        accept="image/*">
+                                                                        accept=".jpg,.jpeg,.png,.gif,.pdf">
                                                                 </div>
                                                                 
                                                                 @if ($initialPaymentReceiptImagePreview)
                                                                     <div class="mt-2">
-                                                                        <img src="{{ $initialPaymentReceiptImagePreview }}"
-                                                                            class="img-thumbnail"
-                                                                            style="max-height: 100px">
+                                                                        @if ($initialPaymentReceiptImagePreview === 'pdf')
+                                                                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                                <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                                <div>
+                                                                                    <p class="fw-bold mb-0">PDF Document</p>
+                                                                                    <p class="text-muted small mb-0">{{ $initialPaymentReceiptImage->getClientOriginalName() }}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        @else
+                                                                            <img src="{{ $initialPaymentReceiptImagePreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                        @endif
                                                                     </div>
                                                                 @endif
 
@@ -499,65 +533,50 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Balance Payment Reference Fields based on payment method -->
-                                                        @if ($balancePaymentMethod == 'cheque')
-                                                            <div class="mb-3">
-                                                                <div class="row g-2">
-                                                                    <div class="col-md-12">
-                                                                        <label class="form-label small fw-bold">Cheque
-                                                                            Image</label>
-                                                                        <div class="input-group">
-                                                                            <span class="input-group-text">
-                                                                                <i class="bi bi-image"></i>
-                                                                            </span>
-                                                                            <input type="file"
-                                                                                class="form-control @error('balancePaymentReceiptImage') is-invalid @enderror"
-                                                                                wire:model="balancePaymentReceiptImage"
-                                                                                accept="image/*">
-                                                                        </div>
-                                                                        
-                                                                        @if ($balancePaymentReceiptImagePreview)
-                                                                            <div class="mt-2">
-                                                                                <img src="{{ $balancePaymentReceiptImagePreview }}"
-                                                                                    class="img-thumbnail"
-                                                                                    style="max-height: 100px">
+                                                        <!-- Due Payment Method Selection -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Expected Payment Method for Balance</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">
+                                                                    <i class="bi bi-wallet2"></i>
+                                                                </span>
+                                                                <select class="form-select" wire:model.live="duePaymentMethod">
+                                                                    <option value="">-- Select expected payment method --</option>
+                                                                    <option value="cash">Cash</option>
+                                                                    <option value="cheque">Cheque</option>
+                                                                    <option value="bank_transfer">Bank Transfer</option>
+                                                                    <option value="credit_card">Credit Card</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Due Payment Attachment (e.g., post-dated cheque image) -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Due Payment Document (if available)</label>
+                                                            <div class="input-group">
+                                                                <span class="input-group-text">
+                                                                    <i class="bi bi-file-earmark-image"></i>
+                                                                </span>
+                                                                <input type="file" class="form-control" wire:model="duePaymentAttachment" accept=".jpg,.jpeg,.png,.gif,.pdf">
+                                                            </div>
+                                                            <small class="form-text text-muted">Upload post-dated cheque or payment agreement document</small>
+                                                            
+                                                            @if ($duePaymentAttachmentPreview)
+                                                                <div class="mt-2">
+                                                                    @if ($duePaymentAttachmentPreview === 'pdf')
+                                                                        <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                                                            <i class="bi bi-file-earmark-pdf text-danger me-2" style="font-size: 2rem;"></i>
+                                                                            <div>
+                                                                                <p class="fw-bold mb-0">PDF Document</p>
+                                                                                <p class="text-muted small mb-0">{{ $duePaymentAttachment->getClientOriginalName() }}</p>
                                                                             </div>
-                                                                        @endif
-                                                                    </div>
-                                                                    <div class="col-md-12 mt-2">
-                                                                        <label class="form-label small fw-bold">Bank
-                                                                            Name</label>
-                                                                        <input type="text"
-                                                                            class="form-control form-control-sm @error('balanceBankName') is-invalid @enderror"
-                                                                            placeholder="Enter bank name"
-                                                                            wire:model="balanceBankName">
-                                                                        
-                                                                    </div>
+                                                                        </div>
+                                                                    @else
+                                                                        <img src="{{ $duePaymentAttachmentPreview }}" class="img-thumbnail" style="max-height: 100px">
+                                                                    @endif
                                                                 </div>
-                                                            </div>
-                                                        @elseif($balancePaymentMethod == 'bank_transfer')
-                                                            <div class="mb-3">
-                                                                <label class="form-label small fw-bold">Bank Transfer
-                                                                    Receipt</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-text">
-                                                                        <i class="bi bi-image"></i>
-                                                                    </span>
-                                                                    <input type="file"
-                                                                        class="form-control @error('balancePaymentReceiptImage') is-invalid @enderror"
-                                                                        wire:model="balancePaymentReceiptImage"
-                                                                        accept="image/*">
-                                                                </div>
-                                                                
-                                                                @if ($balancePaymentReceiptImagePreview)
-                                                                    <div class="mt-2">
-                                                                        <img src="{{ $balancePaymentReceiptImagePreview }}"
-                                                                            class="img-thumbnail"
-                                                                            style="max-height: 100px">
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                        @endif
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endif

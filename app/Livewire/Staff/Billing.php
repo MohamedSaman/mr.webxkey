@@ -70,6 +70,11 @@ class Billing extends Component
     public $lastSaleId = null;
     public $showReceipt = false;
 
+    // Add these properties to your existing properties list
+    public $duePaymentMethod = '';
+    public $duePaymentAttachment;
+    public $duePaymentAttachmentPreview = null;
+
     protected $listeners = ['quantityUpdated' => 'updateTotals'];
 
     public function mount()
@@ -300,28 +305,70 @@ class Billing extends Component
     public function updatedPaymentReceiptImage()
     {
         $this->validate([
-            'paymentReceiptImage' => 'image|max:1024',
+            'paymentReceiptImage' => 'file|mimes:jpg,jpeg,png,gif,pdf|max:2048',
         ]);
 
-        $this->paymentReceiptImagePreview = $this->paymentReceiptImage->temporaryUrl();
+        if ($this->paymentReceiptImage) {
+            $extension = $this->paymentReceiptImage->getClientOriginalExtension();
+            if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
+                $this->paymentReceiptImagePreview = $this->paymentReceiptImage->temporaryUrl();
+            } else {
+                // For PDF we'll just set a flag that it's a PDF
+                $this->paymentReceiptImagePreview = 'pdf';
+            }
+        }
     }
 
     public function updatedInitialPaymentReceiptImage()
     {
         $this->validate([
-            'initialPaymentReceiptImage' => 'image|max:1024',
+            'initialPaymentReceiptImage' => 'file|mimes:jpg,jpeg,png,gif,pdf|max:2048',
         ]);
 
-        $this->initialPaymentReceiptImagePreview = $this->initialPaymentReceiptImage->temporaryUrl();
+        if ($this->initialPaymentReceiptImage) {
+            $extension = $this->initialPaymentReceiptImage->getClientOriginalExtension();
+            if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
+                $this->initialPaymentReceiptImagePreview = $this->initialPaymentReceiptImage->temporaryUrl();
+            } else {
+                // For PDF we'll just set a flag that it's a PDF
+                $this->initialPaymentReceiptImagePreview = 'pdf';
+            }
+        }
     }
 
     public function updatedBalancePaymentReceiptImage()
     {
         $this->validate([
-            'balancePaymentReceiptImage' => 'image|max:1024',
+            'balancePaymentReceiptImage' => 'file|mimes:jpg,jpeg,png,gif,pdf|max:2048',
         ]);
 
-        $this->balancePaymentReceiptImagePreview = $this->balancePaymentReceiptImage->temporaryUrl();
+        if ($this->balancePaymentReceiptImage) {
+            $extension = $this->balancePaymentReceiptImage->getClientOriginalExtension();
+            if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
+                $this->balancePaymentReceiptImagePreview = $this->balancePaymentReceiptImage->temporaryUrl();
+            } else {
+                // For PDF we'll just set a flag that it's a PDF
+                $this->balancePaymentReceiptImagePreview = 'pdf';
+            }
+        }
+    }
+
+    // Add this method with your other updater methods
+    public function updatedDuePaymentAttachment()
+    {
+        $this->validate([
+            'duePaymentAttachment' => 'file|mimes:jpg,jpeg,png,gif,pdf|max:2048',
+        ]);
+
+        if ($this->duePaymentAttachment) {
+            $extension = $this->duePaymentAttachment->getClientOriginalExtension();
+            if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif'])) {
+                $this->duePaymentAttachmentPreview = $this->duePaymentAttachment->temporaryUrl();
+            } else {
+                // For PDF we'll just set a flag that it's a PDF
+                $this->duePaymentAttachmentPreview = 'pdf';
+            }
+        }
     }
 
     protected $validationAttributes = [
@@ -387,8 +434,8 @@ class Billing extends Component
                     if (empty($this->initialPaymentReceiptImage)) {
                         $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
                         return;
-                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 1024 * 1024) {
-                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 2048 * 1024) { // Change from 1024*1024 to 2048*1024
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 2MB", "error")');
                         return;
                     } elseif (empty($this->initialBankName)) {
                         $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
@@ -398,8 +445,8 @@ class Billing extends Component
                     if (empty($this->initialPaymentReceiptImage)) {
                         $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
                         return;
-                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 1024 * 1024) {
-                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
+                    } elseif ($this->initialPaymentReceiptImage && $this->initialPaymentReceiptImage->getSize() > 2048 * 1024) { // Change from 1024*1024 to 2048*1024
+                        $this->js('swal.fire("Validation Error", "Receipt size must be less than 2MB", "error")');
                         return;
                     }
                 }
@@ -417,16 +464,17 @@ class Billing extends Component
                 }
 
                 if ($this->balancePaymentMethod == 'cheque') {
-                    if (empty($this->balancePaymentReceiptImage)) {
-                        $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
+                    if ($this->balancePaymentReceiptImage){
+                        $this->js('swal.fire("Validation Error", "Payment Receipt is required11", "error")');
                         return;
                     } elseif ($this->balancePaymentReceiptImage && $this->balancePaymentReceiptImage->getSize() > 1024 * 1024) {
                         $this->js('swal.fire("Validation Error", "Receipt size must be less than 1MB", "error")');
                         return;
-                    } elseif (empty($this->balanceBankName)) {
-                        $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
-                        return;
                     }
+                    // } elseif (empty($this->balanceBankName)) {
+                    //     $this->js('swal.fire("Validation Error", "Bank Name is required", "error")');
+                    //     return;
+                    // }
                 } elseif ($this->balancePaymentMethod == 'bank_transfer') {
                     if (empty($this->balancePaymentReceiptImage)) {
                         $this->js('swal.fire("Validation Error", "Payment Receipt is required", "error")');
@@ -540,12 +588,19 @@ class Billing extends Component
                     'bank_name' => $this->paymentMethod == 'cheque' ? $this->bankName : null,
                     'is_completed' => true,
                     'payment_date' => now(),
+                    'status' => 'approved', // Set the status to 'approved' for full payments
                 ]);
             } else {
                 if ($this->initialPaymentAmount > 0) {
                     $initialReceiptPath = null;
                     if ($this->initialPaymentReceiptImage && ($this->initialPaymentMethod == 'cheque' || $this->initialPaymentMethod == 'bank_transfer')) {
                         $initialReceiptPath = $this->initialPaymentReceiptImage->store('payment-receipts', 'public');
+                    }
+                    
+                    // Store the due payment attachment if provided
+                    $dueAttachmentPath = null;
+                    if ($this->duePaymentAttachment) {
+                        $dueAttachmentPath = $this->duePaymentAttachment->store('due-payments-receipts', 'public'); // Consistent path naming
                     }
 
                     Payment::create([
@@ -556,6 +611,9 @@ class Billing extends Component
                         'bank_name' => $this->initialPaymentMethod == 'cheque' ? $this->initialBankName : null,
                         'is_completed' => true,
                         'payment_date' => now(),
+                        'due_payment_method' => $this->duePaymentMethod,
+                        'due_payment_attachment' => $dueAttachmentPath,
+                        'status' => 'approved', // Set the status to 'approved' for initial payments
                     ]);
                 }
 
@@ -573,6 +631,7 @@ class Billing extends Component
                         'bank_name' => $this->balancePaymentMethod == 'cheque' ? $this->balanceBankName : null,
                         'is_completed' => false,
                         'due_date' => $this->balanceDueDate,
+                        
                     ]);
                 }
             }
@@ -615,6 +674,11 @@ class Billing extends Component
         $this->balancePaymentReceiptImage = null;
         $this->balancePaymentReceiptImagePreview = null;
         $this->balanceBankName = '';
+
+        // Add these lines to the resetPaymentInfo method
+        $this->duePaymentMethod = '';
+        $this->duePaymentAttachment = null;
+        $this->duePaymentAttachmentPreview = null;
 
         $this->saleNotes = '';
     }
