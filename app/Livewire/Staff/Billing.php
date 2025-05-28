@@ -653,7 +653,7 @@ class Billing extends Component
                     'bank_name' => $this->paymentMethod == 'cheque' ? $this->bankName : null,
                     'is_completed' => true,
                     'payment_date' => now(),
-                    'status' => 'approved', // Set the status to 'approved' for full payments
+                    'status' => 'Paid', // Set the status to 'approved' for full payments
                 ]);
             } else {
                 if ($this->initialPaymentAmount > 0) {
@@ -678,15 +678,18 @@ class Billing extends Component
                         'payment_date' => now(),
                         'due_payment_method' => $this->duePaymentMethod,
                         'due_payment_attachment' => $dueAttachmentPath,
-                        'status' => 'approved', // Set the status to 'approved' for initial payments
+                        'status' => 'Paid', // Set the status to 'approved' for initial payments
                     ]);
                 }
 
                 if ($this->balanceAmount > 0) {
                     $balanceReceiptPath = null;
-                    if ($this->balancePaymentReceiptImage && ($this->balancePaymentMethod == 'cheque' || $this->balancePaymentMethod == 'bank_transfer')) {
-                        $balanceReceiptPath = $this->balancePaymentReceiptImage->store('payment-receipts', 'public');
+                    if ($this->duePaymentAttachment) {
+                        $balanceReceiptPath = $this->duePaymentAttachment->store('payments-receipts', 'public'); // Consistent path naming
                     }
+                    // if ($this->balancePaymentReceiptImage && ($this->balancePaymentMethod == 'cheque' || $this->balancePaymentMethod == 'bank_transfer')) {
+                    //     $balanceReceiptPath = $this->balancePaymentReceiptImage->store('payment-receipts', 'public');
+                    // }
 
                     Payment::create([
                         'sale_id' => $sale->id,
