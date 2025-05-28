@@ -11,6 +11,7 @@ use App\Livewire\Admin\ManageAdmin;
 use App\Livewire\Admin\ManageStaff;
 use App\Livewire\Staff\DuePayments;
 use App\Livewire\Admin\SupplierList;
+use App\Livewire\Admin\ViewPayments;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Admin\AddWatchColor;
 use Illuminate\Support\Facades\Route;
@@ -84,6 +85,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/staff-due-details', StaffDueDetails::class)->name('staff-due-details');
         Route::get('/customer-sale-details', CustomerSaleDetails::class)->name('customer-sale-details');
         Route::get('/payment-approvals', PaymentApprovals::class)->name('payment-approvals');
+        Route::get('/view-payments', ViewPayments::class)->name('view-payments');
     });
 
    

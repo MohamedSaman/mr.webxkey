@@ -635,6 +635,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.view-payments') }}">
+                                    <i class="bi bi-credit-card-2-back"></i> <span>View Payments</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('admin.payment-approvals') ? 'active' : '' }}" href="{{ route('admin.payment-approvals') }}">
                                         <i class="bi bi-shield-check "></i><span class="nav-link-text ms-1">Payment Approvals</span>
                                     @php
