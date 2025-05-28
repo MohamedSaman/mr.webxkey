@@ -120,14 +120,15 @@
             <div class="col-12">
                 <div class="card mb-4 p-3">
                     <div class="card-header pb-2 bg-light">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                             <div>
                                 <h5 class="mb-0">Payment Approvals</h5>
                                 {{-- <p class="text-sm mb-0 text-muted">Manage customer payment requests</p> --}}
                             </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="input-group input-group-merge border rounded-pill bg-white shadow-sm"
-                                    style="width: 250px;">
+                            <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100 w-md-auto">
+                                <!-- Search bar - responsive width -->
+                                <div class="input-group input-group-merge border rounded-pill bg-white shadow-sm flex-grow-1 flex-md-grow-0"
+                                    style="min-width: 200px; max-width: 100%;">
                                     <span class="input-group-text bg-transparent border-0">
                                         <i class="bi bi-search text-primary"></i>
                                     </span>
@@ -136,8 +137,9 @@
                                         wire:model.live.debounce.300ms="search">
                                 </div>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-primary dropdown-toggle shadow-sm rounded-pill"
+                                <!-- Filter dropdown - takes full width on xs screens -->
+                                <div class="dropdown w-100 w-sm-auto">
+                                    <button class="btn btn-outline-primary dropdown-toggle shadow-sm rounded-pill w-100"
                                         type="button" id="filterDropdown" data-bs-toggle="dropdown"
                                         aria-expanded="false">
                                         <i class="bi bi-funnel me-1"></i> Filters
@@ -145,7 +147,7 @@
                                             <span class="badge bg-primary ms-1">!</span>
                                         @endif
                                     </button>
-                                    <div class="dropdown-menu p-3 shadow-lg" style="width: 300px;"
+                                    <div class="dropdown-menu p-3 shadow-lg dropdown-menu-end" style="width: 300px;"
                                         aria-labelledby="filterDropdown">
                                         <h6 class="dropdown-header bg-light rounded-3 py-2 mb-3 text-center">Filter
                                             Options</h6>
