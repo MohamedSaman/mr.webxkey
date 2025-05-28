@@ -672,56 +672,222 @@
             </div>
         </div>
     </div>
+
+    <!-- Receipt Modal -->
+    <div wire:ignore.self class="modal fade" id="receiptModal" tabindex="-1" aria-labelledby="receiptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title text-white" id="receiptModalLabel">
+                        <i class="bi bi-receipt me-2"></i>Sales Receipt
+                    </h5>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-sm btn-light me-2" wire:click="downloadReceipt">
+                            <i class="bi bi-download me-1"></i>Download
+                        </button>
+                        <button type="button" class="btn btn-sm btn-light me-2" onclick="printReceiptContent()">
+                            <i class="bi bi-printer me-1"></i>Print
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-body p-4" id="receiptContent">
+                    @if ($selectedSale)
+                        <div class="receipt-container">
+                            <!-- Receipt Header -->
+                            <div class="text-center mb-4">
+                                <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
+                                <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
+                                <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email:hakeem9053@gmail.com</p>
+                                <h4 class="mt-3 border-bottom border-2 pb-2">SALES RECEIPT</h4>
+                            </div>
+
+                            <!-- Invoice Details -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted mb-2">INVOICE DETAILS</h6>
+                                    <p class="mb-1"><strong>Invoice Number:</strong> {{ $selectedSale->invoice_number }}</p>
+                                    <p class="mb-1"><strong>Date:</strong> 
+                                        {{ \Carbon\Carbon::parse($selectedSale->created_at)->setTimezone('Asia/Colombo')->format('d/m/Y h:i A') }}
+                                    </p>
+                                    <p class="mb-1"><strong>Payment Status:</strong> 
+                                        <span class="badge bg-{{ $selectedSale->payment_status == 'paid' ? 'success' : ($selectedSale->payment_status == 'partial' ? 'warning' : 'danger') }}">
+                                            {{ ucfirst($selectedSale->payment_status) }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted mb-2">CUSTOMER DETAILS</h6>
+                                    @if ($selectedSale->customer)
+                                        <p class="mb-1"><strong>Name:</strong> {{ $selectedSale->customer->name }}</p>
+                                        <p class="mb-1"><strong>Phone:</strong> {{ $selectedSale->customer->phone }}</p>
+                                        <p class="mb-1"><strong>Type:</strong> {{ ucfirst($selectedSale->customer_type) }}</p>
+                                    @else
+                                        <p class="text-muted">Walk-in Customer</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Items Table -->
+                            <h6 class="text-muted mb-2">PURCHASED ITEMS</h6>
+                            <div class="table-responsive mb-4">
+                                <table class="table table-bordered table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Item</th>
+                                            <th scope="col">Code</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Discount</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($saleItems as $index => $item)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $item->watch_name }}</td>
+                                                <td>{{ $item->watch_code }}</td>
+                                                <td>Rs.{{ number_format($item->unit_price, 2) }}</td>
+                                                <td>{{ $item->quantity }}</td>
+                                                <td>Rs.{{ number_format($item->discount, 2) }}</td>
+                                                <td>Rs.{{ number_format($item->total, 2) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Order Summary -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted mb-2">PAYMENT INFORMATION</h6>
+                                    <div class="mb-2 p-2 border-start border-3 bg-light {{$selectedSale->payment_status == 'paid' ? 'border-success' : 'border-warning'}}">
+                                        <p class="mb-1"><strong>Payment Type:</strong> {{ ucfirst($selectedSale->payment_type) }}</p>
+                                        <p class="mb-1"><strong>Paid Amount:</strong> Rs.{{ number_format($selectedSale->total_amount - $selectedSale->due_amount, 2) }}</p>
+                                        @if ($selectedSale->due_amount > 0)
+                                            <p class="mb-0"><strong>Due Amount:</strong> Rs.{{ number_format($selectedSale->due_amount, 2) }}</p>
+                                        @endif
+                                    </div>
+                                    
+                                    @if ($selectedSale->notes)
+                                        <h6 class="text-muted mt-3 mb-2">NOTES</h6>
+                                        <p class="font-italic text-muted">{{ $selectedSale->notes }}</p>
+                                    @endif
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title">ORDER SUMMARY</h6>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Subtotal:</span>
+                                                <span>Rs.{{ number_format($selectedSale->subtotal, 2) }}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Total Discount:</span>
+                                                <span>Rs.{{ number_format($selectedSale->discount_amount, 2) }}</span>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="fw-bold">Grand Total:</span>
+                                                <span class="fw-bold">Rs.{{ number_format($selectedSale->total_amount, 2) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="text-center mt-4 pt-3 border-top">
+                                <p class="mb-0 text-muted small">Thank you for your purchase!</p>
+                                <p class="mb-0 text-muted small">Visit us again!</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="text-center p-5">
+                            <p class="text-muted">No receipt data available</p>
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @push('scripts')
-    <script>
-        document.addEventListener(addEventListenerLoaded, function() {
-            window.addEventListener('open-sale-modal', event => {
-                const modalElement = document.getElementById('saleDetailsModal');
-                const modal = new bootstrap.Modal(modalElement);
-                modal.show();
-            });
-
-            // Print invoice function
-            window.printInvoice = function() {
-                const printContent = document.querySelector('#saleDetailsModal .modal-content').cloneNode(true);
-
-                // Remove buttons and elements not needed for printing
-                const buttons = printContent.querySelectorAll(
-                    '.modal-footer button, .modal-footer a, .btn-close');
-                buttons.forEach(button => button.remove());
-
-                // Create a new window for printing
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write(`
-                    <html>
-                    <head>
-                        <title>Invoice ${document.querySelector('.invoice-number').textContent}</title>
-                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-                        <style>
-                            body { padding: 20px; }
-                            @media print {
-                                .modal-footer, .btn-close { display: none !important; }
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="container">
-                            ${printContent.outerHTML}
-                        </div>
-                        <script>
-                            window.onload = function() { 
-                                window.print();
-                                setTimeout(function() { window.close(); }, 500);
-                            }
-                        <\/script>
-                    </body>
-                    </html>
-                `);
-                printWindow.document.close();
-            };
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Event listener for opening the modal
+        window.Livewire.on('open-sale-modal', () => {
+            const modalElement = document.getElementById('saleDetailsModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
         });
-    </script>
+
+        // Print invoice function - updates to use the receipt modal
+        window.printInvoice = function() {
+            // Show the receipt modal instead of directly printing
+            const receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
+            receiptModal.show();
+        };
+
+        // Function to print receipt content
+        window.printReceiptContent = function() {
+            const printContent = document.getElementById('receiptContent').innerHTML;
+            const originalContent = document.body.innerHTML;
+
+            const printStyles = `
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    font-size: 14px;
+                }
+                .modal-header, .modal-footer, button {
+                    display: none !important;
+                }
+                .receipt-container {
+                    width: 100%;
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                .table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .table th, .table td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                }
+                .table th {
+                    background-color: #f5f5f5;
+                }
+                @media print {
+                    .no-print {
+                        display: none !important;
+                    }
+                }
+            </style>
+            `;
+
+            document.body.innerHTML = printStyles + printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+
+            // Reinitialize Livewire after printing
+            window.Livewire.rescan();
+            
+            // Reattach event listeners
+            window.printInvoice = function() {
+                const receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
+                receiptModal.show();
+            };
+        };
+    });
+</script>
 @endpush

@@ -129,4 +129,13 @@ class CustomerSaleManagement extends Component
         // Check web.php for the correct route name - should be 'receipts.download' not 'receipt.download'
         return $this->redirect(route('receipts.download', ['id' => $saleId]), navigate: false);
     }
+    
+    public function downloadReceipt()
+    {
+        if (!$this->selectedSale) {
+            return;
+        }
+        
+        return $this->redirect(route('receipts.download', ['id' => $this->selectedSale->id]), navigate: false);
+    }
 }
