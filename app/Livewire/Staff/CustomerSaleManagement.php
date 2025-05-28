@@ -35,21 +35,20 @@ class CustomerSaleManagement extends Component
     {
         $userId = Auth::id();
         
-        // Get customer sales summary
-        $customerSales = DB::table('customers')
-            ->join('sales', 'customers.id', '=', 'sales.customer_id')
-            ->where('sales.user_id', $userId)
-            ->select(
-                'customers.id',
-                'customers.name',
-                'customers.email',
-                'customers.phone',
-                'customers.type',
-                DB::raw('COUNT(sales.id) as sale_count'),
-                DB::raw('SUM(sales.total_amount) as total_sales'),
-                DB::raw('SUM(sales.due_amount) as total_due')
-            )
-            ->groupBy('customers.id', 'customers.name', 'customers.email', 'customers.phone', 'customers.type')
+        // Convert this query to use Eloquent ORM
+        $customerSales = Customer::select('customers.id', 'customers.name', 'customers.email', 'customers.phone', 'customers.type')
+            ->withCount(['sales' => function($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }])
+            ->withSum(['sales as total_sales' => function($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }], 'total_amount')
+            ->withSum(['sales as total_due' => function($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }], 'due_amount')
+            ->whereHas('sales', function($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
             ->get();
             
         // Get all sales by this staff member
@@ -99,22 +98,26 @@ class CustomerSaleManagement extends Component
         $this->selectedSaleId = $saleId;
         $this->selectedSale = Sale::with('customer')->find($saleId);
         
+        // Use the SaleItem objects directly instead of converting to arrays
+        // $this->saleItems = SaleItem::with('watch')
+        //     ->where('sale_id', $saleId)
+        //     ->get();
         $this->saleItems = SaleItem::where('sale_id', $saleId)
-            ->join('watch_details', 'sale_items.watch_id', '=', 'watch_details.id')
-            ->select(
-                'sale_items.*',
-                'watch_details.name as watch_full_name',
-                'watch_details.brand',
-                'watch_details.model',
-                'watch_details.image'
-            )
-            ->get();
-            
-        // Use dispatchBrowserEvent instead of dispatch for older Livewire
-        $this->dispatch('open-sale-modal');
+        ->join('watch_details', 'sale_items.watch_id', '=', 'watch_details.id')
+        ->select(
+            'sale_items.*',
+            'watch_details.name as watch_full_name',
+            'watch_details.brand',
+            'watch_details.model',
+            'watch_details.image'
+        )
+        ->get();
+        // dd($this->saleItems, $this->selectedSale,$saleId);
+        $this->js("$('#saleDetailsModal').modal('show');");
+        // $this->dispatch('open-sale-modal');
     }
     
-    public function resetFilters()
+   public function resetFilters()
     {
         $this->search = '';
         $this->filterStatus = '';
