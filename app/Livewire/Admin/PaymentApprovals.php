@@ -122,7 +122,9 @@ class PaymentApprovals extends Component
             $payment->sale->update([
                 'notes' => ($payment->sale->notes ? $payment->sale->notes . "\n" : '') . 
                     "Payment rejected on " . now()->format('Y-m-d H:i') . ". Reason: " . $this->rejectionReason . 
-                    "\nDue date extended from " . $originalDueDate . " to " . $newDueDate->format('Y-m-d') . " (3 days grace period)."
+                    "\nDue date extended from " . $originalDueDate . " to " . $newDueDate->format('Y-m-d') . " (3 days grace period).",
+                'created_at' => now(), // Update created_at to reflect the change
+                'updated_at' => now(), // Update updated_at to reflect the change
             ]);
             
             DB::commit();

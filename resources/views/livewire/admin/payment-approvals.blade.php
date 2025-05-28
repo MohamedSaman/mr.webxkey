@@ -750,15 +750,42 @@
     @push('scripts')
         <script>
             document.addEventListener('livewire:initialized', () => {
+                // Helper function to handle modal operations safely
+                const handleModal = (modalId, action) => {
+                    const modalElement = document.getElementById(modalId);
+                    
+                    // First, check if a modal instance already exists and dispose it
+                    const existingModal = bootstrap.Modal.getInstance(modalElement);
+                    if (existingModal) {
+                        existingModal.dispose();
+                    }
+                    
+                    if (action === 'show') {
+                        // Create a fresh modal instance and show it
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                        
+                        // Add event listener for when modal is hidden (manually closed)
+                        modalElement.addEventListener('hidden.bs.modal', function() {
+                            // Clean up the modal instance when it's closed
+                            const modalToDispose = bootstrap.Modal.getInstance(modalElement);
+                            if (modalToDispose) {
+                                modalToDispose.dispose();
+                            }
+                        }, { once: true }); // Use once:true so we don't accumulate listeners
+                    }
+                };
+
                 @this.on('openModal', (modalId) => {
-                    let modal = new bootstrap.Modal(document.getElementById(modalId));
-                    modal.show();
+                    handleModal(modalId, 'show');
                 });
 
                 @this.on('closeModal', (modalId) => {
-                    let modalElement = document.getElementById(modalId);
-                    let modal = bootstrap.Modal.getInstance(modalElement);
-                    modal.hide();
+                    const modalElement = document.getElementById(modalId);
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
                 });
 
                 @this.on('showToast', ({
@@ -782,7 +809,7 @@
             });
 
             function openFullImage(imageUrl) {
-                console.log('Opening image:', imageUrl); // Debug
+                console.log('Opening image:', imageUrl); 
                 Swal.fire({
                     imageUrl: imageUrl,
                     imageAlt: 'Payment Receipt',
