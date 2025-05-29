@@ -577,7 +577,7 @@
                                                             target="_blank" class="btn btn-primary">
                                                             <i class="bi bi-eye me-1"></i> View PDF
                                                         </a>
-                                                        <a href="{{ Storage::url($selectedPayment->due_payment_attachment) }}"
+                                                        <a href="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
                                                             download class="btn btn-outline-secondary">
                                                             <i class="bi bi-download me-1"></i> Download
                                                         </a>
