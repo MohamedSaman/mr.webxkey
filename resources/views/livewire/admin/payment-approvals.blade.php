@@ -573,7 +573,7 @@
                                                     </div>
                                                     <h5 class="mb-3">PDF Document</h5>
                                                     <div class="d-flex justify-content-center gap-2 mb-3">
-                                                        <a href="{{ Storage::url($selectedPayment->due_payment_attachment) }}"
+                                                        <a href="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
                                                             target="_blank" class="btn btn-primary">
                                                             <i class="bi bi-eye me-1"></i> View PDF
                                                         </a>
@@ -597,7 +597,7 @@
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <span class="badge bg-primary">Image Document</span>
                                                         <div>
-                                                            <a href="{{ Storage::url($selectedPayment->due_payment_attachment) }}"
+                                                            <a href="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
                                                                 download class="btn btn-sm btn-outline-primary">
                                                                 <i class="bi bi-download me-1"></i> Download
                                                             </a>
