@@ -254,7 +254,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div
                                                         class="icon-shape icon-xs bg-success-subtle text-success rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                                        <i class="bi bi-currency-rupee"></i>
+                                                       <i class="bi bi text-success">Rs.</i>
                                                     </div>
                                                     <span class="text-sm font-weight-bold">
                                                         {{ number_format($payment->amount, 2) }}
@@ -589,9 +589,10 @@
                                                 </div>
                                             @else
                                                 <div class="document-preview">
-                                                    <img src="{{ Storage::url($selectedPayment->due_payment_attachment) }}"
-                                                        class="img-fluid w-100"
-                                                        style="max-height: 500px; object-fit: contain;">
+                                                   <img src="{{ Storage::url(str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
+     class="img-fluid w-100"
+     style="max-height: 500px; object-fit: contain;">
+
                                                 </div>
                                                 <div class="bg-white p-3 border-top">
                                                     <div class="d-flex justify-content-between align-items-center">

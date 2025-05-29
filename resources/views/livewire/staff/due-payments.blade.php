@@ -89,7 +89,7 @@
                                     <div class="card-body p-3">
                                         <div class="d-flex align-items-center">
                                             <div class="icon-shape icon-md rounded-circle bg-success bg-opacity-10 me-3 text-center">
-                                                <i class="bi bi-currency-rupee text-success"></i>
+                                           <i class="bi bi text-success">Rs.</i>
                                             </div>
                                             <div>
                                                 <p class="text-xs text-muted mb-0 text-uppercase">Total Due</p>
@@ -228,7 +228,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <div
                                                         class="icon-shape icon-xs rounded-circle bg-success bg-opacity-10 me-2 text-center">
-                                                        <i class="bi bi-currency-rupee text-success"></i>
+                                                        <i class="bi bi text-success">Rs.</i>
                                                     </div>
                                                     <span class="text-sm font-weight-bold">
                                                         {{ number_format($payment->amount, 2) }}
