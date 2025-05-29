@@ -589,9 +589,8 @@
                                                 </div>
                                             @else
                                                 <div class="document-preview">
-                                                   <img src="{{ Storage::url(str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
-     class="img-fluid w-100"
-     style="max-height: 500px; object-fit: contain;">
+                                                  <img src="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}" class="img-fluid w-100" style="max-height: 500px; object-fit: contain;">
+
 
                                                 </div>
                                                 <div class="bg-white p-3 border-top">
