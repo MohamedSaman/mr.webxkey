@@ -533,149 +533,123 @@
                             </div>
 
                             <!-- Right column - Document -->
-                            <div class="col-md-4 bg-light p-4 border-start">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-header bg-gradient-dark text-white py-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="mb-0 fw-bold text-white">Payment Document</h6>
-                                            @if ($selectedPayment->due_payment_attachment)
-                                                @php
-                                                    $extension = pathinfo(
-                                                        $selectedPayment->due_payment_attachment,
-                                                        PATHINFO_EXTENSION,
-                                                    );
-                                                    $isPdf = strtolower($extension) === 'pdf';
-                                                @endphp
-                                                @if (!$isPdf)
-                                                    <button type="button" class="btn btn-sm btn-light"
-                                                        onclick="openFullImage('{{ Storage::url($selectedPayment->due_payment_attachment) }}')">
-                                                        <i class="bi bi-fullscreen"></i>
-                                                    </button>
-                                                @endif
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="card-body p-0">
-                                        @if ($selectedPayment->due_payment_attachment)
-                                            @php
-                                                $extension = pathinfo(
-                                                    $selectedPayment->due_payment_attachment,
-                                                    PATHINFO_EXTENSION,
-                                                );
-                                                $isPdf = strtolower($extension) === 'pdf';
-                                            @endphp
-
-                                            @if ($isPdf)
-                                                <div class="text-center py-5 bg-light">
-                                                    <div
-                                                        class="icon-shape icon-xl bg-danger bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                                                        <i class="bi bi-file-earmark-pdf fs-1 text-danger"></i>
-                                                    </div>
-                                                    <h5 class="mb-3">PDF Document</h5>
-                                                    <div class="d-flex justify-content-center gap-2 mb-3">
-                                                        <a href="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
-                                                            target="_blank" class="btn btn-primary">
-                                                            <i class="bi bi-eye me-1"></i> View PDF
-                                                        </a>
-                                                        <a href="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
-                                                            download class="btn btn-outline-secondary">
-                                                            <i class="bi bi-download me-1"></i> Download
-                                                        </a>
-                                                    </div>
-                                                    <div class="alert alert-light mb-0">
-                                                        <i class="bi bi-info-circle me-2"></i>
-                                                        PDF will open in a new tab
-                                                    </div>
-                                                </div>
-                                            @else
-                                                <div class="document-preview">
-                                                  <img src="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}" class="img-fluid w-100" style="max-height: 500px; object-fit: contain;">
-
-
-                                                </div>
-                                                <div class="bg-white p-3 border-top">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="badge bg-primary">Image Document</span>
-                                                        <div>
-                                                            <a href="{{ asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment)) }}"
-                                                                download class="btn btn-sm btn-outline-primary">
-                                                                <i class="bi bi-download me-1"></i> Download
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @else
-                                            <div class="text-center py-5">
-                                                <div
-                                                    class="icon-shape icon-xl bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-file-earmark-x fs-1 text-secondary"></i>
-                                                </div>
-                                                <h5 class="text-muted">No Document Attached</h5>
-                                                <p class="text-muted mb-0">No payment proof was provided</p>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <!-- Purchase Information -->
-                                <div class="card border-0 shadow-sm mt-4">
-                                    <div class="card-header bg-gradient-info text-white py-3">
-                                        <h6 class="mb-0 fw-bold text-white">Purchase Details</h6>
-                                    </div>
-                                    <div class="card-body p-0">
-                                        <div class="table-responsive">
-                                            <table class="table table-sm mb-0">
-                                                <thead class="bg-light">
-                                                    <tr>
-                                                        <th class="text-xs text-uppercase text-muted fw-normal ps-3">
-                                                            Item</th>
-                                                        <th class="text-xs text-uppercase text-muted fw-normal">Qty
-                                                        </th>
-                                                        <th
-                                                            class="text-xs text-uppercase text-muted fw-normal text-end pe-3">
-                                                            Price</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($selectedPayment->sale->items as $item)
-                                                        <tr>
-                                                            <td class="ps-3">
-                                                                @if ($item->watch)
-                                                                    <p class="text-sm mb-0">
-                                                                        {{ $item->watch->brand ?? 'Unknown Brand' }}
-                                                                        {{ $item->watch->model ?? 'Unknown Model' }}
-                                                                    </p>
-                                                                    <span
-                                                                        class="text-xs text-muted">{{ $item->watch->code ?? 'N/A' }}</span>
-                                                                @else
-                                                                    <p class="text-sm mb-0">
-                                                                        {{ $item->watch_name ?? 'Watch Details Unavailable' }}
-                                                                    </p>
-                                                                    <span class="text-xs text-danger">Item record may
-                                                                        have been deleted</span>
-                                                                @endif
-                                                            </td>
-                                                            <td class="text-sm">{{ $item->quantity }}</td>
-                                                            <td class="text-sm text-end pe-3">
-                                                                Rs.{{ number_format($item->unit_price, 2) }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                                <tfoot class="bg-light">
-                                                    <tr>
-                                                        <td colspan="2" class="text-end fw-bold text-sm">Total:
-                                                        </td>
-                                                        <td class="text-end pe-3 fw-bold text-primary text-sm">
-                                                            Rs.{{ number_format($selectedPayment->sale->total_amount, 2) }}
-                                                        </td>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                           <div class="col-md-4 bg-light p-4 border-start">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-gradient-dark text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-white">Payment Document</h6>
+                @if ($selectedPayment->due_payment_attachment)
+                    @php
+                        $extension = pathinfo($selectedPayment->due_payment_attachment, PATHINFO_EXTENSION);
+                        $isPdf = strtolower($extension) === 'pdf';
+                        $fileUrl = asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment));
+                    @endphp
+                    @if (!$isPdf)
+                        <button type="button" class="btn btn-sm btn-light" onclick="openFullImage('{{ $fileUrl }}')">
+                            <i class="bi bi-fullscreen"></i>
+                        </button>
+                    @endif
+                @endif
+            </div>
+        </div>
+        <div class="card-body p-0">
+            @if ($selectedPayment->due_payment_attachment)
+                @if ($isPdf)
+                    <div class="text-center py-5 bg-light">
+                        <div class="icon-shape icon-xl bg-danger bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                            <i class="bi bi-file-earmark-pdf fs-1 text-danger"></i>
+                        </div>
+                        <h5 class="mb-3">PDF Document</h5>
+                        <div class="d-flex justify-content-center gap-2 mb-3">
+                            <a href="{{ $fileUrl }}" target="_blank" class="btn btn-primary">
+                                <i class="bi bi-eye me-1"></i> View PDF
+                            </a>
+                            <a href="{{ $fileUrl }}" download class="btn btn-outline-secondary">
+                                <i class="bi bi-download me-1"></i> Download
+                            </a>
+                        </div>
+                        <div class="alert alert-light mb-0">
+                            <i class="bi bi-info-circle me-2"></i> PDF will open in a new tab
+                        </div>
+                    </div>
+                @else
+                    <div class="document-preview">
+                        <img src="{{ $fileUrl }}" class="img-fluid w-100" style="max-height: 500px; object-fit: contain;">
+                    </div>
+                    <div class="bg-white p-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">Image Document</span>
+                            <div>
+                                <a href="{{ $fileUrl }}" download class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download me-1"></i> Download
+                                </a>
                             </div>
+                        </div>
+                    </div>
+                @endif
+            @else
+                <div class="text-center py-5">
+                    <div class="icon-shape icon-xl bg-secondary bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-file-earmark-x fs-1 text-secondary"></i>
+                    </div>
+                    <h5 class="text-muted">No Document Attached</h5>
+                    <p class="text-muted mb-0">No payment proof was provided</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Purchase Information -->
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-gradient-info text-white py-3">
+            <h6 class="mb-0 fw-bold text-white">Purchase Details</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="text-xs text-uppercase text-muted fw-normal ps-3">Item</th>
+                            <th class="text-xs text-uppercase text-muted fw-normal">Qty</th>
+                            <th class="text-xs text-uppercase text-muted fw-normal text-end pe-3">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($selectedPayment->sale->items as $item)
+                            <tr>
+                                <td class="ps-3">
+                                    @if ($item->watch)
+                                        <p class="text-sm mb-0">
+                                            {{ $item->watch->brand ?? 'Unknown Brand' }}
+                                            {{ $item->watch->model ?? 'Unknown Model' }}
+                                        </p>
+                                        <span class="text-xs text-muted">{{ $item->watch->code ?? 'N/A' }}</span>
+                                    @else
+                                        <p class="text-sm mb-0">
+                                            {{ $item->watch_name ?? 'Watch Details Unavailable' }}
+                                        </p>
+                                        <span class="text-xs text-danger">Item record may have been deleted</span>
+                                    @endif
+                                </td>
+                                <td class="text-sm">{{ $item->quantity }}</td>
+                                <td class="text-sm text-end pe-3">Rs.{{ number_format($item->unit_price, 2) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="2" class="text-end fw-bold text-sm">Total:</td>
+                            <td class="text-end pe-3 fw-bold text-primary text-sm">
+                                Rs.{{ number_format($selectedPayment->sale->total_amount, 2) }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
                         </div>
                     @else
                         <div class="text-center py-5">
