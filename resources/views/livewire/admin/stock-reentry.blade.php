@@ -91,8 +91,14 @@
         <div class="col-lg-5">
             @if ($selectedProduct)
                 <div class="card mt-3 mt-lg-0">
-                    <div class="card-header">
-                        <strong>Edit Stock: </strong> {{ $selectedProduct->watchDetail->name ?? 'Selected Product' }}
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div>
+                            <strong>Edit Stock: </strong> {{ $selectedProduct->watchDetail->name ?? 'Selected Product' }}
+                            <p class="card-text small text-muted mb-0">Code: {{ $selectedProduct->watchDetail->code ?? 'N/A' }}</p>
+                        </div>
+                        @if ($selectedProduct->watchDetail && $selectedProduct->watchDetail->image)
+                            <img src="{{ asset('public/storage/' . $selectedProduct->watchDetail->image) }}" alt="{{ $selectedProduct->watchDetail->name }}" class="img-fluid ms-3" style="max-height: 60px; object-fit: contain;">
+                        @endif
                     </div>
                     <div class="card-body">
                         <p>Available Quantity: {{ $selectedProduct->quantity - $selectedProduct->sold_quantity }}</p>
@@ -117,13 +123,17 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Search functionality for watches in the grid
             document.getElementById('watchSearchInput').addEventListener('input', function(e) {
                 const searchValue = e.target.value.toLowerCase();
                 document.querySelectorAll('.staff-product-item').forEach(item => {
                     const brand = item.querySelector('.card-title')?.textContent.toLowerCase() || '';
-                    const name = item.querySelector('.card-text')?.textContent.toLowerCase() || '';
-                    if (brand.includes(searchValue) || name.includes(searchValue)) {
+                    const name = item.querySelector('.card-text.small.mb-0')?.textContent.toLowerCase() || '';
+                    const code = item.querySelector('.card-text.small.text-muted')?.textContent.toLowerCase() || '';
+                    if (
+                        brand.includes(searchValue) ||
+                        name.includes(searchValue) ||
+                        code.includes(searchValue)
+                    ) {
                         item.style.display = '';
                     } else {
                         item.style.display = 'none';
