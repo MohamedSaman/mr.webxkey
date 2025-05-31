@@ -37,8 +37,9 @@
                                 <div class="row g-0">
                                     <div class="col-4">
                                         <div class="p-2 p-md-3 h-100 d-flex align-items-center justify-content-center bg-light rounded-start">
-                                            @if ($watch && $watch->watch_image)
-                                                <img src="{{ asset('public/storage/' . $watch->watch_image) }}" alt="{{ $watch->name }}" class="img-fluid" style="max-height: 80px; object-fit: contain;">
+                                            @if ($watch && $watch->image)
+                                                <img src="{{ asset('public/storage/' . $watch->image) }}" alt="{{ $watch->name }}" class="img-fluid" style="max-height: 80px; object-fit: contain;">
+                                                
                                             @else
                                                 <div class="text-center text-muted">
                                                     <i class="bi bi-watch fs-3 fs-md-1"></i>

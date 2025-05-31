@@ -78,7 +78,9 @@ class StockReentry extends Component
 
 public function render()
 {
-    $products = StaffProduct::with('watchDetail')
+    $products = StaffProduct::with(['watchDetail' => function ($query) {
+            $query->select('id', 'name', 'brand', 'code', 'image'); // Ensure 'image' is selected
+        }])
         ->where('staff_id', $this->staffId)
         ->when($this->searchTerm, function ($query) {
             $query->whereHas('watchDetail', function ($q) {
@@ -96,3 +98,4 @@ public function render()
     ]);
 }
 }
+
