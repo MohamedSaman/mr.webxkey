@@ -21,6 +21,8 @@ class StockReentry extends Component
     public $selectedProduct;
     public $damagedQuantity = 0;
     public $restockQuantity = 0;
+    public $searchTerm = ''; // <-- Add this line
+
 
     public function mount($staffId)
     {
@@ -39,7 +41,7 @@ class StockReentry extends Component
     {
         $this->validate([
             'damagedQuantity' => 'nullable|integer|min:0',
-            // 'restockQuantity' => 'nullable|integer|min:0',
+            'restockQuantity' => 'nullable|integer|min:0',
         ]);
 
         DB::transaction(function () {
@@ -47,12 +49,14 @@ class StockReentry extends Component
 
             $available = $product->quantity - $product->sold_quantity;
             $totalToRemove = $this->damagedQuantity;
+            $totalToRestock = $this->restockQuantity;
 
             if ($totalToRemove > $available) {
                 throw new \Exception("Entered quantities exceed available stock.");
             }
 
             $product->quantity -= $totalToRemove;
+            $product->quantity -= $totalToRestock;
             $product->save();
 
             $stock = WatchStock::where('watch_id', $product->watch_id)->first();
@@ -60,11 +64,11 @@ class StockReentry extends Component
                 $stock = new WatchStock();
                 $stock->watch_id = $product->watch_id;
                 $stock->damage_stock = 0;
-                // $stock->restocked_quantity = 0;
+                $stock->available_stock = 0;
             }
 
             $stock->damage_stock += $this->damagedQuantity;
-            // $stock->restocked_quantity += $this->restockQuantity;
+            $stock->available_stock += $this->restockQuantity;
             $stock->save();
 
             $this->dispatch('notify', 'Stock updated successfully.');
@@ -72,14 +76,23 @@ class StockReentry extends Component
         });
     }
 
-    public function render()
-    {
-        $products = StaffProduct::with('watchDetail')
-            ->where('staff_id', $this->staffId)
-            ->get();
+public function render()
+{
+    $products = StaffProduct::with('watchDetail')
+        ->where('staff_id', $this->staffId)
+        ->when($this->searchTerm, function ($query) {
+            $query->whereHas('watchDetail', function ($q) {
+                $q->where(function ($subQ) {
+                    $subQ->where('name', 'like', '%' . $this->searchTerm . '%')
+                        ->orWhere('brand', 'like', '%' . $this->searchTerm . '%')
+                        ->orWhere('code', 'like', '%' . $this->searchTerm . '%');
+                });
+            });
+        })
+        ->get();
 
-        return view('livewire.admin.stock-reentry', [
-            'products' => $products,
-        ]);
-    }
+    return view('livewire.admin.stock-reentry', [
+        'products' => $products,
+    ]);
+}
 }

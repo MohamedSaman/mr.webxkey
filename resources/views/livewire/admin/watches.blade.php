@@ -1137,47 +1137,10 @@
                                     <div id="inventory-collapse" class="accordion-collapse collapse"
                                         data-bs-parent="#watchDetailsAccordion">
                                         <div class="accordion-body">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="card mb-3 border-primary">
-                                                        <div class="card-body">
-                                                            <div class="d-flex justify-content-between">
-                                                                <p class="card-text fw-bold">Shop Stock</p>
-                                                                <h4 class="card-title text-primary">
-                                                                    {{ $watchDetails->shop_stock }}
-                                                                </h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="card mb-3 border-primary">
-                                                        <div class="card-body">
-                                                            <div class="d-flex justify-content-between">
-                                                                <p class="card-text fw-bold">Store Stock</p>
-                                                                <h4 class="card-title text-primary">
-                                                                    {{ $watchDetails->store_stock }}
-                                                                </h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                          
 
                                             <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="card mb-3 border-danger">
-                                                        <div class="card-body">
-                                                            <div class="d-flex justify-content-between">
-                                                                <p class="card-text fw-bold">Damage Stock</p>
-                                                                <h4 class="card-title text-danger">
-                                                                    {{ $watchDetails->damage_stock }}
-                                                                </h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
+                                                  <div class="col-md-6">
                                                     <div
                                                         class="card mb-3 {{ $watchDetails->available_stock > 0 ? 'border-success' : 'border-danger' }}">
                                                         <div class="card-body">
@@ -1191,6 +1154,19 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <div class="card mb-3 border-danger">
+                                                        <div class="card-body">
+                                                            <div class="d-flex justify-content-between">
+                                                                <p class="card-text fw-bold">Damage Stock</p>
+                                                                <h4 class="card-title text-danger">
+                                                                    {{ $watchDetails->damage_stock }}
+                                                                </h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                              
                                             </div>
 
                                             <div class="row">
