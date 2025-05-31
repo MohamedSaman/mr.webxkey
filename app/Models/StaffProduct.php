@@ -2,42 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\WatchDetail;
 
 class StaffProduct extends Model
 {
-    use HasFactory;
-    
-    // Fix the table name to match your database
+    // Specify the table if it does not follow Laravel conventions
     protected $table = 'staff_products';
-    
+
+    // Fillable fields for mass assignment
     protected $fillable = [
-        'staff_sale_id',
-        'watch_id',
+        'watch_id',     // foreign key to watch_details
         'staff_id',
         'quantity',
-        'unit_price',
-        'discount_per_unit',
-        'total_discount',
-        'total_value',
-        'sold_quantity',
-        'sold_value',
-        'status',
+        'price',
+        // add other fields here
     ];
-    
-    public function staffSale()
+
+    /**
+     * Relationship: StaffProduct belongs to one WatchDetail
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function watchDetail()
     {
-        return $this->belongsTo(StaffSale::class);
-    }
-    
-    public function watch()
-    {
+        // 'watch_id' is the foreign key in staff_products table
+        // pointing to the 'id' of the watch_details table
         return $this->belongsTo(WatchDetail::class, 'watch_id');
-    }
-    
-    public function staff()
-    {
-        return $this->belongsTo(User::class, 'staff_id');
     }
 }

@@ -86,6 +86,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/customer-sale-details', CustomerSaleDetails::class)->name('customer-sale-details');
         Route::get('/payment-approvals', PaymentApprovals::class)->name('payment-approvals');
         Route::get('/view-payments', ViewPayments::class)->name('view-payments');
+        Route::get('/admin/staff/{staffId}/reentry', \App\Livewire\Admin\StockReentry::class)->name('staff.reentry');
+
     });
 
    

@@ -10,6 +10,7 @@ use App\Models\StaffSale;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
+
 #[Layout('components.layouts.admin')]
 #[Title('Staff Watch Stock')]
 

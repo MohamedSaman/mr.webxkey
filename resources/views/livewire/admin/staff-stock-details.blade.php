@@ -52,7 +52,10 @@
                                             <button wire:click="viewStockDetails({{ $staffStock->user_id }})"
                                                 class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-eye"></i>
+
                                             </button>
+                                            <a href="{{ route('admin.staff.reentry', $staffStock->user_id) }}" class="btn btn-outline-secondary">Re-entry</a>
+
                                         </td>
                                     </tr>
                                 @endforeach
