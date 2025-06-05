@@ -30,4 +30,22 @@ class StaffProduct extends Model
         // pointing to the 'id' of the watch_details table
         return $this->belongsTo(WatchDetail::class, 'watch_id');
     }
+    public function watch()
+{
+    return $this->belongsTo(WatchDetail::class, 'watch_id');
+}
+    public function staffSale()
+    {
+        return $this->belongsTo(StaffSale::class, 'staff_id');
+    }
+
+    /**
+     * Get the total price for the product
+     *
+     * @return float
+     */
+    public function getTotalPriceAttribute()
+    {
+        return $this->quantity * $this->price;
+    }   
 }

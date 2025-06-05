@@ -121,25 +121,45 @@
     </div>
 </div>
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('watchSearchInput').addEventListener('input', function(e) {
-                const searchValue = e.target.value.toLowerCase();
-                document.querySelectorAll('.staff-product-item').forEach(item => {
-                    const brand = item.querySelector('.card-title')?.textContent.toLowerCase() || '';
-                    const name = item.querySelector('.card-text.small.mb-0')?.textContent.toLowerCase() || '';
-                    const code = item.querySelector('.card-text.small.text-muted')?.textContent.toLowerCase() || '';
-                    if (
-                        brand.includes(searchValue) ||
-                        name.includes(searchValue) ||
-                        code.includes(searchValue)
-                    ) {
-                        item.style.display = '';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
+<script>
+    function filterProducts() {
+        const searchInput = document.getElementById('watchSearchInput');
+        if (!searchInput) return;
+        const searchValue = searchInput.value.toLowerCase();
+        document.querySelectorAll('.staff-product-item').forEach(item => {
+            const brand = item.querySelector('.card-title')?.textContent.toLowerCase() || '';
+            const name = item.querySelector('.card-text.small.mb-0')?.textContent.toLowerCase() || '';
+            const code = item.querySelector('.card-text.small.text-muted')?.textContent.toLowerCase() || '';
+            if (
+                brand.includes(searchValue) ||
+                name.includes(searchValue) ||
+                code.includes(searchValue)
+            ) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
         });
-    </script>
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('watchSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', filterProducts);
+        }
+    });
+
+    // Re-apply filter after Livewire DOM updates
+    document.addEventListener('livewire:message.processed', function() {
+        filterProducts();
+    });
+    document.addEventListener('livewire:message.processed', function() {
+    const searchInput = document.getElementById('watchSearchInput');
+    if (searchInput) {
+        searchInput.value = localStorage.getItem('watchSearchValue') || '';
+        filterProducts();
+    }
+});
+    
+</script>
 @endpush
