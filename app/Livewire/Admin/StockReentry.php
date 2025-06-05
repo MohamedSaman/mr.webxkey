@@ -44,19 +44,20 @@ class StockReentry extends Component
             'restockQuantity' => 'nullable|integer|min:0',
         ]);
 
-        DB::transaction(function () {
-            $product = StaffProduct::find($this->selectedProduct->id);
+        $product = StaffProduct::find($this->selectedProduct->id);
 
-            $available = $product->quantity - $product->sold_quantity;
-            $totalToRemove = $this->damagedQuantity;
-            $totalToRestock = $this->restockQuantity;
+        $available = $product->quantity - $product->sold_quantity;
+        $totalToRemove = $this->damagedQuantity;
+        $totalToRestock = $this->restockQuantity;
 
-            if ($totalToRemove > $available) {
-                throw new \Exception("Entered quantities exceed available stock.");
-            }
+        // Check if entered quantities exceed available stock
+        if (($totalToRemove + $totalToRestock) > $available) {
+            $this->dispatch('notify', 'Entered quantities exceed available stock.', 'error');
+            return;
+        }
 
-            $product->quantity -= $totalToRemove;
-            $product->quantity -= $totalToRestock;
+        DB::transaction(function () use ($product, $totalToRemove, $totalToRestock) {
+            $product->quantity -= ($totalToRemove + $totalToRestock);
             $product->save();
 
             $stock = WatchStock::where('watch_id', $product->watch_id)->first();

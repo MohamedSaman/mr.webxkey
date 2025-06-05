@@ -44,8 +44,8 @@
                                         <td class="text-center align-middle">{{ $staffStock->sold_quantity }}</td>
                                         <td class="text-center align-middle">
                                             <span
-                                                class="badge {{ $staffStock->available_quantity > 0 ? 'bg-success' : 'bg-danger' }}">
-                                                {{ $staffStock->available_quantity }}
+                                                class="badge {{ $staffStock->total_quantity - $staffStock->sold_quantity > 0 ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $staffStock->total_quantity - $staffStock->sold_quantity }}
                                             </span>
                                         </td>
                                         <td class="text-center align-middle">
