@@ -616,20 +616,22 @@ class Billing extends Component
                 
                 // Update the parent staff sale record
                 $staffSale = $staffProduct->staffSale;
-                $staffSale->sold_quantity += $this->quantities[$id];
-                $staffSale->sold_value += $total;
-                
-                // Update parent status if all items sold
-                $totalAssigned = $staffSale->products->sum('quantity');
-                $totalSold = $staffSale->products->sum('sold_quantity');
-                
-                if ($totalSold >= $totalAssigned) {
-                    $staffSale->status = 'completed';
-                } else {
-                    $staffSale->status = 'partial';
+                if ($staffSale) {
+                    $staffSale->sold_quantity += $this->quantities[$id];
+                    $staffSale->sold_value += $total;
+                    
+                    // Update parent status if all items sold
+                    $totalAssigned = $staffSale->products->sum('quantity');
+                    $totalSold = $staffSale->products->sum('sold_quantity');
+                    
+                    if ($totalSold >= $totalAssigned) {
+                        $staffSale->status = 'completed';
+                    } else {
+                        $staffSale->status = 'partial';
+                    }
+                    
+                    $staffSale->save();
                 }
-                
-                $staffSale->save();
                 
                 // Also update the main inventory
                 $watchStock = WatchStock::where('watch_id', $item['id'])->first();
