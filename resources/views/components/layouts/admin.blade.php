@@ -675,9 +675,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.billing-page') }}">
-                        <i class="bi bi-cash"></i> <span>Billing</span>
+                        <i class="bi bi-person-badge"></i> <span>Staff Stock Assign</span>
                     </a>
                 </li>
+<a class="nav-link" href="{{ route('admin.store-billing') }}">
+    <i class="bi bi-cash"></i> <span>Store Billing</span>
+</a>
             </ul>
         </div>
 

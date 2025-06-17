@@ -33,6 +33,10 @@ use App\Http\Controllers\ReceiptController;
 use App\Livewire\Admin\CustomerSaleDetails;
 use App\Livewire\Admin\WatchStrapColorlist;
 use App\Livewire\Staff\CustomerSaleManagement;
+use App\Livewire\Admin\StoreBilling;
+use App\Livewire\Admin\StaffStockDetails as StaffStockDetailsExport;
+
+use App\Livewire\Staff\StoreBilling as StaffStoreBilling;
 use App\Http\Controllers\WatchesExportController;
 use App\Http\Controllers\StaffSaleExportController;
 
@@ -87,6 +91,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/payment-approvals', PaymentApprovals::class)->name('payment-approvals');
         Route::get('/view-payments', ViewPayments::class)->name('view-payments');
         Route::get('/admin/staff/{staffId}/reentry', \App\Livewire\Admin\StockReentry::class)->name('staff.reentry');
+        // Route::get('/store-billing', [StoreBilling::class, 'index'])->name('store-billing');
+        Route::get('/store-billing', StoreBilling::class)->name('store-billing');
 
     });
 
@@ -98,6 +104,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/customer-sale-management', CustomerSaleManagement::class)->name('customer-sale-management');
         Route::get('/staff-stock-overview', StaffStockOverview::class)->name('staff-stock-overview');
         Route::get('/due-payments', DuePayments::class)->name('due-payments');
+
     });
 
 

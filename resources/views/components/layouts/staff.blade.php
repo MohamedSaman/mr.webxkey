@@ -721,7 +721,7 @@
         }
 
         /* Fix for iOS momentum scrolling */
-        @supports (-webkit-overflow-scrolling: touch) {
+        @@supports (-webkit-overflow-scrolling: touch) {
             .sidebar {
                 -webkit-overflow-scrolling: touch;
             }
