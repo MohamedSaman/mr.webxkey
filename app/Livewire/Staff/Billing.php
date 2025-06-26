@@ -270,6 +270,9 @@ public function addToCart($watchId)
         $this->updateTotals();
     }
 
+
+
+    
     public function updateDiscount($watchId, $discount)
     {
         $this->discounts[$watchId] = max(0, min($discount, $this->cart[$watchId]['price']));
@@ -581,6 +584,7 @@ public function addToCart($watchId)
                 }
             }
         }
+    
 
         try {
             DB::beginTransaction();
@@ -607,43 +611,62 @@ public function addToCart($watchId)
                 'notes' => $this->saleNotes,
                 'due_amount' => $this->balanceAmount,
             ]);
+foreach ($this->cart as $id => $item) {
+    $requestedQty = $this->quantities[$id];
 
-            foreach ($this->cart as $id => $item) {
-                $price = $item['price'] ?: $item['price'];
-                $itemDiscount = $this->discounts[$id] ?? 0;
-                $total = ($price * $this->quantities[$id]) - ($itemDiscount * $this->quantities[$id]);
+    // 🔎 Get total available stock for this watch_id from all staff_products
+    $availableStock = StaffProduct::where('watch_id', $item['id'])
+        ->where('staff_id', auth()->id())
+        ->where('status', '!=', 'completed')
+        ->selectRaw('SUM(quantity - sold_quantity) as total_available')
+        ->value('total_available');
 
-                // Find the staff product to update
-                $staffProduct = StaffProduct::find($item['staff_product_id']);
-                if (!$staffProduct || ($staffProduct->quantity - $staffProduct->sold_quantity) < $this->quantities[$id]) {
-                    throw new Exception("Not enough assigned stock available for item: {$item['name']}");
-                }
+    if ($requestedQty > $availableStock) {
+        throw new Exception("Not enough stock available for item: {$item['name']}. Requested: {$requestedQty}, Available: {$availableStock}");
+    }
 
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'watch_id' => $item['id'],
-                    'watch_code' => $item['code'],
-                    'watch_name' => $item['name'],
-                    'quantity' => $this->quantities[$id],
-                    'unit_price' => $price,
-                    'discount' => $itemDiscount,
-                    'total' => $total,
-                    'staff_product_id' => $item['staff_product_id'],
-                ]);
+    $remainingQty = $requestedQty;
+    $itemDiscount = $this->discounts[$id] ?? 0;
+    $unitPrice = $item['price'];
 
-                // Update the staff product sold quantities
-                $staffProduct->sold_quantity += $this->quantities[$id];
-                $staffProduct->sold_value += $total;
-                
-                // Update status if all items sold
-                if ($staffProduct->sold_quantity >= $staffProduct->quantity) {
-                    $staffProduct->status = 'completed';
-                } else {
-                    $staffProduct->status = 'partial';
-                }
-                
-                $staffProduct->save();
-                
+    // 🧠 Loop through all staff_product entries and consume from them
+    $staffProducts = StaffProduct::where('watch_id', $item['id'])
+        ->where('staff_id', auth()->id())
+        ->where('status', '!=', 'completed')
+        ->orderBy('id') // or priority field
+        ->get();
+
+    foreach ($staffProducts as $staffProduct) {
+        $available = $staffProduct->quantity - $staffProduct->sold_quantity;
+        if ($available <= 0) continue;
+
+        $useQty = min($remainingQty, $available);
+        $total = ($unitPrice * $useQty) - ($itemDiscount * $useQty);
+
+        // 💾 Save SaleItem
+        SaleItem::create([
+            'sale_id' => $sale->id,
+            'watch_id' => $item['id'],
+            'watch_code' => $item['code'],
+            'watch_name' => $item['name'],
+            'quantity' => $useQty,
+            'unit_price' => $unitPrice,
+            'discount' => $itemDiscount,
+            'total' => $total,
+            'staff_product_id' => $staffProduct->id,
+        ]);
+
+        // 🧾 Update staffProduct
+        $staffProduct->sold_quantity += $useQty;
+        $staffProduct->sold_value += $total;
+        $staffProduct->status = $staffProduct->sold_quantity >= $staffProduct->quantity ? 'completed' : 'partial';
+        $staffProduct->save();
+
+        $remainingQty -= $useQty;
+        if ($remainingQty <= 0) break;
+    }
+
+
                 // Update the parent staff sale record
                 $staffSale = $staffProduct->staffSale;
                 if ($staffSale) {
