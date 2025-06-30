@@ -89,93 +89,123 @@ class Billing extends Component
         $this->customers = Customer::orderBy('name')->get();
     }
 
-    public function updatedSearch()
-    {
-        if (strlen($this->search) >= 2) {
-            // Get only products assigned to this staff member with available stock
-            $this->searchResults = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
-                ->join('staff_sales', 'staff_sales.id', '=', 'staff_products.staff_sale_id')
-                ->select(
-                    'watch_details.*',
-                    'staff_products.unit_price as selling_price', 
-                    'staff_products.discount_per_unit as discount_price',
-                    'staff_products.id as staff_product_id',
-                    DB::raw('(staff_products.quantity - staff_products.sold_quantity) as available_stock')
-                )
-                ->where('staff_products.staff_id', auth()->id())
-                ->where('staff_products.status', '!=', 'completed')
-                // Add this line to ensure quantity > sold_quantity
-                ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
-                ->where(function($query) {
-                    $query->where('watch_details.code', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
-                })
-                // Keep the having clause as a double-check
-                ->having('available_stock', '>', 0)
-                ->take(50)
-                ->get();
-        } else {
-            $this->searchResults = [];
-        }
-    }
-
-    public function addToCart($watchId)
-    {
-        // Get product details from staff assigned products
-        $watch = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
-            ->where('watch_details.id', $watchId)
+    // serach showing 2 or more time same product issue solved 6/24/2025
+public function updatedSearch()
+{
+    if (strlen($this->search) >= 2) {
+        $this->searchResults = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
+            ->join('staff_sales', 'staff_sales.id', '=', 'staff_products.staff_sale_id')
+            ->select(
+                'watch_details.id',
+                'watch_details.name',
+                'watch_details.code',
+                'watch_details.model',
+                'watch_details.brand',
+                'watch_details.barcode',
+                DB::raw('SUM(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
+                DB::raw('MIN(staff_products.unit_price) as selling_price'),
+                DB::raw('MIN(staff_products.discount_per_unit) as discount_price'),
+                DB::raw('MIN(staff_products.id) as staff_product_id')
+            )
             ->where('staff_products.staff_id', auth()->id())
             ->where('staff_products.status', '!=', 'completed')
-            ->select(
-                'watch_details.*',
-                'staff_products.unit_price as selling_price', 
-                'staff_products.discount_per_unit as discount_price',
-                'staff_products.id as staff_product_id',
-                DB::raw('(staff_products.quantity - staff_products.sold_quantity) as available_stock')
+            ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
+            ->where(function($query) {
+                $query->where('watch_details.code', 'like', '%' . $this->search . '%')
+                    ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
+                    ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
+                    ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
+                    ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
+            })
+            ->groupBy(
+                'watch_details.id',
+                'watch_details.name',
+                'watch_details.code',
+                'watch_details.model',
+                'watch_details.brand',
+                'watch_details.barcode'
             )
-            ->first();
+            ->having('available_stock', '>', 0)
+            ->take(50)
+            ->get();
+    } else {
+        $this->searchResults = [];
+    }
+}
+ //add cart modify 6/24/2025
 
-        if (!$watch || $watch->available_stock <= 0) {
-            $this->dispatch('showToast', ['type' => 'danger', 'message' => 'This product is not available or not assigned to you.']);
+    /**
+     * Add a watch to the cart
+     *
+     * @param int $watchId Watch ID
+     */
+public function addToCart($watchId)
+{
+    // Get total available stock across all assigned entries for this product
+    $watch = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
+        ->where('watch_details.id', $watchId)
+        ->where('staff_products.staff_id', auth()->id())
+        ->where('staff_products.status', '!=', 'completed')
+        ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
+        ->select(
+            'watch_details.id',
+            'watch_details.name',
+            'watch_details.code',
+            'watch_details.model',
+            'watch_details.brand',
+            'watch_details.image',
+            DB::raw('SUM(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
+            DB::raw('MIN(staff_products.unit_price) as selling_price'),
+            DB::raw('MIN(staff_products.discount_per_unit) as discount_price'),
+            DB::raw('MIN(staff_products.id) as staff_product_id')
+        )
+        ->groupBy(
+            'watch_details.id',
+            'watch_details.name',
+            'watch_details.code',
+            'watch_details.model',
+            'watch_details.brand',
+            'watch_details.image'
+        )
+        ->having('available_stock', '>', 0)
+        ->first();
+
+    if (!$watch || $watch->available_stock <= 0) {
+        $this->dispatch('showToast', ['type' => 'danger', 'message' => 'This product is not available or not assigned to you.']);
+        return;
+    }
+
+    $existingItem = collect($this->cart)->firstWhere('id', $watchId);
+
+    if ($existingItem) {
+        if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
+            $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$watch->available_stock}) reached."]);
             return;
         }
+        $this->quantities[$watchId]++;
+    } else {
+        $discountPrice = $watch->discount_price ?? 0;
+        $this->cart[$watchId] = [
+            'id' => $watch->id,
+            'staff_product_id' => $watch->staff_product_id,
+            'code' => $watch->code,
+            'name' => $watch->name,
+            'model' => $watch->model,
+            'brand' => $watch->brand,
+            'image' => $watch->image,
+            'price' => $watch->selling_price ?? 0,
+            'discountPrice' => $discountPrice,
+            'inStock' => $watch->available_stock,
+        ];
 
-        $existingItem = collect($this->cart)->firstWhere('id', $watchId);
-
-        if ($existingItem) {
-            // Check if adding one more would exceed stock
-            if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
-                $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$watch->available_stock}) reached."]);
-                return;
-            }
-            $this->quantities[$watchId]++;
-        } else {
-            // Add new item to cart
-            $discountPrice = $watch->discount_price ?? 0;
-            $this->cart[$watchId] = [
-                'id' => $watch->id,
-                'staff_product_id' => $watch->staff_product_id,
-                'code' => $watch->code,
-                'name' => $watch->name,
-                'model' => $watch->model,
-                'brand' => $watch->brand,
-                'image' => $watch->image,
-                'price' => $watch->selling_price ?? 0,
-                'discountPrice' => $discountPrice ?? 0,
-                'inStock' => $watch->available_stock ?? 0,
-            ];
-
-            $this->quantities[$watchId] = 1;
-            $this->discounts[$watchId] = $discountPrice;
-        }
-
-        $this->search = '';
-        $this->searchResults = [];
-        $this->updateTotals();
+        $this->quantities[$watchId] = 1;
+        $this->discounts[$watchId] = $discountPrice;
     }
+
+    $this->search = '';
+    $this->searchResults = [];
+    $this->updateTotals();
+}
 
     /**
      * Validate and restrict quantity input
@@ -240,6 +270,9 @@ class Billing extends Component
         $this->updateTotals();
     }
 
+
+
+    
     public function updateDiscount($watchId, $discount)
     {
         $this->discounts[$watchId] = max(0, min($discount, $this->cart[$watchId]['price']));
@@ -551,6 +584,7 @@ class Billing extends Component
                 }
             }
         }
+    
 
         try {
             DB::beginTransaction();
@@ -577,43 +611,62 @@ class Billing extends Component
                 'notes' => $this->saleNotes,
                 'due_amount' => $this->balanceAmount,
             ]);
+foreach ($this->cart as $id => $item) {
+    $requestedQty = $this->quantities[$id];
 
-            foreach ($this->cart as $id => $item) {
-                $price = $item['price'] ?: $item['price'];
-                $itemDiscount = $this->discounts[$id] ?? 0;
-                $total = ($price * $this->quantities[$id]) - ($itemDiscount * $this->quantities[$id]);
+    // 🔎 Get total available stock for this watch_id from all staff_products
+    $availableStock = StaffProduct::where('watch_id', $item['id'])
+        ->where('staff_id', auth()->id())
+        ->where('status', '!=', 'completed')
+        ->selectRaw('SUM(quantity - sold_quantity) as total_available')
+        ->value('total_available');
 
-                // Find the staff product to update
-                $staffProduct = StaffProduct::find($item['staff_product_id']);
-                if (!$staffProduct || ($staffProduct->quantity - $staffProduct->sold_quantity) < $this->quantities[$id]) {
-                    throw new Exception("Not enough assigned stock available for item: {$item['name']}");
-                }
+    if ($requestedQty > $availableStock) {
+        throw new Exception("Not enough stock available for item: {$item['name']}. Requested: {$requestedQty}, Available: {$availableStock}");
+    }
 
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'watch_id' => $item['id'],
-                    'watch_code' => $item['code'],
-                    'watch_name' => $item['name'],
-                    'quantity' => $this->quantities[$id],
-                    'unit_price' => $price,
-                    'discount' => $itemDiscount,
-                    'total' => $total,
-                    'staff_product_id' => $item['staff_product_id'],
-                ]);
+    $remainingQty = $requestedQty;
+    $itemDiscount = $this->discounts[$id] ?? 0;
+    $unitPrice = $item['price'];
 
-                // Update the staff product sold quantities
-                $staffProduct->sold_quantity += $this->quantities[$id];
-                $staffProduct->sold_value += $total;
-                
-                // Update status if all items sold
-                if ($staffProduct->sold_quantity >= $staffProduct->quantity) {
-                    $staffProduct->status = 'completed';
-                } else {
-                    $staffProduct->status = 'partial';
-                }
-                
-                $staffProduct->save();
-                
+    // 🧠 Loop through all staff_product entries and consume from them
+    $staffProducts = StaffProduct::where('watch_id', $item['id'])
+        ->where('staff_id', auth()->id())
+        ->where('status', '!=', 'completed')
+        ->orderBy('id') // or priority field
+        ->get();
+
+    foreach ($staffProducts as $staffProduct) {
+        $available = $staffProduct->quantity - $staffProduct->sold_quantity;
+        if ($available <= 0) continue;
+
+        $useQty = min($remainingQty, $available);
+        $total = ($unitPrice * $useQty) - ($itemDiscount * $useQty);
+
+        // 💾 Save SaleItem
+        SaleItem::create([
+            'sale_id' => $sale->id,
+            'watch_id' => $item['id'],
+            'watch_code' => $item['code'],
+            'watch_name' => $item['name'],
+            'quantity' => $useQty,
+            'unit_price' => $unitPrice,
+            'discount' => $itemDiscount,
+            'total' => $total,
+            'staff_product_id' => $staffProduct->id,
+        ]);
+
+        // 🧾 Update staffProduct
+        $staffProduct->sold_quantity += $useQty;
+        $staffProduct->sold_value += $total;
+        $staffProduct->status = $staffProduct->sold_quantity >= $staffProduct->quantity ? 'completed' : 'partial';
+        $staffProduct->save();
+
+        $remainingQty -= $useQty;
+        if ($remainingQty <= 0) break;
+    }
+
+
                 // Update the parent staff sale record
                 $staffSale = $staffProduct->staffSale;
                 if ($staffSale) {
