@@ -30,7 +30,7 @@
                                                     <!-- Product Image - Full height -->
                                                   <div class="product-image me-3" style="min-width: 60px;">
     @if ($result->image)
-        <img src="{{ asset('storage/' . $result->image) }}"
+        <img src="{{ asset('public/storage/' . $result->image) }}"
             alt="{{ $result->name }}" class="img-fluid rounded"
             style="width: 60px; height: 60px; object-fit: cover;">
     @else
