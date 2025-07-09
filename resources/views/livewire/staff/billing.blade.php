@@ -28,15 +28,18 @@
                                                 wire:key="result-{{ $result->id }}">
                                                 <div class="d-flex align-items-stretch position-relative">
                                                     <!-- Product Image - Full height -->
-                                                  <div class="product-image me-3" style="min-width: 60px;">
-   
-        <img src="{{ asset('public/storage/' . $result->image) }}"
-            alt="{{ $result->name }}" class="img-fluid rounded"
-            style="width: 60px; height: 60px; object-fit: cover;">
-   
-     
-    
-</div>
+                                                  < <div class="product-image me-3" style="min-width: 60px;">
+                                                        @if ($result->image)
+                                                            <img src="{{ asset('public/storage/' . $result->image) }}"
+                                                                alt="{{ $result->name }}" class="img-fluid rounded"
+                                                                style="width: 60px; height: 60px; object-fit: cover;">
+                                                        @else
+                                                            <div class="no-image bg-light d-flex align-items-center justify-content-center rounded"
+                                                                style="width: 60px; height: 60px;">
+                                                                <i class="fas fa-watch text-muted"></i>
+                                                            </div>
+                                                        @endif
+                                                    </div>
 
 
 

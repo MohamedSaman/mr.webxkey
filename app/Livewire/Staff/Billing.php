@@ -123,7 +123,8 @@ public function updatedSearch()
                 'watch_details.code',
                 'watch_details.model',
                 'watch_details.brand',
-                'watch_details.barcode'
+                'watch_details.barcode',
+                'watch_details.image',
             )
             ->having('available_stock', '>', 0)
             ->take(50)
@@ -131,6 +132,7 @@ public function updatedSearch()
     } else {
         $this->searchResults = [];
     }
+    
 }
  //add cart modify 6/24/2025
 
