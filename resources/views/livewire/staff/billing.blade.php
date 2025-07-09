@@ -34,12 +34,12 @@
             alt="{{ $result->name }}" class="img-fluid rounded"
             style="width: 60px; height: 60px; object-fit: cover;">
     @else
-        <div class="no-image bg-light d-flex align-items-center justify-content-center rounded"
-            style="width: 60px; height: 60px;">
-            <i class="fas fa-watch text-muted"></i>
-        </div>
+         <img src="{{ asset('public/storage/' . $result->image) }}"
+                                                                alt="{{ $result->name }}" class="img-fluid rounded"
+                                                                style="width: 60px; height: 60px; object-fit: cover;">
     @endif
 </div>
+
 
 
                                                     <!-- Vertical divider -->
