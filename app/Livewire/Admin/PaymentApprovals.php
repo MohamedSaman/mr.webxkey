@@ -69,10 +69,16 @@ class PaymentApprovals extends Component
             // Check if all payments are completed
             $pendingPayments = $sale->payments()->where('is_completed', false)->count();
             
-            if ($pendingPayments === 0) {
+            // Reduce the due_amount by the payment amount
+            $newDueAmount = max(0, $sale->due_amount - $payment->amount);
+            $sale->update([
+                'due_amount' => $newDueAmount,
+            ]);
+
+            // If due_amount is now 0, mark payment_status as 'paid'
+            if ($newDueAmount == 0) {
                 $sale->update([
                     'payment_status' => 'paid',
-                    'due_amount' => 0,
                 ]);
             }
             

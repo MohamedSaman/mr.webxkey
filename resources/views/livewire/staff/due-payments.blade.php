@@ -256,7 +256,7 @@
                                                         @if (now()->gt($payment->due_date) || now()->diffInDays($payment->due_date) <= 3) 
                                                             text-danger fw-bold 
                                                         @endif">
-                                                        {{ $payment->due_date->format('d M Y') }}
+                                                        {{ $payment->due_date ? $payment->due_date->format('d M Y') : 'N/A' }}
                                                     </span>
                                                 </div>
                                                 
@@ -441,12 +441,21 @@
                                         <!-- Two-column form layout -->
                                         <div class="col-lg-6 p-4">
                                             <div class="mb-4">
+                                                <label class="form-label small fw-bold mb-2">Received Amount</label>
+                                                    <input type="text" class="form-control @error('receivedAmount') is-invalid @enderror"
+                                                        wire:model="receivedAmount" required>
+                                                    @error('receivedAmount')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
                                                 <label class="form-label small fw-bold mb-2">Payment Method <span
                                                         class="text-danger">*</span></label>
+                                                        
                                                 <div class="input-group shadow-sm">
                                                     <span class="input-group-text bg-white border-end-0">
                                                         <i class="bi bi-credit-card text-primary"></i>
                                                     </span>
+                                                    
+
                                                     <select
                                                         class="form-select border-start-0 ps-0 @error('duePaymentMethod') is-invalid @enderror"
                                                         wire:model="duePaymentMethod" required>

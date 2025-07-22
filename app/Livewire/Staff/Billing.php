@@ -102,6 +102,7 @@ public function updatedSearch()
                 'watch_details.model',
                 'watch_details.brand',
                 'watch_details.barcode',
+                'watch_details.image', // ✅ Fixed: include image field
                 DB::raw('SUM(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
                 DB::raw('MIN(staff_products.unit_price) as selling_price'),
                 DB::raw('MIN(staff_products.discount_per_unit) as discount_price'),
@@ -123,7 +124,8 @@ public function updatedSearch()
                 'watch_details.code',
                 'watch_details.model',
                 'watch_details.brand',
-                'watch_details.barcode'
+                'watch_details.barcode',
+                'watch_details.image' // ✅ Group by image too (required in strict SQL modes)
             )
             ->having('available_stock', '>', 0)
             ->take(50)
@@ -132,6 +134,7 @@ public function updatedSearch()
         $this->searchResults = [];
     }
 }
+
  //add cart modify 6/24/2025
 
     /**

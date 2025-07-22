@@ -26,6 +26,7 @@ class DuePayments extends Component
     public $duePaymentMethod = '';
     public $paymentNote = '';
     public $duePaymentAttachmentPreview;
+    public $receivedAmount = '';
     public $filters = [
         'status' => '',
         'dateRange' => '',
@@ -70,6 +71,7 @@ class DuePayments extends Component
     public function submitPayment()
     {
         $this->validate([
+            'receivedAmount' => 'required|numeric|min:0.01',
             'duePaymentMethod' => 'required',
             'duePaymentAttachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf|max:2048',
         ]);
@@ -84,10 +86,30 @@ class DuePayments extends Component
             if ($this->duePaymentAttachment) {
                 $receiptName = time() . '-payment-' . $payment->id . '.' . $this->duePaymentAttachment->getClientOriginalExtension();
                 $this->duePaymentAttachment->storeAs('public/due-receipts', $receiptName);
-                $attachmentPath = 'due-receipts/' . $receiptName;
+                $attachmentPath = "due-receipts/{$receiptName}";
             }
-
+            $receivedAmount = floatval($this->receivedAmount);
+            $remainingAmount = $payment->amount - $receivedAmount;
+            if($payment->amount >= $receivedAmount) {
+                 $payment->update([
+                'amount' => $receivedAmount,
+                'due_payment_method' => $this->duePaymentMethod,
+                'due_payment_attachment' => $attachmentPath,
+                'status' => 'pending',  // Change status to pending for admin approval
+                'payment_date' => now(),
+            ]);
+                // If the received amount is less than the total amount, update the payment
+            } else {
+                // If the received amount is equal to or greater than the total amount, mark as completed
+                DB::rollBack();
+                $this->dispatch('showToast', [
+                    'type' => 'error',
+                    'message' => 'Entered amount is too large. Please enter an amount less than or equal to the due amount.'
+                ]);
+                return;
+            }
             $payment->update([
+                'amount' => $receivedAmount,
                 'due_payment_method' => $this->duePaymentMethod,
                 'due_payment_attachment' => $attachmentPath,
                 'status' => 'pending',  // Change status to pending for admin approval
@@ -101,7 +123,18 @@ class DuePayments extends Component
                         "Payment received on " . now()->format('Y-m-d H:i') . ": " . $this->paymentNote
                 ]);
             }
-            
+
+            // If there is a remaining amount, create a new Payment record with status null
+            if ($remainingAmount > 0.01) { // Use a small threshold to avoid floating point issues
+                Payment::create([
+                    'sale_id' => $payment->sale_id,
+                    'amount' => $remainingAmount,
+                    'due_date' => $payment->due_date, // or set a new due date if needed
+                    'status' => null,
+                    'is_completed' => false,
+                ]);
+            }
+
             DB::commit();
             
             $this->dispatch('closeModal', 'payment-detail-modal');

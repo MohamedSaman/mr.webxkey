@@ -515,6 +515,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-title">WatchStore</div>
+                
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">

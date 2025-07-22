@@ -28,7 +28,7 @@
                                                 wire:key="result-{{ $result->id }}">
                                                 <div class="d-flex align-items-stretch position-relative">
                                                     <!-- Product Image - Full height -->
-                                                    <div class="product-image me-3" style="min-width: 60px;">
+                                                  <div class="product-image me-3" style="min-width: 60px;">
                                                         @if ($result->image)
                                                             <img src="{{ asset('public/storage/' . $result->image) }}"
                                                                 alt="{{ $result->name }}" class="img-fluid rounded"
@@ -40,6 +40,8 @@
                                                             </div>
                                                         @endif
                                                     </div>
+
+
 
                                                     <!-- Vertical divider -->
                                                     <div class="vr mx-2 h-100"></div>

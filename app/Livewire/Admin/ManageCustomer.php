@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Exception;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\On;
 
 #[Layout('components.layouts.admin')]
 #[Title('Manage Customer')]
@@ -38,8 +39,8 @@ class ManageCustomer extends Component
             'customerType' => 'required',
             'contactNumber' => 'required',
             'address' => 'required',
-            'email' => 'required|email|unique:customers,email',
-            'bussinessName' => 'required',
+            'email' => 'email|unique:customers,email',
+            'bussinessName' => 'nullable',
         ]);
         try{
             Customer::create([
@@ -85,15 +86,15 @@ class ManageCustomer extends Component
         $this->validate([
             'editName' => 'required',
             'editCustomerType' => 'required',
-            'editBussinessName' => 'required',
+            'editBussinessName' => 'nullable',
             'editContactNumber' => 'required',
             'editAddress' => 'required',
-            'editEmail' => 'required|email|unique:customers,email,'.$id
+            'editEmail' => 'email|unique:customers,email,'.$id
         ]);
         try{
             $customer = Customer::find($id);
             $customer->name = $this->editName;
-            $customer->phone = $this->editPhone;
+            $customer->phone = $this->editContactNumber; // <-- fixed here
             $customer->business_name = $this->editBussinessName;
             $customer->type = $this->editCustomerType;
             $customer->address = $this->editAddress;
