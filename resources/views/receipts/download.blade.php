@@ -155,9 +155,9 @@
     <div class="receipt-container">
         <!-- Receipt Header -->
         <div class="text-center mb-4">
-            <h2 class="mb-0">WatchStore</h2>
-            <p class="mb-0 text-muted small">123 Main Street, City, Country</p>
-            <p class="mb-0 text-muted small">Phone: (123) 456-7890 | Email: info@watchstore.com</p>
+            <h2 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h2>
+            <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
+            <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email:hakeem9053@gmail.com</p>
             <h3 class="mt-3 border-bottom pb-2">SALES RECEIPT</h3>
         </div>
         
@@ -270,7 +270,7 @@
         <!-- Footer -->
         <div class="text-center mt-4 pt-3 border-top">
             <p class="mb-0 text-muted small">Thank you for your purchase!</p>
-            <p class="mb-0 text-muted small">For questions or returns, please contact us within 7 days</p>
+            <!-- <p class="mb-0 text-muted small">For questions or returns, please contact us within 7 days</p> -->
         </div>
     </div>
 </body>
