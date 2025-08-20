@@ -67,7 +67,7 @@ class ViewPayments extends Component
                 return $q->where('payment_method', $this->filters['paymentMethod']);
             });
             
-        $payments = $query->orderBy('created_at', 'desc')->paginate(10);
+        $payments = $query->orderBy('created_at', 'desc')->paginate(15);
         
         // Get summary stats
         $totalPayments = Payment::where('is_completed', 1)->sum('amount');

@@ -635,6 +635,11 @@
                                     <i class="bi bi-people"></i> <span>Customer Sales</span>
                                 </a>
                             </li>
+                              <li class="nav-item">
+                                <a class="nav-link py-2" href="{{ route('admin.due-payments') }}">
+                                    <i class="bi bi-cash-coin"></i> <span>Due Payments</span>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.view-payments') }}">
                                     <i class="bi bi-credit-card-2-back"></i> <span>View Payments</span>

@@ -34,11 +34,13 @@ use App\Livewire\Admin\CustomerSaleDetails;
 use App\Livewire\Admin\WatchStrapColorlist;
 use App\Livewire\Staff\CustomerSaleManagement;
 use App\Livewire\Admin\StoreBilling;
+use App\Livewire\Admin\DuePayments as AdminDuePayments;
 use App\Livewire\Admin\StaffStockDetails as StaffStockDetailsExport;
-
 use App\Livewire\Staff\StoreBilling as StaffStoreBilling;
 use App\Http\Controllers\WatchesExportController;
 use App\Http\Controllers\StaffSaleExportController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +95,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/admin/staff/{staffId}/reentry', \App\Livewire\Admin\StockReentry::class)->name('staff.reentry');
         // Route::get('/store-billing', [StoreBilling::class, 'index'])->name('store-billing');
         Route::get('/store-billing', StoreBilling::class)->name('store-billing');
+        Route::get('/due-payments', AdminDuePayments::class)->name('due-payments');
+        // Uncomment the above line if App\Livewire\Admin\DuePayments exists and is implemented.
+
+
 
     });
 
