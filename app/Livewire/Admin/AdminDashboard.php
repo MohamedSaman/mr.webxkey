@@ -28,11 +28,13 @@ class AdminDashboard extends Component
     public $totalStock = 0;
     public $assignedStock = 0;
     public $soldStock = 0;
+    public $availableStock = 0;
     public $assignmentPercentage = 0;
     public $soldPercentage = 0;
     public $damagedStock = 0;
     public $damagedValue = 0;
     public $totalInventoryValue = 0;
+    public $totalAvailableInventory = 0;
     public $totalStaffCount = 0;
     public $staffWithAssignmentsCount = 0;
     public $staffAssignmentPercentage = 0;
@@ -105,13 +107,15 @@ class AdminDashboard extends Component
                 DB::raw('SUM(total_stock) as total_stock'),
                 DB::raw('SUM(assigned_stock) as assigned_stock'),
                 DB::raw('SUM(sold_count) as sold_stock'),
-                DB::raw('SUM(damage_stock) as damaged_stock')
+                DB::raw('SUM(damage_stock) as damaged_stock'),
+                DB::raw('SUM(available_stock) as available_stock')
             )->first();
 
         $this->totalStock = $stockStats->total_stock ?? 0;
         $this->assignedStock = $stockStats->assigned_stock ?? 0;
         $this->soldStock = $stockStats->sold_stock ?? 0;
         $this->damagedStock = $stockStats->damaged_stock ?? 0;
+        $this->availableStock = $stockStats->available_stock ?? 0;
 
         // Calculate percentages
         if ($this->assignedStock > 0) {
@@ -135,8 +139,14 @@ class AdminDashboard extends Component
             ->join('watch_prices', 'watch_stocks.watch_id', '=', 'watch_prices.watch_id')
             ->select(DB::raw('SUM(watch_stocks.available_stock * watch_prices.supplier_price) as total_value'))
             ->first();
-            
+
+        $totalAvailableInventory = DB::table('watch_stocks')
+            ->join('watch_prices', 'watch_stocks.watch_id', '=', 'watch_prices.watch_id')
+            ->select(DB::raw('SUM(watch_stocks.available_stock * watch_prices.supplier_price) as total_value'))
+            ->first();
+
         $this->totalInventoryValue = $totalInventoryValue->total_value ?? 0;
+        $this->totalAvailableInventory = $totalAvailableInventory->total_value ?? 0;
 
         $this->totalStaffCount = DB::table('users')->where('role', 'staff')->count();
         $this->staffWithAssignmentsCount = DB::table('staff_sales')

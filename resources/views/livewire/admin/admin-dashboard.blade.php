@@ -588,10 +588,10 @@
                     <!-- Damaged Stock Info -->
                     <div class="stat-info mt-3 pt-2 border-top">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted"><i class="bi bi-exclamation-triangle-fill text-primary me-1"></i> Total</small>
-                            <span class="badge bg-primary">{{ number_format($totalStock) }}</span>
+                            <small class="text-muted"><i class="bi bi-exclamation-triangle-fill text-primary me-1"></i>Available Stock</small>
+                            <span class="badge bg-primary">{{ number_format($availableStock) }}</span>
                         </div>
-                        <small class="d-block text-end text-primary">Rs.{{ number_format($totalInventoryValue, 2) }}</small>
+                        <small class="d-block text-end text-primary">Rs.{{ number_format($totalAvailableInventory, 2) }}</small>
                     </div>
                 </div>
             </div>
