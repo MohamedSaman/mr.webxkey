@@ -3,7 +3,6 @@
 namespace App\Livewire\Staff;
 
 use Exception;
-use App\Models\Sale;
 use App\Models\Payment;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -11,96 +10,166 @@ use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 #[Layout('components.layouts.staff')]
 #[Title('Due Payments')]
 class DuePayments extends Component
 {
     use WithPagination, WithFileUploads;
-    
-    public $search = '';
-    public $selectedPayment = null;
-    public $paymentDetail = null;
-    public $duePaymentAttachment;
-    public $paymentId;
-    public $duePaymentMethod = '';
-    public $paymentNote = '';
-    public $duePaymentAttachmentPreview;
-    public $receivedAmount = '';
-    public $filters = [
+
+    /** -----------------------------
+     * UI / State
+     * ------------------------------*/
+    public string $search = '';
+    public ?int $paymentId = null;
+    public ?Payment $paymentDetail = null;
+
+    public ?string $duePaymentMethod = '';
+    public ?string $paymentNote = '';
+    public $duePaymentAttachment = null;               // Livewire tmp uploaded file
+    public ?array $duePaymentAttachmentPreview = null;  // preview metadata
+    public string $receivedAmount = '';
+
+    public array $filters = [
         'status' => '',
         'dateRange' => '',
     ];
 
-    // Add these properties to your existing properties list
-    public $extendDuePaymentId;
-    public $newDueDate;
-    public $extensionReason = '';
+    // Extend-due-date modal state
+    public ?int $extendDuePaymentId = null;
+    public ?string $newDueDate = null;
+    public string $extensionReason = '';
 
     protected $listeners = ['refreshPayments' => '$refresh'];
 
-    public function mount()
+    /** Max upload size in KB (2_048 = 2MB). Increase if you want bigger receipts. */
+    public int $maxAttachmentKb = 2048;
+
+    /** Allowed mime/extension pairs */
+    private array $allowedMimes = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
+
+    /** -----------------------------
+     * Validation
+     * ------------------------------*/
+    protected function rules(): array
     {
-        // Initialize component
+        return [
+            'receivedAmount'        => ['required', 'numeric', 'min:0.01'],
+            'duePaymentMethod'      => ['required', 'string', 'max:100'],
+            'paymentNote'           => ['nullable', 'string', 'max:2000'],
+            'duePaymentAttachment'  => ['nullable', 'file', 'mimes:' . implode(',', $this->allowedMimes), 'max:' . $this->maxAttachmentKb],
+
+            // Extend due date
+            'newDueDate'            => ['nullable', 'date', 'after:today'],
+            'extensionReason'       => ['nullable', 'string', 'min:5', 'max:500'],
+        ];
     }
 
-    public function updatedDuePaymentAttachment()
+    protected function messages(): array
     {
-        $this->validate([
-            'duePaymentAttachment' => 'file|mimes:jpg,jpeg,png,gif,pdf|max:2048',
-        ]);
+        return [
+            'duePaymentAttachment.max' => "The due payment attachment must not be greater than {$this->maxAttachmentKb} kilobytes.",
+            'duePaymentAttachment.mimes' => 'Supported file types: jpg, jpeg, png, gif, pdf.',
+        ];
+    }
+
+    /** -----------------------------
+     * Lifecycle
+     * ------------------------------*/
+    public function mount(): void
+    {
+        // no-op for now
+    }
+
+    /** -----------------------------
+     * File handling
+     * ------------------------------*/
+    public function updatedDuePaymentAttachment(): void
+    {
+        $this->validateOnly('duePaymentAttachment');
 
         if ($this->duePaymentAttachment) {
-            $previewInfo = $this->getFilePreviewInfo($this->duePaymentAttachment);
-            $this->duePaymentAttachmentPreview = $previewInfo;
+            $this->duePaymentAttachmentPreview = $this->getFilePreviewInfo($this->duePaymentAttachment);
+        } else {
+            $this->duePaymentAttachmentPreview = null;
         }
     }
 
-    public function getPaymentDetails($paymentId)
+    private function getFilePreviewInfo($file): ?array
     {
-        $this->paymentId = $paymentId;
-        $this->paymentDetail = Payment::with(['sale.customer', 'sale.items'])->find($paymentId);
-        $this->duePaymentMethod = $this->paymentDetail->due_payment_method ?? '';
-        $this->paymentNote = '';
+        if (!$file) {
+            return null;
+        }
+
+        $ext = strtolower($file->getClientOriginalExtension());
+
+        $info = [
+            'name'   => $file->getClientOriginalName(),
+            'type'   => 'unknown',
+            'icon'   => 'bi-file-earmark',
+            'color'  => 'text-secondary',
+            'preview'=> null,
+        ];
+
+        if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+            $info['type']  = 'image';
+            $info['icon']  = 'bi-file-earmark-image';
+            $info['color'] = 'text-primary';
+            try {
+                $info['preview'] = $file->temporaryUrl();
+            } catch (\Throwable $e) {
+                $info['preview'] = null;
+            }
+        } elseif ($ext === 'pdf') {
+            $info['type']  = 'pdf';
+            $info['icon']  = 'bi-file-earmark-pdf';
+            $info['color'] = 'text-danger';
+        }
+
+        return $info;
+    }
+
+    /** -----------------------------
+     * Modals / Actions
+     * ------------------------------*/
+    public function getPaymentDetails(int $paymentId): void
+    {
+        $this->resetValidation();
+
+        $this->paymentId   = $paymentId;
+        $this->paymentDetail = Payment::with(['sale.customer', 'sale.items'])->findOrFail($paymentId);
+
+        $this->duePaymentMethod = (string)($this->paymentDetail->due_payment_method ?? '');
+        $this->paymentNote      = '';
+        $this->receivedAmount   = ''; // let user enter a partial or full amount
         $this->duePaymentAttachment = null;
         $this->duePaymentAttachmentPreview = null;
-        
+
         $this->dispatch('openModal', 'payment-detail-modal');
     }
 
-    public function submitPayment()
+    public function submitPayment(): void
     {
         $this->validate([
-            'receivedAmount' => 'required|numeric|min:0.01',
-            'duePaymentMethod' => 'required',
-            'duePaymentAttachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf|max:2048',
+            'receivedAmount'       => ['required', 'numeric', 'min:0.01'],
+            'duePaymentMethod'     => ['required', 'string', 'max:100'],
+            'duePaymentAttachment' => ['nullable', 'file', 'mimes:' . implode(',', $this->allowedMimes), 'max:' . $this->maxAttachmentKb],
+            'paymentNote'          => ['nullable', 'string', 'max:2000'],
         ]);
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            $payment = Payment::findOrFail($this->paymentId);
-            
-            // Store attachment if provided
-            $attachmentPath = $payment->due_payment_attachment;
-            if ($this->duePaymentAttachment) {
-                $receiptName = time() . '-payment-' . $payment->id . '.' . $this->duePaymentAttachment->getClientOriginalExtension();
-                $this->duePaymentAttachment->storeAs('public/due-receipts', $receiptName);
-                $attachmentPath = "due-receipts/{$receiptName}";
-            }
-            $receivedAmount = floatval($this->receivedAmount);
-            $remainingAmount = $payment->amount - $receivedAmount;
-            if($payment->amount >= $receivedAmount) {
-                 $payment->update([
-                'amount' => $receivedAmount,
-                'due_payment_method' => $this->duePaymentMethod,
-                'due_payment_attachment' => $attachmentPath,
-                'status' => 'pending',  // Change status to pending for admin approval
-                'payment_date' => now(),
-            ]);
-                // If the received amount is less than the total amount, update the payment
-            } else {
-                // If the received amount is equal to or greater than the total amount, mark as completed
+        try {
+            $payment = Payment::lockForUpdate()->findOrFail($this->paymentId);
+
+            $due = (float) $payment->amount;                // current due on this row
+            $received = (float) $this->receivedAmount;
+
+            if ($received > $due) {
                 DB::rollBack();
                 $this->dispatch('showToast', [
                     'type' => 'error',
@@ -108,186 +177,187 @@ class DuePayments extends Component
                 ]);
                 return;
             }
-            $payment->update([
-                'amount' => $receivedAmount,
-                'due_payment_method' => $this->duePaymentMethod,
-                'due_payment_attachment' => $attachmentPath,
-                'status' => 'pending',  // Change status to pending for admin approval
-                'payment_date' => now(),
-            ]);
 
-            // Add a note to track this payment submission
-            if ($this->paymentNote) {
-                $payment->sale->update([
-                    'notes' => ($payment->sale->notes ? $payment->sale->notes . "\n" : '') . 
-                        "Payment received on " . now()->format('Y-m-d H:i') . ": " . $this->paymentNote
-                ]);
+            // Handle optional attachment
+            $attachmentPath = $payment->due_payment_attachment; // keep existing if none uploaded
+            if ($this->duePaymentAttachment) {
+                // (Optional) delete previous file if you want to prevent orphan files:
+                // if ($attachmentPath && Storage::disk('public')->exists($attachmentPath)) {
+                //     Storage::disk('public')->delete($attachmentPath);
+                // }
+
+                $fileExt = $this->duePaymentAttachment->getClientOriginalExtension();
+                $receiptName = now()->timestamp . '-payment-' . $payment->id . '-' . Str::random(6) . '.' . $fileExt;
+                $stored = $this->duePaymentAttachment->storeAs('public/due-receipts', $receiptName);
+                // $stored returns "public/due-receipts/filename" → save the path relative to public disk
+                $attachmentPath = 'due-receipts/' . $receiptName;
             }
 
-            // If there is a remaining amount, create a new Payment record with status null
-            if ($remainingAmount > 0.01) { // Use a small threshold to avoid floating point issues
+            // Update current payment row to the received amount and mark as pending for approval
+            $payment->update([
+                'amount'                => $received,
+                'due_payment_method'    => $this->duePaymentMethod,
+                'due_payment_attachment'=> $attachmentPath,
+                'status'                => 'pending',
+                'payment_date'          => now(),
+            ]);
+
+            $remaining = round($due - $received, 2);
+
+            // Create a new payment row for the leftover due (if any)
+            if ($remaining > 0.00) {
                 Payment::create([
-                    'sale_id' => $payment->sale_id,
-                    'amount' => $remainingAmount,
-                    'due_date' => $payment->due_date, // or set a new due date if needed
-                    'status' => null,
+                    'sale_id'      => $payment->sale_id,
+                    'amount'       => $remaining,
+                    'due_date'     => $payment->due_date, // keep same due date or set a new one if needed
+                    'status'       => null,
                     'is_completed' => false,
                 ]);
             }
 
+            // Append note on the Sale (optional)
+            if (!empty($this->paymentNote)) {
+                $sale = $payment->sale()->lockForUpdate()->first();
+                $existing = (string)($sale->notes ?? '');
+                $noteLine = "Payment submitted on " . now()->format('Y-m-d H:i') . ": " . $this->paymentNote;
+                $sale->update(['notes' => trim($existing . "\n" . $noteLine)]);
+            }
+
             DB::commit();
-            
+
             $this->dispatch('closeModal', 'payment-detail-modal');
             $this->dispatch('showToast', [
-                'type' => 'success', 
-                'message' => 'Payment submitted successfully and sent for admin approval'
+                'type' => 'success',
+                'message' => 'Payment submitted and sent for admin approval.'
             ]);
-            
-            $this->reset(['paymentDetail', 'duePaymentMethod', 'duePaymentAttachment', 'paymentNote']);
-            
+
+            // Reset form state
+            $this->reset([
+                'paymentDetail',
+                'duePaymentMethod',
+                'duePaymentAttachment',
+                'duePaymentAttachmentPreview',
+                'paymentNote',
+                'receivedAmount',
+                'paymentId',
+            ]);
+
+            // refresh list
+            $this->dispatch('refreshPayments');
+
         } catch (Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             $this->dispatch('showToast', [
-                'type' => 'error', 
-                'message' => 'Failed to submit payment: ' . $e->getMessage()
+                'type' => 'error',
+                'message' => 'Failed to submit payment: ' . $e->getMessage(),
             ]);
         }
     }
 
-    public function openExtendDueModal($paymentId)
+    public function openExtendDueModal(int $paymentId): void
     {
+        $this->resetValidation();
+
         $this->extendDuePaymentId = $paymentId;
         $payment = Payment::findOrFail($paymentId);
-        
-        // Set initial new due date to 7 days from current due date
-        $this->newDueDate = $payment->due_date->addDays(7)->format('Y-m-d');
+
+        $dueDate = $payment->due_date instanceof Carbon
+            ? $payment->due_date
+            : Carbon::parse($payment->due_date);
+
+        $this->newDueDate = $dueDate->copy()->addDays(7)->format('Y-m-d');
         $this->extensionReason = '';
-        
+
         $this->dispatch('openModal', 'extend-due-modal');
     }
 
-    public function extendDueDate()
+    public function extendDueDate(): void
     {
         $this->validate([
-            'newDueDate' => 'required|date|after:today',
-            'extensionReason' => 'required|min:5',
+            'newDueDate'      => ['required', 'date', 'after:today'],
+            'extensionReason' => ['required', 'string', 'min:5', 'max:500'],
         ]);
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            $payment = Payment::findOrFail($this->extendDuePaymentId);
-            $oldDueDate = $payment->due_date->format('Y-m-d');
-            
-            // Update the due date
+        try {
+            $payment = Payment::lockForUpdate()->findOrFail($this->extendDuePaymentId);
+
+            $oldDue = ($payment->due_date instanceof Carbon)
+                ? $payment->due_date->format('Y-m-d')
+                : Carbon::parse($payment->due_date)->format('Y-m-d');
+
             $payment->update([
                 'due_date' => $this->newDueDate,
             ]);
 
-            // Add a note to track this extension
-            $payment->sale->update([
-                'notes' => ($payment->sale->notes ? $payment->sale->notes . "\n" : '') . 
-                    "Due date extended on " . now()->format('Y-m-d H:i') . " from {$oldDueDate} to {$this->newDueDate}. Reason: {$this->extensionReason}"
-            ]);
-            
+            $sale = $payment->sale()->lockForUpdate()->first();
+            $existing = (string)($sale->notes ?? '');
+            $noteLine = "Due date extended on " . now()->format('Y-m-d H:i') .
+                        " from {$oldDue} to {$this->newDueDate}. Reason: {$this->extensionReason}";
+            $sale->update(['notes' => trim($existing . "\n" . $noteLine)]);
+
             DB::commit();
-            
+
             $this->dispatch('closeModal', 'extend-due-modal');
             $this->dispatch('showToast', [
-                'type' => 'success', 
-                'message' => 'Due date extended successfully'
+                'type' => 'success',
+                'message' => 'Due date extended successfully.',
             ]);
-            
+
             $this->reset(['extendDuePaymentId', 'newDueDate', 'extensionReason']);
-            
+            $this->dispatch('refreshPayments');
+
         } catch (Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             $this->dispatch('showToast', [
-                'type' => 'error', 
-                'message' => 'Failed to extend due date: ' . $e->getMessage()
+                'type' => 'error',
+                'message' => 'Failed to extend due date: ' . $e->getMessage(),
             ]);
         }
     }
 
-    /**
-     * Get file info with appropriate preview or icon
-     * 
-     * @param mixed $file Uploaded file object
-     * @return array File information with type, name, and preview
-     */
-    private function getFilePreviewInfo($file)
-    {
-        if (!$file) {
-            return null;
-        }
-        
-        $result = [
-            'name' => $file->getClientOriginalName(),
-            'type' => 'unknown',
-            'icon' => 'bi-file-earmark',
-            'color' => 'text-secondary',
-            'preview' => null
-        ];
-        
-        $extension = strtolower($file->getClientOriginalExtension());
-        
-        if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $result['type'] = 'image';
-            $result['icon'] = 'bi-file-earmark-image';
-            $result['color'] = 'text-primary';
-            
-            try {
-                $result['preview'] = $file->temporaryUrl();
-            } catch (\Exception $e) {
-                $result['preview'] = null;
-            }
-        } elseif ($extension === 'pdf') {
-            $result['type'] = 'pdf';
-            $result['icon'] = 'bi-file-earmark-pdf';
-            $result['color'] = 'text-danger';
-        }
-        
-        return $result;
-    }
-
+    /** -----------------------------
+     * Listing / Render
+     * ------------------------------*/
     public function render()
     {
         $query = Payment::query()
             ->where('is_completed', false)
-            // Remove the whereNull('status') line to show all statuses
-            ->whereHas('sale', function($query) {
-                $query->where('user_id', auth()->id());
-            })
+            ->whereHas('sale', fn($q) => $q->where('user_id', auth()->id()))
             ->with(['sale.customer']);
-            
-        // Apply search filter
-        if ($this->search) {
-            $query->whereHas('sale', function($q) {
-                $q->where('invoice_number', 'like', "%{$this->search}%")
-                  ->orWhereHas('customer', function($q2) {
-                      $q2->where('name', 'like', "%{$this->search}%")
-                        ->orWhere('phone', 'like', "%{$this->search}%");
+
+        // Search (by invoice number / customer name / phone)
+        if ($this->search !== '') {
+            $term = '%' . $this->search . '%';
+            $query->whereHas('sale', function ($q) use ($term) {
+                $q->where('invoice_number', 'like', $term)
+                  ->orWhereHas('customer', function ($q2) use ($term) {
+                      $q2->where('name', 'like', $term)
+                         ->orWhere('phone', 'like', $term);
                   });
             });
         }
-        
-        // Apply status filter - modify to include null values when needed
-        if ($this->filters['status'] === 'null') {
+
+        // Status filter
+        if (($this->filters['status'] ?? '') === 'null') {
             $query->whereNull('status');
-        } elseif ($this->filters['status']) {
+        } elseif (!empty($this->filters['status'])) {
             $query->where('status', $this->filters['status']);
         }
-        
-        // Apply date range filter
-        if ($this->filters['dateRange']) {
-            [$startDate, $endDate] = explode(' to ', $this->filters['dateRange']);
-            $query->whereBetween('due_date', [$startDate, $endDate]);
+
+        // Date range filter: "YYYY-MM-DD to YYYY-MM-DD"
+        if (!empty($this->filters['dateRange']) && str_contains($this->filters['dateRange'], 'to')) {
+            [$startDate, $endDate] = array_map('trim', explode('to', $this->filters['dateRange'], 2));
+            if ($startDate && $endDate) {
+                $query->whereBetween('due_date', [$startDate, $endDate]);
+            }
         }
-        
+
         $duePayments = $query->orderBy('due_date', 'asc')->paginate(10);
-        
+
         return view('livewire.staff.due-payments', [
-            'duePayments' => $duePayments
+            'duePayments' => $duePayments,
         ]);
     }
 }
