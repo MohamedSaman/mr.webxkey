@@ -8,6 +8,7 @@ use App\Models\StaffProduct;
 use App\Models\WatchDetail;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\DB;
 
 #[Title('My Stock Overview')]
 #[Layout('components.layouts.staff')]
@@ -17,6 +18,11 @@ class StaffStockOverview extends Component
     public $showSaleDetails = false;
     public $searchQuery = '';
     public $activeView = 'watches'; // Default view: 'watches' or 'batches'
+
+    public $totalInventory = 0;
+    public $soldInventory = 0;
+    public $availableStockValue = 0;
+    public $totalSoldValue = 0;
 
     public function mount()
     {
@@ -130,6 +136,19 @@ class StaffStockOverview extends Component
                 }
             }
         }
+
+        $inventoryStats = StaffProduct::where('staff_id', auth()->id())
+            ->select(
+                DB::raw('SUM(quantity) as total_quantity'),
+                DB::raw('SUM(sold_quantity) as sold_quantity'),
+                DB::raw('SUM(sold_value) as sold_value')
+
+            )->first();
+        
+        $this->totalInventory = $inventoryStats->total_quantity ?? 0;
+        $this->soldInventory = $inventoryStats->sold_quantity ?? 0;
+        $this->totalSoldValue = $inventoryStats->sold_value ?? 0;
+
         
         return view('livewire.staff.staff-stock-overview', [
             'staffSales' => $staffSales,

@@ -23,8 +23,8 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="text-muted mb-1">Total Sold</h6>
-                            <h3 class="mb-0">{{ $totalSold }}</h3>
-                            <small class="text-muted">{{ $totalAssigned > 0 ? number_format(($totalSold/$totalAssigned) * 100, 1) : 0 }}% of assigned</small>
+                            <h3 class="mb-0">{{ $soldInventory }}</h3>
+                            <small class="text-muted">{{ $totalAssigned > 0 ? number_format(($soldInventory/$totalAssigned) * 100, 1) : 0 }}% of assigned</small>
                         </div>
                         <div class="align-self-center">
                             <i class="bi bi-cash-stack fs-1 text-success opacity-50"></i>
@@ -40,7 +40,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="text-muted mb-1">Remaining Stock</h6>
-                            <h3 class="mb-0">{{ $totalAssigned - $totalSold }}</h3>
+                            <h3 class="mb-0">{{ $totalInventory - $soldInventory }}</h3>
                             <small class="text-muted">{{ $totalAssigned > 0 ? number_format((($totalAssigned-$totalSold)/$totalAssigned) * 100, 1) : 0 }}% remaining</small>
                         </div>
                         <div class="align-self-center">
@@ -57,7 +57,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="text-muted mb-1">Sales Value</h6>
-                            <h3 class="mb-0">Rs. {{ number_format($soldValue, 2) }}</h3>
+                            <h3 class="mb-0">Rs. {{ number_format($totalSoldValue, 2) }}</h3>
                             <small class="text-muted">of Rs. {{ number_format($totalValue, 2) }}</small>
                         </div>
                         <div class="align-self-center">
